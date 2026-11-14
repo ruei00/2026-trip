@@ -25,7 +25,7 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .okinawa-card {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.97);
       border-radius: 1.25rem;
       box-shadow: 0 8px 20px -4px rgba(14, 165, 233, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
       border: 2px solid #e0f2fe;
@@ -33,15 +33,17 @@
     .map-btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 4px;
       background: #f0f9ff;
       color: #0284c7;
       border: 1px solid #bae6fd;
-      padding: 3px 10px;
+      padding: 4px 10px;
       border-radius: 9999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       transition: all 0.15s;
+      white-space: nowrap;
     }
     .map-btn:hover, .map-btn:active {
       background: #0284c7;
@@ -50,45 +52,75 @@
     .book-btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 4px;
       background: #fff1f2;
       color: #e11d48;
       border: 1px solid #fecdd3;
-      padding: 3px 10px;
+      padding: 4px 10px;
       border-radius: 9999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
+      white-space: nowrap;
+    }
+    .spot-intro {
+      background: #f8fafc;
+      border-left: 3px solid #38bdf8;
+      padding: 8px 10px;
+      border-radius: 0 0.75rem 0.75rem 0;
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 6px;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body class="pb-28 text-slate-800">
 
-  <!-- 頂部沖繩海島風橫幅 -->
-  <header class="relative bg-gradient-to-br from-cyan-500 via-sky-500 to-blue-600 text-white pt-6 pb-10 px-4 shadow-lg overflow-hidden">
-    <!-- 裝飾背景圖示 -->
+  <!-- ==================== 頂部沖繩海島風橫幅 + 精確到秒倒數計時 ==================== -->
+  <header class="relative bg-gradient-to-br from-cyan-500 via-sky-500 to-blue-600 text-white pt-5 pb-10 px-4 shadow-lg overflow-hidden">
     <div class="absolute -right-6 -top-6 text-white/10 text-8xl rotate-12 pointer-events-none">🌺</div>
     <div class="absolute left-2 bottom-2 text-white/10 text-7xl -rotate-12 pointer-events-none">🐋</div>
 
     <div class="max-w-xl mx-auto relative z-10">
-      <div class="flex justify-between items-start">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <div class="inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 text-xs font-extrabold px-3 py-1 rounded-full shadow-sm">
             <span>🦁 OKINAWA TRIP</span>
             <span>•</span>
-            <span>2026/12/31 - 2027/1/4</span>
+            <span>2026/12/31 - 2027/01/04</span>
           </div>
           <h1 class="text-2xl sm:text-3xl font-extrabold mt-2 tracking-tight drop-shadow-sm">
             🌺 沖繩跨年五天四夜
           </h1>
-          <p class="text-xs text-sky-100 mt-1 font-medium">
-            ✈️ 星宇航空台中直飛 ・ 🚙 Alphard 豪華自駕遊 (6人同行)
+          <p class="text-xs text-sky-100 mt-0.5 font-medium">
+            ✈️ 星宇航空台中直飛 ・ 🚙 Alphard 豪華自駕遊
           </p>
         </div>
-        <!-- 倒數計時器 -->
-        <div id="countdown-box" class="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 text-center min-w-[78px] shadow-sm">
-          <div class="text-[10px] text-sky-100 font-bold">距離出發</div>
-          <div id="countdown-days" class="text-xl font-black text-amber-300 leading-tight">--</div>
-          <div class="text-[10px] text-white font-bold">DAYS</div>
+
+        <!-- 倒數計時器 (天/時/分/秒) -->
+        <div class="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 text-center shadow-sm">
+          <div class="text-[11px] text-amber-200 font-extrabold mb-1 tracking-wider">
+            <i class="fa-regular fa-clock mr-1"></i>距離 12/31 15:20 起飛倒數
+          </div>
+          <div id="countdown-timer" class="grid grid-cols-4 gap-1.5 text-center">
+            <div class="bg-slate-900/35 rounded-xl px-2 py-1 min-w-[48px]">
+              <div id="cd-days" class="text-lg sm:text-xl font-black text-amber-300 leading-none">--</div>
+              <div class="text-[9px] text-sky-100 font-bold mt-0.5">天</div>
+            </div>
+            <div class="bg-slate-900/35 rounded-xl px-2 py-1 min-w-[44px]">
+              <div id="cd-hours" class="text-lg sm:text-xl font-black text-white leading-none">--</div>
+              <div class="text-[9px] text-sky-100 font-bold mt-0.5">時</div>
+            </div>
+            <div class="bg-slate-900/35 rounded-xl px-2 py-1 min-w-[44px]">
+              <div id="cd-mins" class="text-lg sm:text-xl font-black text-white leading-none">--</div>
+              <div class="text-[9px] text-sky-100 font-bold mt-0.5">分</div>
+            </div>
+            <div class="bg-slate-900/35 rounded-xl px-2 py-1 min-w-[44px]">
+              <div id="cd-secs" class="text-lg sm:text-xl font-black text-rose-300 leading-none">--</div>
+              <div class="text-[9px] text-sky-100 font-bold mt-0.5">秒</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -101,25 +133,93 @@
 
   <main class="max-w-xl mx-auto px-3.5 pt-2">
 
+    <!-- ==================== 首頁即時天氣 & 快速換匯小工具 ==================== -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+      <!-- 沖繩即時天氣卡片 -->
+      <div class="okinawa-card p-3.5 flex flex-col justify-between">
+        <div class="flex justify-between items-center mb-2">
+          <div class="font-extrabold text-xs text-sky-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-cloud-sun text-amber-500 text-sm"></i> 沖繩即時天氣 (自動更新)
+          </div>
+          <button onclick="fetchOkinawaWeather()" class="text-[11px] text-sky-600 hover:underline">
+            <i class="fa-solid fa-rotate-right"></i> 重新整理
+          </button>
+        </div>
+
+        <div id="weather-box" class="grid grid-cols-2 gap-2 my-1">
+          <div class="bg-sky-50/80 border border-sky-100 rounded-xl p-2 text-center">
+            <div class="text-[11px] font-bold text-slate-500">📍 那霸 (南部)</div>
+            <div id="weather-naha-temp" class="text-lg font-black text-sky-700 mt-0.5">載入中...</div>
+            <div id="weather-naha-desc" class="text-[10px] text-slate-500">--</div>
+          </div>
+          <div class="bg-cyan-50/80 border border-cyan-100 rounded-xl p-2 text-center">
+            <div class="text-[11px] font-bold text-slate-500">📍 名護 (北部)</div>
+            <div id="weather-nago-temp" class="text-lg font-black text-cyan-700 mt-0.5">載入中...</div>
+            <div id="weather-nago-desc" class="text-[10px] text-slate-500">--</div>
+          </div>
+        </div>
+
+        <div class="text-[11px] text-slate-500 bg-amber-50/70 border border-amber-200/60 rounded-lg px-2.5 py-1.5 mt-1.5">
+          🧥 <b>跨年穿搭建議：</b>12-1月均溫約 16~21°C，海風較大，建議「薄長袖/針織衫＋防風外套」洋蔥式穿搭！
+        </div>
+      </div>
+
+      <!-- 隨身即時換匯計算機 -->
+      <div class="okinawa-card p-3.5 flex flex-col justify-between">
+        <div class="flex justify-between items-center mb-2">
+          <div class="font-extrabold text-xs text-emerald-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-coins text-emerald-500 text-sm"></i> 日圓 ⇄ 台幣 隨身換算
+          </div>
+          <div class="flex items-center gap-1 text-[11px] bg-slate-100 px-2 py-0.5 rounded-full">
+            <span>匯率:</span>
+            <input type="number" id="quick-rate" value="0.215" step="0.001" oninput="syncRate(this.value)" class="w-12 bg-white border rounded px-1 text-center font-bold text-emerald-700">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 items-center my-1">
+          <div class="relative">
+            <span class="absolute left-2.5 top-2 text-xs font-bold text-slate-400">¥</span>
+            <input type="number" id="calc-jpy" placeholder="輸入日圓" oninput="convertCurrency('JPY')" class="w-full pl-6 pr-2 py-1.5 rounded-xl border border-sky-200 bg-sky-50/40 text-sm font-black text-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
+            <div class="text-[10px] text-slate-400 mt-0.5 pl-1">日圓 (JPY)</div>
+          </div>
+          <div class="relative">
+            <span class="absolute left-2 top-2 text-[11px] font-bold text-slate-400">NT$</span>
+            <input type="number" id="calc-twd" placeholder="折合台幣" oninput="convertCurrency('TWD')" class="w-full pl-9 pr-2 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50/40 text-sm font-black text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+            <div class="text-[10px] text-slate-400 mt-0.5 pl-1">台幣 (TWD)</div>
+          </div>
+        </div>
+
+        <!-- 常用面額快速按鈕 -->
+        <div class="flex items-center justify-between gap-1 mt-1.5">
+          <span class="text-[10px] text-slate-400 font-bold">快選:</span>
+          <button onclick="setQuickJpy(500)" class="flex-1 bg-slate-100 hover:bg-sky-100 text-slate-700 text-[11px] font-bold py-1 rounded-lg transition">¥500</button>
+          <button onclick="setQuickJpy(1000)" class="flex-1 bg-slate-100 hover:bg-sky-100 text-slate-700 text-[11px] font-bold py-1 rounded-lg transition">¥1千</button>
+          <button onclick="setQuickJpy(3000)" class="flex-1 bg-slate-100 hover:bg-sky-100 text-slate-700 text-[11px] font-bold py-1 rounded-lg transition">¥3千</button>
+          <button onclick="setQuickJpy(5000)" class="flex-1 bg-slate-100 hover:bg-sky-100 text-slate-700 text-[11px] font-bold py-1 rounded-lg transition">¥5千</button>
+          <button onclick="setQuickJpy(10000)" class="flex-1 bg-slate-100 hover:bg-sky-100 text-slate-700 text-[11px] font-bold py-1 rounded-lg transition">¥1萬</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ==================== TAB 1: 每日行程 ==================== -->
     <section id="tab-itinerary" class="tab-content active space-y-4">
 
       <!-- 天數切換按鈕 -->
-      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 sticky top-2 z-20 bg-[#FFFDF9]/90 backdrop-blur-sm rounded-2xl p-1">
-        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md">
-          Day 1 <span class="block text-[10px] font-normal opacity-90">12/31 跨年</span>
+      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 sticky top-2 z-20 bg-[#FFFDF9]/95 backdrop-blur-sm rounded-2xl p-1 shadow-sm border border-sky-100">
+        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md">
+          Day 1 <span class="block text-[10px] font-normal opacity-90">12/31 那霸</span>
         </button>
-        <button onclick="switchDay(2)" id="day-btn-2" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
-          Day 2 <span class="block text-[10px] font-normal opacity-75">1/1 北部水族館</span>
+        <button onclick="switchDay(2)" id="day-btn-2" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 2 <span class="block text-[10px] font-normal opacity-75">1/1 北部</span>
         </button>
-        <button onclick="switchDay(3)" id="day-btn-3" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
-          Day 3 <span class="block text-[10px] font-normal opacity-75">1/2 美國村煙火</span>
+        <button onclick="switchDay(3)" id="day-btn-3" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 3 <span class="block text-[10px] font-normal opacity-75">1/2 美國村</span>
         </button>
-        <button onclick="switchDay(4)" id="day-btn-4" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
-          Day 4 <span class="block text-[10px] font-normal opacity-75">1/3 玉泉洞購物</span>
+        <button onclick="switchDay(4)" id="day-btn-4" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 4 <span class="block text-[10px] font-normal opacity-75">1/3 南部/那霸</span>
         </button>
-        <button onclick="switchDay(5)" id="day-btn-5" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
-          Day 5 <span class="block text-[10px] font-normal opacity-75">1/4 瀨長島返台</span>
+        <button onclick="switchDay(5)" id="day-btn-5" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 5 <span class="block text-[10px] font-normal opacity-75">1/4 瀨長島</span>
         </button>
       </div>
 
@@ -130,20 +230,19 @@
             <img src="https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=900&q=80" alt="那霸波上宮與國際通" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
             <div class="absolute bottom-3 left-4 right-4 text-white">
-              <span class="bg-rose-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 1 ・ 12/31 (四)</span>
+              <span class="bg-rose-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 1 ・ 12/31 (四) 跨年夜</span>
               <h2 class="text-xl font-extrabold mt-1">✈️ 抵達沖繩・國際通・波上宮跨年參拜</h2>
             </div>
           </div>
 
           <div class="p-4 space-y-4">
-            <!-- 時間軸項目 -->
             <div class="flex gap-3 items-start">
               <div class="w-16 flex-shrink-0 text-center">
                 <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">13:20</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
                 <div class="font-bold text-slate-800">抵達臺中國際機場 T2 報到</div>
-                <p class="text-xs text-slate-500 mt-0.5">搭乘星宇航空 JX302（15:20 起飛 ➔ 17:50 抵達那霸機場 I）</p>
+                <p class="text-xs text-slate-500 mt-0.5">搭乘星宇航空 JX302（15:20 起飛 ➔ 17:50 抵達那霸機場國際線 I）</p>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=臺中國際機場" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 台中機場導航</a>
                 </div>
@@ -156,9 +255,9 @@
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
                 <div class="font-bold text-slate-800">🚙 沖繩行腳租車 取車</div>
-                <p class="text-xs text-slate-500 mt-0.5">提領行李後出機場等租車公司接駁。記得準備<b>台灣駕照＋日文譯本＋護照</b>，以及現場尾款現金 <b>94,000 日圓</b>！</p>
+                <p class="text-xs text-slate-500 mt-0.5">提領行李後出機場搭乘接駁車取車（ALPHARD 8人座）。請備妥<b>台灣駕照＋日文譯本＋護照</b>，及尾款現金 <b>94,000 日圓</b>。</p>
                 <div class="mt-2 flex flex-wrap gap-2">
-                  <a href="https://youtu.be/OPy06MllCJI?si=HpF6V38j4uNweEfl" target="_blank" class="book-btn"><i class="fa-brands fa-youtube"></i> 機場接駁影片教學</a>
+                  <a href="https://youtu.be/OPy06MllCJI?si=HpF6V38j4uNweEfl" target="_blank" class="book-btn"><i class="fa-brands fa-youtube"></i> 機場接駁教學影片</a>
                   <a href="https://footprint-rentacar.com/tw/" target="_blank" class="map-btn"><i class="fa-solid fa-globe"></i> 行腳租車官網</a>
                 </div>
               </div>
@@ -169,9 +268,9 @@
                 <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">19:30</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🏨 飯店 Check-in（開車約 10 分鐘）</div>
-                <p class="text-xs text-slate-600 mt-0.5"><b>Hotel Lantana Naha Kokusai-Dori</b>（那霸國際通蘭塔納飯店）</p>
-                <p class="text-[11px] text-slate-400">入住 15:00~23:30 / 退房 11:00 前｜沖繩, 那霸, Matsuo 2-8-1</p>
+                <div class="font-bold text-slate-800">🏨 那霸市區飯店 Check-in（車程 10 分鐘）</div>
+                <p class="text-xs text-slate-600 mt-0.5"><b>Hotel Lantana Naha Kokusai-Dori</b>（國際通蘭塔納飯店）</p>
+                <p class="text-[11px] text-slate-400">入住 15:00~23:30 / 退房 11:00 前｜就在國際通正中央，下樓即逛街！</p>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Lantana+Naha+Kokusai-Dori" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至飯店</a>
                 </div>
@@ -183,13 +282,15 @@
                 <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">晚餐</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🍜 國際通美食晚餐 & 逛街探路</div>
-                <p class="text-xs text-slate-500 mt-0.5">可先逛逛比價，伴手禮最後幾天再買齊！推薦晚餐選擇：</p>
+                <div class="font-bold text-slate-800">🍜 國際通晚餐 & 逛街探路</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜那霸國際通（奇蹟的一哩）：</b>全長 1.6 公里的沖繩最熱鬧大道！兩側集結百間紅芋塔伴手禮、藥妝、唐吉訶德與屋台村居酒屋。第一晚建議先走走看看、比價探路，最後兩天回那霸再一次買齊！
+                </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=酒喜膳+一喜喜+那霸" target="_blank" class="map-btn">🍲 酒喜膳 一喜喜</a>
-                  <a href="https://kazuki-okinawa.com/" target="_blank" class="book-btn"><i class="fa-solid fa-calendar-check"></i> 一喜喜官網訂位</a>
+                  <a href="https://kazuki-okinawa.com/" target="_blank" class="book-btn"><i class="fa-solid fa-calendar-check"></i> 一喜喜訂位</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+那霸牧志店" target="_blank" class="map-btn">🍜 暖暮拉麵 牧志店</a>
-                  <a href="https://www.google.com/maps/search/?api=1&query=那霸國際通" target="_blank" class="map-btn">🛍️ 國際通商店街</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=那霸國際通" target="_blank" class="map-btn">🛍️ 國際通導航</a>
                 </div>
               </div>
             </div>
@@ -199,8 +300,10 @@
                 <span class="inline-block bg-purple-100 text-purple-800 text-xs font-extrabold px-2 py-1 rounded-lg">跨年</span>
               </div>
               <div class="flex-1">
-                <div class="font-bold text-slate-800">⛩️ 波上宮 跨年倒數 & 新年初詣參拜</div>
-                <p class="text-xs text-slate-500 mt-0.5">沖繩最著名的懸崖神社！跨年夜會有熱鬧的屋台小吃攤與敲鐘祈福，迎接 2027 新年！</p>
+                <div class="font-bold text-slate-800">⛩️ 波上宮 等待跨年倒數 & 新年初詣參拜</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜波上宮（琉球八社之首）：</b>矗立在珊瑚礁斷崖上的絕美朱紅神社，是沖繩守護航海平安與開運的最高聖地。12/31 跨年夜到元旦凌晨會有熱鬧的日本祭典屋台小吃攤（炒麵、章魚燒、甘酒），午夜 00:00 準時敲響新年鐘聲，必買超可愛的「紅型書包御守」！
+                </div>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=波上宮+那霸" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 波上宮導航</a>
                 </div>
@@ -228,10 +331,12 @@
                 <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:30</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🍔 出門 & 早餐：A&W 美式漢堡 牧港店</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車約 20 分鐘（營業 06:00–02:00）。沖繩必吃經典麥根沙士 (Root Beer) 與捲捲薯條！</p>
+                <div class="font-bold text-slate-800">🍔 出門早餐：美式漢堡 A&W 牧港店（車程 20 分）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜A&W 牧港店：</b>日本唯一的 A&W 連鎖美式漢堡就在沖繩！牧港店擁有復古美式汽車餐廳霓虹招牌與大片草皮，非常適合跟小橘熊吉祥物拍照，必點 Mozza Burger、捲捲薯條與經典麥根沙士（Root Beer）。
+                </div>
                 <div class="mt-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=A%26W+Makiminato" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> A&W 牧港店導航</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=A%26W+Makiminato" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> A&W 牧港店導航 (06:00-02:00)</a>
                 </div>
               </div>
             </div>
@@ -241,8 +346,10 @@
                 <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">10:30</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🌉 古宇利大橋 & 海灘踏浪</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車約 1 小時 30 分。跨越漸層古宇利藍大海的絕美跨海大橋！</p>
+                <div class="font-bold text-slate-800">🌉 古宇利大橋 & 海灘散步（車程 1.5 小時）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜古宇利島（戀之島）：</b>全長 1,960 公尺的跨海大橋，開車筆直衝向翡翠綠漸層大海的視覺震撼堪稱沖繩第一！過橋後右側就是古宇利海灘，沙質細白清澈，可下水踏浪拍大橋全景。
+                </div>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=古宇利大橋" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 古宇利大橋導航</a>
                 </div>
@@ -255,10 +362,12 @@
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
                 <div class="font-bold text-slate-800">🍤 古宇利蝦蝦飯 + The Sinmay 外帶咖啡</div>
-                <p class="text-xs text-slate-500 mt-0.5">蝦蝦飯營業 11:00–16:00（蒜香奶油超濃郁）；順路經過買杯 The Sinmay 咖啡（10:00–16:30）。</p>
+                <div class="spot-intro">
+                  💡 <b>美食介紹｜Kouri Shrimp 蝦蝦飯：</b>從夏威夷餐車紅到蓋起海景大樓的超人氣名店！大尾彈牙蝦仁裹滿濃郁奶油大蒜醬，可上頂樓露台邊看古宇利大橋邊享用。離開前順路買杯 The Sinmay 手沖咖啡。
+                </div>
                 <div class="mt-2 flex flex-wrap gap-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=Kouri+Shrimp+古宇利蝦蝦飯" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 古宇利蝦蝦飯</a>
-                  <a href="https://www.google.com/maps/search/?api=1&query=The+Sinmay+Okinawa+Coffee" target="_blank" class="map-btn">☕ The Sinmay 咖啡</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=Kouri+Shrimp+古宇利蝦蝦飯" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 古宇利蝦蝦飯 (11:00-16:00)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=The+Sinmay+Okinawa+Coffee" target="_blank" class="map-btn">☕ The Sinmay 咖啡 (10:00-16:30)</a>
                 </div>
               </div>
             </div>
@@ -268,16 +377,17 @@
                 <span class="inline-block bg-blue-100 text-blue-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🐋 沖繩美麗海水族館（海洋博公園）</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車約 30 分鐘（營業 08:30–18:30）。建議停在 <b>P7 北門立體停車場</b> 離水族館最近！</p>
+                <div class="font-bold text-slate-800">🐋 沖繩美麗海水族館（車程 30 分鐘｜08:30–18:30）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜美麗海水族館：</b>亞洲最具代表性的海洋殿堂！核心看點是高達 8.2 公尺的「黑潮之海」巨大水槽，可近距離仰望 8.8 公尺長的巨型鯨鯊與鬼蝠魟悠游。自駕請直接導航停在 <b>「P7 北門立體停車場」</b>，出電梯就是水族館入口！
+                </div>
                 <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5 mt-2 text-xs space-y-1">
                   <div class="font-bold text-sky-900">⏰ 必看表演時刻表：</div>
-                  <div>🔺 <b>鯨鯊餵食秀：</b>15:00 / 17:00（位置：2樓 黑潮之海）</div>
-                  <div>🔺 <b>Okichan 海豚秀：</b>13:00 / 15:00 / 17:00（位置：戶外海豚劇場）</div>
-                  <div>🔺 <b>其他設施：</b>海龜館、海牛館、翡翠海灘</div>
+                  <div>🔺 <b>鯨鯊垂直餵食秀：</b>15:00 / 17:00（位置：2樓 黑潮之海大水槽）</div>
+                  <div>🔺 <b>Okichan 海豚劇場秀：</b>13:00 / 15:00 / 17:00（位置：戶外海豚劇場，完全免費）</div>
                 </div>
                 <div class="mt-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩美麗海水族館" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 美麗海水族館導航</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩美麗海水族館+P7停車場" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 美麗海水族館 P7 停車場導航</a>
                 </div>
               </div>
             </div>
@@ -289,7 +399,7 @@
               <div class="flex-1 pb-3 border-b border-slate-100">
                 <div class="font-bold text-slate-800">🏨 名護飯店 Check-in（連住兩晚）</div>
                 <p class="text-xs text-slate-600 mt-0.5"><b>New Normal Hotel in NAGO</b>（沖繩, 名護, Miyazato 949）</p>
-                <p class="text-[11px] text-slate-400">入住 15:00~00:00 / 退房 10:00 前</p>
+                <p class="text-[11px] text-slate-400">入住 15:00~00:00 / 退房 10:00 前｜公寓式寬敞房型，周邊超市賣場超齊全</p>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=New+Normal+Hotel+in+NAGO" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至名護飯店</a>
                 </div>
@@ -301,12 +411,12 @@
                 <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">晚餐</span>
               </div>
               <div class="flex-1">
-                <div class="font-bold text-slate-800">🥩 名護晚餐口袋名單 & 夜間採買</div>
-                <div class="text-xs text-slate-600 mt-1 space-y-1.5">
+                <div class="font-bold text-slate-800">🥩 名護晚餐選擇 & 賣場夜間採買</div>
+                <div class="text-xs text-slate-600 mt-1 space-y-1">
                   <div>• <b>拉麵：</b>暖暮拉麵 名護店 (10:00–00:00)</div>
                   <div>• <b>純豬肉燒肉：</b>島豬七輪燒肉 滿味 (17:00–21:30 / 週日一休)</div>
                   <div>• <b>吃到飽燒肉：</b>焼肉五苑 名護店、焼肉きんぐ (燒肉王) 名護店</div>
-                  <div>• <b>阿古豬涮涮鍋 (皆可訂位)：</b>Hisui (11:00–15:00/17:00–22:00)、ちゃぁぶ～名護店 (週三休)、やんばるダイニング 松の古民家 (週日休)</div>
+                  <div>• <b>阿古豬涮涮鍋 (可訂位)：</b>Hisui (11:00–15:00/17:00–22:00)、ちゃぁぶ～名護店 (週三休)、やんばるダイニング 松の古民家 (週日休)</div>
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+名護店" target="_blank" class="map-btn">🍜 暖暮名護</a>
@@ -341,13 +451,15 @@
                 <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:30</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🥐 出門早餐 & 上午悠閒時光</div>
-                <p class="text-xs text-slate-500 mt-0.5">早餐選擇：Kaito 麵包 (08:00–17:00)、星巴克 名護21世紀之森公園店 (07:30–21:00) 或便利商店。</p>
-                <p class="text-xs text-slate-600 mt-1">上午可去：名護城公園 / 開車15分鐘至 <b>部瀨名海中公園</b> (09:00–17:30 海中展望塔＆玻璃底船)。</p>
+                <div class="font-bold text-slate-800">🥐 出門早餐 ➔ 部瀨名海中公園（車程 15 分）</div>
+                <p class="text-xs text-slate-500 mt-0.5">早餐：Kaito 麵包 (08:00–17:00)、星巴克 名護21世紀之森公園店 (07:30–21:00) 或超商。</p>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜部瀨名海中公園：</b>擁有沖繩唯一的海中展望塔！走下螺旋階梯進入水深 5 公尺的海底觀景窗，360 度近距離看小丑魚與熱帶魚群；還可搭乘鯨魚造型玻璃底船出海餵魚，完全不用弄濕衣服！
+                </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=パン屋+Kaito+名護" target="_blank" class="map-btn">🥖 Kaito 麵包</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=Starbucks+Nago" target="_blank" class="map-btn">☕ 星巴克名護店</a>
-                  <a href="https://www.google.com/maps/search/?api=1&query=部瀨名海中公園" target="_blank" class="map-btn">🐠 部瀨名海中公園</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=部瀨名海中公園" target="_blank" class="map-btn">🐠 部瀨名海中公園 (09:00-17:30)</a>
                 </div>
               </div>
             </div>
@@ -357,11 +469,13 @@
                 <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">午餐</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🐖 百年古家 大家 (Agu豬) & 島甜甜圈</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車 15 分鐘。在百年古民家品嚐阿古豬涮涮鍋/沖繩麵 (11:00–15:30，可訂位) 或吃 Hisui。<br>飯後點心：島甜甜圈 しまドーナッツ (11:00–15:00 / 週一二三休)、Blue Seal。</p>
+                <div class="font-bold text-slate-800">🐖 百年古家 大家 (阿古豬) & 島甜甜圈</div>
+                <div class="spot-intro">
+                  💡 <b>美食介紹｜百年古家 大家（UFUYA）：</b>隱身在名護山林間的百年琉球古民家建築，坐在緣廊聽著瀑布流水聲，享用頂級阿古豬（Agu豬）薑汁燒肉定食、阿古豬沖繩麵或涮涮鍋，氣氛滿分！飯後可順路買豆渣做的健康「島甜甜圈」。
+                </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
-                  <a href="https://www.google.com/maps/search/?api=1&query=百年古家+大家" target="_blank" class="map-btn">🍲 百年古家 大家</a>
-                  <a href="https://www.google.com/maps/search/?api=1&query=しまドーナッツ+名護" target="_blank" class="map-btn">🍩 島甜甜圈</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=百年古家+大家" target="_blank" class="map-btn">🍲 百年古家 大家 (11:00-15:30)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=しまドーナッツ+名護" target="_blank" class="map-btn">🍩 島甜甜圈 (11:00-15:00)</a>
                 </div>
               </div>
             </div>
@@ -371,8 +485,10 @@
                 <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🐘 萬座毛（開車約 45 分鐘）</div>
-                <p class="text-xs text-slate-500 mt-0.5">營業 08:00–20:00。沖繩代表性象鼻珊瑚礁斷崖與無敵海景步道。</p>
+                <div class="font-bold text-slate-800">🐘 萬座毛（車程 45 分鐘｜08:00–20:00）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜萬座毛：</b>琉球國王曾讚嘆「能供萬人齊坐的原野」！20 公尺高的珊瑚礁斷崖長年受海浪侵蝕，形成神似「大象鼻子」的奇岩，搭配平坦無際的翠綠草地與深藍海浪，繞行步道一圈約 20 分鐘非常好拍。
+                </div>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=萬座毛" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 萬座毛導航</a>
                 </div>
@@ -384,11 +500,13 @@
                 <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-extrabold px-2 py-1 rounded-lg">傍晚</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🎡 北谷美國村 (開車 40 分鐘｜10:00–22:00)</div>
-                <div class="text-xs text-slate-600 mt-1 space-y-1">
+                <div class="font-bold text-slate-800">🎡 北谷美國村（車程 40 分鐘｜10:00–22:00）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜美濱美國村（American Village）：</b>充滿美式西海岸風情的繽紛度假小鎮！彩色馬卡龍建築、海濱棕櫚樹步道、復古潮流選物店與超大型扭蛋中心（Dragon Palace 1F / GIGO），傍晚日落與夜晚點燈後宛如置身加州。
+                </div>
+                <div class="text-xs text-slate-600 mt-2 space-y-1">
                   <div>• <b>甜點：</b>Blue Seal Depot Island (11:00–21:00)</div>
-                  <div>• <b>晚餐選擇：</b>塔可飯 Taco Rice Cafe Kijimuna (11:00–22:00)、グルメ回転寿司市場 美浜店 (11:30–14:00/16:30–21:50)、拉麵 Kiseki Soba (11:00–20:45)、Red Lobster 龍蝦餐廳、蒸気海鮮 (吃到飽)</div>
-                  <div>• <b>扭蛋聖地：</b>Dragon Palace 1F、GIGO 北谷</div>
+                  <div>• <b>晚餐推薦：</b>歐姆塔可飯 Kijimuna (11:00–22:00)、グルメ回転寿司市場 美浜店 (週三休)、拉麵 Kiseki Soba、Red Lobster 龍蝦餐廳、蒸気海鮮</div>
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=American+Village+Okinawa" target="_blank" class="map-btn">🎡 美國村導航</a>
@@ -401,17 +519,17 @@
             <!-- 煙火特別攻略卡 -->
             <div class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-3.5 rounded-2xl shadow-md">
               <div class="font-extrabold text-amber-300 text-sm flex items-center gap-1.5">
-                <span>🎆 20:00 美國村週末煙火秀</span>
-                <span class="text-[10px] bg-amber-400/20 border border-amber-300/40 px-2 py-0.5 rounded-full">私房最佳視野</span>
+                <span>🎆 20:00 美國村週末限定煙火秀</span>
+                <span class="text-[10px] bg-amber-400/20 border border-amber-300/40 px-2 py-0.5 rounded-full">最佳視野推薦</span>
               </div>
               <ul class="text-xs text-slate-200 mt-2 space-y-1.5">
                 <li><b>① Depot Island 海邊步道 Boardwalk：</b>沿海岸找無遮蔽處，吃完晚餐散步過去最方便！</li>
-                <li><b>② Sunset Beach 日落海灘旁大階梯（超推⭐）：</b>前方無遮蔽物，直接看煙火在正前方升空！</li>
+                <li><b>② Sunset Beach 日落海灘旁大階梯（超推⭐）：</b>前方無遮蔽物，直接看煙火在正前方海面升空！</li>
                 <li><b>③ 北谷 Fisherina 海岸一帶：</b>不想擠在正中央可沿著海邊往北走。</li>
               </ul>
-              <div class="mt-2.5 flex gap-2">
+              <div class="mt-2.5 flex flex-wrap gap-2">
                 <a href="https://www.google.com/maps/search/?api=1&query=Sunset+Beach+Chatan" target="_blank" class="map-btn !bg-white/15 !text-white !border-white/30">📍 日落海灘導航</a>
-                <a href="https://www.google.com/maps/search/?api=1&query=AEON+Chatan" target="_blank" class="map-btn !bg-white/15 !text-white !border-white/30">🛒 AEON 北谷店買宵夜</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=AEON+Chatan" target="_blank" class="map-btn !bg-white/15 !text-white !border-white/30">🛒 AEON北谷店買宵夜</a>
               </div>
             </div>
           </div>
@@ -436,10 +554,12 @@
                 <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:30</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🦇 退房出門 ➔ 玉泉洞 (沖繩世界文化王國)</div>
-                <p class="text-xs text-slate-500 mt-0.5">早餐吃 Kaito 麵包 / 星巴克 / 超商。開車 1 小時 15 分抵達玉泉洞（09:00–16:00），欣賞壯觀鐘乳石洞！</p>
+                <div class="font-bold text-slate-800">🦇 退房出門 ➔ 玉泉洞・沖繩世界（車程 1小時15分）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜玉泉洞（Okinawa World）：</b>歷經 30 萬年歲月形成的日本第二大鐘乳石洞！全長 5 公里（開放 890 公尺），洞內有超過 100 萬株石筍與打上藍光的「青泉」地下河，長年恆溫 21°C。出洞後還可逛琉球王國城下町與欣賞魄力十足的 EISA 太鼓舞表演！
+                </div>
                 <div class="mt-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩世界+玉泉洞" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 玉泉洞導航</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩世界+玉泉洞" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 玉泉洞導航 (09:00-16:00)</a>
                 </div>
               </div>
             </div>
@@ -449,11 +569,13 @@
                 <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">午餐</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🍤 奧武島（貓島）現炸天婦羅 & 海產食堂</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車約 15 分鐘。必吃銅板價現炸海蘊天婦羅！</p>
+                <div class="font-bold text-slate-800">🍤 奧武島（貓島）天婦羅 & 海產食堂（車程 15 分）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜奧武島：</b>開車不用 2 分鐘就能過橋抵達的純樸小漁村，島上有許多不怕生的慵懶浪貓。必吃沖繩式厚皮酥脆天婦羅（一個只要約 ¥100 銅板價，必點海蘊、魚肉、紅芋），也可以去海產物食堂吃超澎湃生魚片丼飯！
+                </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
-                  <a href="https://www.google.com/maps/search/?api=1&query=大城天婦羅店+奧武島" target="_blank" class="map-btn">🍤 大城天婦羅 (週一二休)</a>
-                  <a href="https://www.google.com/maps/search/?api=1&query=中本鮮魚天婦羅店" target="_blank" class="map-btn">🦑 中本天婦羅 (週四休)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=大城天婦羅店+奧武島" target="_blank" class="map-btn">🍤 大城天婦羅 (10:30-17:45)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=中本鮮魚天婦羅店" target="_blank" class="map-btn">🦑 中本天婦羅 (10:30-18:00)</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=奥武島海産物食堂" target="_blank" class="map-btn">🐟 奥武島海產物食堂</a>
                 </div>
               </div>
@@ -464,11 +586,13 @@
                 <span class="inline-block bg-purple-100 text-purple-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🛍️ PARCO CITY 浦添西海岸（10:00–22:00）</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車約 40 分鐘。沖繩最大海景購物中心！樓層重點攻略：</p>
+                <div class="font-bold text-slate-800">🛍️ PARCO CITY 浦添西海岸（車程 40 分｜10:00–22:00）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜SAN-A 浦添西海岸 PARCO CITY：</b>緊鄰西海岸海景的沖繩超人氣大型購物中心！共集結 250 間品牌，日系服飾、雜貨、動漫周邊一次逛齊，美食街還能邊看夕陽海景邊用餐。
+                </div>
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 mt-2 text-xs space-y-1.5">
                   <div><span class="font-bold text-orange-600">1F：</span><b>3COINS+plus</b> (Green)、松本清 & SAN-A食品館 (Orange)、萬代扭蛋</div>
-                  <div><span class="font-bold text-emerald-600">2F：</span><b>GU</b>、PEACH JOHN、PLAZA、niko and…、Calvin Klein (Green)｜ZARA、H&M、COACH、北臉、POLO (Blue)｜染髮 fufu (Orange)｜🍴 <b>鳥玉丼飯 (Toritama)</b></div>
+                  <div><span class="font-bold text-emerald-600">2F：</span><b>GU</b>、PEACH JOHN、PLAZA、niko and…、CK (Green)｜ZARA、H&M、COACH、北臉、POLO (Blue)｜🍴 <b>鳥玉丼飯 (Toritama)</b></div>
                   <div><span class="font-bold text-sky-600">3F：</span><b>UNIQLO、無印良品、DAISO 大創</b> (Orange)｜任天堂區、西村裕二、POP MART (Green)｜🍴 <b>迴轉壽司 Yazaemon、炸豬排 Katsuno-ya</b></div>
                 </div>
                 <div class="mt-2">
@@ -484,7 +608,7 @@
               <div class="flex-1">
                 <div class="font-bold text-slate-800">🏨 那霸飯店 Check-in + 市區最後採買時刻！</div>
                 <p class="text-xs text-slate-600 mt-0.5"><b>Hotel Cocktail Stay Naha</b>（沖繩, 那霸, Matsuyama 1-29-7）</p>
-                <p class="text-[11px] text-slate-400">入住 15:00~23:00 / 退房 11:00 前</p>
+                <p class="text-[11px] text-slate-400">入住 15:00~23:00 / 退房 11:00 前｜請參考下方「那霸・國際通導航總整理」買齊伴手禮！</p>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Cocktail+Stay+Naha" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至那霸飯店</a>
                 </div>
@@ -502,7 +626,7 @@
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
             <div class="absolute bottom-3 left-4 right-4 text-white">
               <span class="bg-amber-500 text-slate-900 text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 5 ・ 1/4 (一)</span>
-              <h2 class="text-xl font-extrabold mt-1">🥞 豬肉蛋飯糰・瀨長島幸福鬆餅・平安返台</h2>
+              <h2 class="text-xl font-extrabold mt-1">🥞 牧志市場・瀨長島幸福鬆餅・平安返台</h2>
             </div>
           </div>
 
@@ -512,8 +636,10 @@
                 <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:15</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🍙 出門早餐：沖繩豬肉蛋飯糰 / 福助玉子燒</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車約 7 分鐘至牧志市場周邊，接著進行國際通最後伴手禮補貨、第一牧志公設市場、泊港漁市場、波上宮。</p>
+                <div class="font-bold text-slate-800">🍙 早餐：沖繩飯糰 / 福助玉子燒 + 市場巡禮</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜第一牧志公設市場 & 泊港漁市場：</b>被譽為「沖繩人的廚房」！早起先吃沖繩靈魂早餐「Pork Tamago 豬肉蛋飯糰」或超厚實的「福助玉子燒」，接著在國際通與市場做最後伴手禮衝刺。
+                </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=Pork+Tamago+Onigiri+Makishi+Market" target="_blank" class="map-btn">🍙 豬肉蛋飯糰 牧志店</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=福助の玉子焼き+市場本通り店" target="_blank" class="map-btn">🍳 福助玉子燒</a>
@@ -528,11 +654,13 @@
                 <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">🥞 瀨長島 Umikaji Terrace：幸福鬆餅</div>
-                <p class="text-xs text-slate-500 mt-0.5">開車約 20 分鐘（幸福鬆餅營業 11:00–21:00）。在純白地中海風山丘一邊吃舒芙蕾鬆餅、一邊看飛機起降！</p>
+                <div class="font-bold text-slate-800">🥞 瀨長島 Umikaji Terrace：幸福鬆餅（車程 20 分）</div>
+                <div class="spot-intro">
+                  💡 <b>景點介紹｜瀨長島（沖繩小希臘）：</b>距離那霸機場僅 10 分鐘車程的純白階梯式海島商場！沿著山坡打造的白色露台面向蔚藍大海，還能超近距離觀賞那霸機場飛機呼嘯起降。必吃入口即化的「幸福鬆餅」與吊床咖啡廳！
+                </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=瀨長島+Umikaji+Terrace" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 瀨長島導航</a>
-                  <a href="https://www.google.com/maps/search/?api=1&query=幸せのパンケーキ+ウミカジテラス沖縄店" target="_blank" class="map-btn">🥞 幸福鬆餅導航</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=幸せのパンケーキ+ウミカジテラス沖縄店" target="_blank" class="map-btn">🥞 幸福鬆餅 (11:00-21:00)</a>
                 </div>
               </div>
             </div>
@@ -542,8 +670,8 @@
                 <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">17:00</span>
               </div>
               <div class="flex-1 pb-3 border-b border-slate-100">
-                <div class="font-bold text-slate-800">⛽ 離開瀨長島 ➔ 加滿油 ➔ 沖繩行腳還車</div>
-                <p class="text-xs text-slate-500 mt-0.5">車程約 10 分鐘。還車前務必加滿油（Regular 紅色油槍）並保留收據，搭接駁車於 <b>18:00 前抵達那霸機場</b>辦理機台退稅與報到。</p>
+                <div class="font-bold text-slate-800">⛽ 離開瀨長島 ➔ 加油 ➔ 沖繩行腳還車</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 10 分鐘。還車前務必加滿油（Regular 紅色油槍）並保留收據，搭接駁車於 <b>18:00 前抵達那霸機場</b>辦理機台退稅與報到。</p>
                 <div class="mt-2">
                   <a href="https://www.google.com/maps/search/?api=1&query=那霸機場國際線航廈" target="_blank" class="map-btn"><i class="fa-solid fa-plane-departure"></i> 那霸機場國際線導航</a>
                 </div>
@@ -556,71 +684,252 @@
               </div>
               <div class="flex-1">
                 <div class="font-bold text-slate-800">✈️ 星宇航空 JX313 飛返臺中</div>
-                <p class="text-xs text-slate-500 mt-0.5">20:30 那霸機場 I 起飛 ➔ 21:20 抵達臺中國際機場 T2。帶著滿滿戰利品平安回家！</p>
+                <p class="text-xs text-slate-500 mt-0.5">20:30 那霸機場 I 起飛 ➔ 21:20 抵達臺中國際機場 T2。帶著滿滿回憶平安回家！</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ===== 那霸＆國際通 吃喝逛街全攻略 (Day 1 / 4 / 5 通用) ===== -->
-      <div class="okinawa-card p-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 class="font-extrabold text-base text-sky-900">🏮 那霸・國際通吃喝逛街導航總整理</h3>
-          <span class="text-[11px] bg-sky-100 text-sky-700 font-bold px-2.5 py-0.5 rounded-full">點店名直接導航</span>
+      <!-- ===== 🏮 那霸・國際通吃喝逛街導航總整理 (僅在 Day 1、Day 4、Day 5 顯示！) ===== -->
+      <div id="naha-guide-box" class="okinawa-card p-4 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-sky-100 pb-2.5">
+          <div>
+            <h3 class="font-extrabold text-base text-sky-900">🏮 那霸・國際通吃喝逛街導航總整理</h3>
+            <p class="text-[11px] text-slate-500">專為 Day 1、Day 4、Day 5 那霸市區行程整理，點擊按鈕直接導航或預約！</p>
+          </div>
+          <span class="text-[10px] bg-rose-100 text-rose-700 font-extrabold px-2.5 py-1 rounded-full">Day 1 / 4 / 5 專用</span>
         </div>
 
-        <!-- 美食分類 -->
-        <div class="bg-orange-50/70 border border-orange-200/70 rounded-xl p-3 space-y-2 text-xs">
-          <div class="font-extrabold text-orange-800 text-sm">🍜 國際通周邊必吃美食（含營業時間）</div>
-          <div class="grid grid-cols-1 gap-2">
-            <div><b>拉麵/沖繩麵：</b>
-              <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+那霸牧志店" target="_blank" class="map-btn mt-1">暖暮牧志店 (09:00-02:00)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=琉家拉麵+國際通本店" target="_blank" class="map-btn mt-1">琉家拉麵 (11:30-00:00/週三四休)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=Okinawa+Soba+EIBUN" target="_blank" class="map-btn mt-1">沖繩麵 EIBUN (11:00-20:00)</a>
-              <a href="https://www.tablecheck.com/shops/soba-eibun/reserve" target="_blank" class="book-btn mt-1">EIBUN 預約</a>
+        <!-- 🍴 美食整齊網格 -->
+        <div>
+          <div class="font-extrabold text-xs text-orange-800 bg-orange-100/80 px-3 py-1.5 rounded-xl mb-2.5 flex items-center justify-between">
+            <span>🍜 吃吃喝喝口袋名單（16 間精選）</span>
+            <span class="text-[10px] font-normal">附營業時間 & 訂位</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-orange-600 font-bold">拉麵</span>
+                <div class="font-bold text-slate-800">暖暮拉麵 那霸牧志店</div>
+                <div class="text-[11px] text-slate-400">🕒 09:00–02:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+那霸牧志店" target="_blank" class="map-btn">📍 導航</a>
             </div>
-            <div><b>壽喜燒/涮涮鍋：</b>
-              <a href="https://www.google.com/maps/search/?api=1&query=酒喜膳+一喜喜" target="_blank" class="map-btn mt-1">酒喜膳 一喜喜 (17:30-22:00/週日休)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=Shima+Shabu-Shabu+NAKAMA" target="_blank" class="map-btn mt-1">Shima Shabu NAKAMA</a>
-              <a href="https://yoyaku.toreta.in/shabushabu-nakama/#/" target="_blank" class="book-btn mt-1">NAKAMA 訂位</a>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-orange-600 font-bold">拉麵</span>
+                <div class="font-bold text-slate-800">琉家拉麵 國際通本店</div>
+                <div class="text-[11px] text-slate-400">🕒 11:30–00:00 (週三四休)</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=琉家拉麵+國際通本店" target="_blank" class="map-btn">📍 導航</a>
             </div>
-            <div><b>居酒屋/串燒：</b>
-              <a href="https://www.google.com/maps/search/?api=1&query=TACHINOMIYA+BAR+國際通" target="_blank" class="map-btn mt-1">TACHINOMIYA黑糖牛奶 (10:00-02:00)</a>
-              <a href="https://tabelog.com/tw/okinawa/A4701/A470101/47029335/" target="_blank" class="book-btn mt-1">Uguisu串燒 (17:00-00:00)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=新時代+沖縄+那覇久茂地店" target="_blank" class="map-btn mt-1">新時代 久茂地店 (16:00-02:00)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=Chokotto+Sushi+Kokusai-dori+Yataimura" target="_blank" class="map-btn mt-1">屋台村 鮭魚卵丼飯 (12:00-00:00)</a>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-orange-600 font-bold">沖繩麵</span>
+                <div class="font-bold text-slate-800">沖繩麵 EIBUN</div>
+                <div class="text-[11px] text-slate-400">🕒 11:00–20:00</div>
+              </div>
+              <div class="flex flex-col gap-1">
+                <a href="https://www.google.com/maps/search/?api=1&query=Okinawa+Soba+EIBUN" target="_blank" class="map-btn">📍 導航</a>
+                <a href="https://www.tablecheck.com/shops/soba-eibun/reserve" target="_blank" class="book-btn">📅 預約</a>
+              </div>
             </div>
-            <div><b>豬排/飯糰/點心：</b>
-              <a href="https://www.google.com/maps/search/?api=1&query=とんかつ小やじ+那覇店" target="_blank" class="map-btn mt-1">炸豬排 小やじ (11:00-17:00/週三休)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=福助の玉子焼き+久茂地店" target="_blank" class="map-btn mt-1">福助玉子燒 久茂地 (07:00-19:30)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=Blue+Seal+國際通店" target="_blank" class="map-btn mt-1">Blue Seal (10:00-23:00)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=JEF+Sunrise+Naha" target="_blank" class="map-btn mt-1">JEF苦瓜漢堡 (09:00-20:00)</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=hoppepan+那霸" target="_blank" class="map-btn mt-1">hoppepan麵包 (週一二三休)</a>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-rose-600 font-bold">壽喜燒/涮涮鍋</span>
+                <div class="font-bold text-slate-800">酒喜膳 一喜喜</div>
+                <div class="text-[11px] text-slate-400">🕒 17:30–22:00 (週日休)</div>
+              </div>
+              <div class="flex flex-col gap-1">
+                <a href="https://www.google.com/maps/search/?api=1&query=酒喜膳+一喜喜" target="_blank" class="map-btn">📍 導航</a>
+                <a href="https://kazuki-okinawa.com/" target="_blank" class="book-btn">📅 官網</a>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-rose-600 font-bold">涮涮鍋</span>
+                <div class="font-bold text-slate-800">Shima Shabu NAKAMA</div>
+                <div class="text-[11px] text-slate-400">🕒 11:30-15:00 / 17:00-22:30</div>
+              </div>
+              <div class="flex flex-col gap-1">
+                <a href="https://www.google.com/maps/search/?api=1&query=Shima+Shabu-Shabu+NAKAMA" target="_blank" class="map-btn">📍 導航</a>
+                <a href="https://yoyaku.toreta.in/shabushabu-nakama/#/" target="_blank" class="book-btn">📅 訂位</a>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-purple-600 font-bold">居酒屋/串燒</span>
+                <div class="font-bold text-slate-800">Uguisu 串燒</div>
+                <div class="text-[11px] text-slate-400">🕒 17:00–00:00</div>
+              </div>
+              <div class="flex flex-col gap-1">
+                <a href="https://www.google.com/maps/search/?api=1&query=Uguisu+那霸" target="_blank" class="map-btn">📍 導航</a>
+                <a href="https://tabelog.com/tw/okinawa/A4701/A470101/47029335/" target="_blank" class="book-btn">🍽️ 食評</a>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-purple-600 font-bold">黑糖牛奶/酒吧</span>
+                <div class="font-bold text-slate-800">TACHINOMIYA BAR</div>
+                <div class="text-[11px] text-slate-400">🕒 10:00–02:00 (國際通店)</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=TACHINOMIYA+BAR+國際通" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-purple-600 font-bold">居酒屋</span>
+                <div class="font-bold text-slate-800">新時代 那覇久茂地店</div>
+                <div class="text-[11px] text-slate-400">🕒 16:00–02:00 (傳串炸雞皮)</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=新時代+沖縄+那覇久茂地店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-purple-600 font-bold">屋台村/鮭魚卵</span>
+                <div class="font-bold text-slate-800">屋台村 じゅんちゃん</div>
+                <div class="text-[11px] text-slate-400">🕒 12:00–00:00 (Chokotto壽司)</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Chokotto+Sushi+Kokusai-dori+Yataimura" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-amber-600 font-bold">炸豬排</span>
+                <div class="font-bold text-slate-800">とんかつ小やじ 那覇店</div>
+                <div class="text-[11px] text-slate-400">🕒 11:00–17:00 (週三休)</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=とんかつ小やじ+那覇店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-emerald-600 font-bold">沖繩飯糰</span>
+                <div class="font-bold text-slate-800">Pork Tamago 牧志市場店</div>
+                <div class="text-[11px] text-slate-400">🕒 07:00–20:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Pork+Tamago+Onigiri+Makishi+Market" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-emerald-600 font-bold">玉子燒飯糰</span>
+                <div class="font-bold text-slate-800">福助の玉子焼き (市場/久茂地)</div>
+                <div class="text-[11px] text-slate-400">🕒 07:00–20:00 (久茂地至19:30)</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=福助の玉子焼き+市場本通り店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-sky-600 font-bold">冰淇淋/速食</span>
+                <div class="font-bold text-slate-800">Blue Seal 國際通 / JEF漢堡</div>
+                <div class="text-[11px] text-slate-400">🕒 10:00–23:00 / 09:00–20:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Blue+Seal+國際通店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-sky-600 font-bold">麵包/市場</span>
+                <div class="font-bold text-slate-800">hoppepan / 牧志公設市場</div>
+                <div class="text-[11px] text-slate-400">🕒 10:00-19:00 / 08:00-22:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=那霸市第一牧志公設市場" target="_blank" class="map-btn">📍 導航</a>
             </div>
           </div>
         </div>
 
-        <!-- 逛街藥妝伴手禮分類 -->
-        <div class="bg-emerald-50/70 border border-emerald-200/70 rounded-xl p-3 space-y-2 text-xs">
-          <div class="font-extrabold text-emerald-800 text-sm">🛍️ 藥妝・伴手禮・超市（含營業時間）</div>
-          <div class="flex flex-wrap gap-1.5">
-            <a href="https://www.google.com/maps/search/?api=1&query=Don+Quijote+Kokusai-dori" target="_blank" class="map-btn">🐧 唐吉訶德 國際通 (09:00-05:00)</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=ドン・キホーテ国際通りくもじ店" target="_blank" class="map-btn">🐧 唐吉訶德 久茂地 (08:00-01:00)</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=大國藥妝+國際通縣廳前" target="_blank" class="map-btn">💊 大國藥妝 (10:05-22:50)</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=札幌藥妝+沖繩國際通店" target="_blank" class="map-btn">💊 札幌藥妝 (11:00-22:00)</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=Matsumoto+Kiyoshi+Asato+Kokusai+Street" target="_blank" class="map-btn">💊 松本清 (10:00-22:00)</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=MaxValu+牧志店" target="_blank" class="map-btn">🛒 MaxValu 牧志店 (24H)</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=塩屋+松尾店" target="_blank" class="map-btn">🍦 塩屋 松尾店</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=Calbee%2B+沖繩國際通店" target="_blank" class="map-btn">🍟 Calbee+ 國際通</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=福木屋+國際通" target="_blank" class="map-btn">🍰 福木屋年輪蛋糕</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=御菓子御殿+國際通松尾店" target="_blank" class="map-btn">🍠 御菓子御殿 松尾店</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=Orion+Official+Store+Naha" target="_blank" class="map-btn">🍺 Orion 官方商店</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=Splash+Okinawa" target="_blank" class="map-btn">🐚 Splash 紀念品</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=世界一のアップルパイ+mille+mele+沖縄" target="_blank" class="map-btn">🍎 世界第一蘋果派 (浮島通/國際線機場)</a>
+        <!-- 🛍️ 逛街伴手禮藥妝整齊網格 -->
+        <div>
+          <div class="font-extrabold text-xs text-emerald-800 bg-emerald-100/80 px-3 py-1.5 rounded-xl mb-2.5 flex items-center justify-between">
+            <span>🛍️ 藥妝・伴手禮・唐吉訶德・超市（13 間精選）</span>
+            <span class="text-[10px] font-normal">點擊直接開啟 Google Maps</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-amber-600 font-bold">唐吉訶德 (免手續費)</span>
+                <div class="font-bold text-slate-800">Don Quijote 國際通店</div>
+                <div class="text-[11px] text-slate-400">🕒 09:00–05:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Don+Quijote+Kokusai-dori" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-amber-600 font-bold">唐吉訶德</span>
+                <div class="font-bold text-slate-800">唐吉訶德 國際通久茂地店</div>
+                <div class="text-[11px] text-slate-400">🕒 08:00–01:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=ドン・キホーテ国際通りくもじ店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-rose-600 font-bold">藥妝 (全額退稅)</span>
+                <div class="font-bold text-slate-800">大國藥妝 國際通縣廳前店</div>
+                <div class="text-[11px] text-slate-400">🕒 10:05–22:50</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Daikoku+Drug+Kokusai+Dori+Kenchomae" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-rose-600 font-bold">藥妝 (全額退稅)</span>
+                <div class="font-bold text-slate-800">松本清 安里國際通 / 札幌藥妝</div>
+                <div class="text-[11px] text-slate-400">🕒 10:00–22:00 / 11:00–22:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Matsumoto+Kiyoshi+Asato+Kokusai+Street" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-emerald-600 font-bold">伴手禮</span>
+                <div class="font-bold text-slate-800">御菓子御殿 (松尾店/牧志店)</div>
+                <div class="text-[11px] text-slate-400">🕒 09:00–22:00 (牧志至21:00)</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=御菓子御殿+國際通松尾店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-emerald-600 font-bold">伴手禮</span>
+                <div class="font-bold text-slate-800">塩屋 松尾店 / Calbee+</div>
+                <div class="text-[11px] text-slate-400">🕒 10:00–21:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=塩屋+松尾店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-emerald-600 font-bold">伴手禮/紀念品</span>
+                <div class="font-bold text-slate-800">福木屋 / Orion 官方商店</div>
+                <div class="text-[11px] text-slate-400">🕒 10:00–20:00</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Orion+Official+Store+Naha" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+
+            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+              <div>
+                <span class="text-[10px] text-sky-600 font-bold">24H超市 / 紀念品</span>
+                <div class="font-bold text-slate-800">MaxValu 牧志店 / Splash</div>
+                <div class="text-[11px] text-slate-400">🕒 24小時營業 / 10:00–21:30</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=MaxValu+牧志店" target="_blank" class="map-btn">📍 導航</a>
+            </div>
           </div>
         </div>
       </div>
+
     </section>
 
     <!-- ==================== TAB 2: 航班・住宿・租車 ==================== -->
@@ -796,7 +1105,7 @@
           </h2>
           <div class="flex items-center gap-1 text-xs bg-slate-100 px-2.5 py-1 rounded-lg">
             <span>匯率:</span>
-            <input type="number" id="exchange-rate" value="0.215" step="0.001" onchange="updateRate()" class="w-14 bg-white border rounded px-1 text-center font-bold text-sky-700">
+            <input type="number" id="exchange-rate" value="0.215" step="0.001" oninput="syncRate(this.value)" class="w-14 bg-white border rounded px-1 text-center font-bold text-sky-700">
           </div>
         </div>
         <p class="text-xs text-slate-500 mb-3">在這裡紀錄公費、油資、過路費、聚餐或個人戰利品！資料會自動保存在手機裡。</p>
@@ -890,18 +1199,29 @@
       <div class="okinawa-card p-4">
         <div class="flex justify-between items-center mb-2">
           <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
-            <i class="fa-solid fa-bag-shopping text-rose-500"></i> 沖繩必買清單（可打勾紀錄）
+            <i class="fa-solid fa-bag-shopping text-rose-500"></i> 沖繩必買清單（整齊卡片點選）
           </h2>
           <button onclick="resetChecklist()" class="text-xs text-slate-400 underline">重置勾選</button>
         </div>
-        <p class="text-xs text-slate-500 mb-3">完整收錄檔案內所有零食、超商甜點、3COINS、藥妝與服飾！點擊即可打勾。</p>
-        <div id="checklist-container" class="space-y-4 text-sm"></div>
+
+        <!-- 購買進度條 -->
+        <div class="bg-sky-50 border border-sky-100 rounded-xl p-3 mb-4">
+          <div class="flex justify-between items-center text-xs font-bold text-sky-800 mb-1.5">
+            <span>🛒 戰利品達成進度</span>
+            <span id="checklist-progress-text">0 / 26 項 (0%)</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+            <div id="checklist-progress-bar" class="bg-gradient-to-r from-sky-500 to-emerald-400 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div id="checklist-container" class="space-y-5 text-sm"></div>
       </div>
 
       <!-- 沖繩 20 大商場退稅友善排行榜 -->
       <div class="okinawa-card p-4 space-y-3">
         <h3 class="font-extrabold text-base text-sky-800 flex items-center gap-2">
-          <i class="fa-solid fa-Scale-balanced text-amber-500"></i> 沖繩熱門商場退稅友善度 & 扭蛋攻略
+          <i class="fa-solid fa-scale-balanced text-amber-500"></i> 沖繩熱門商場退稅友善度 & 扭蛋攻略
         </h3>
         <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-xs space-y-1.5">
           <div class="font-bold text-amber-900">🏆 免手續費「全額退稅」重點店鋪：</div>
@@ -915,7 +1235,7 @@
         </div>
         <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-3 text-xs space-y-1.5">
           <div class="font-bold text-purple-900">💊 沖繩 5 大扭蛋機聖地：</div>
-          <div class="flex flex-wrap gap-1.5 mt-1">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-1">
             <a href="https://www.google.com/maps/search/?api=1&query=那霸+OPA" target="_blank" class="map-btn">① 那霸 OPA 百貨 2F (旭橋站)</a>
             <a href="https://www.google.com/maps/search/?api=1&query=Don+Quijote+Kokusai-dori" target="_blank" class="map-btn">② 唐吉訶德國際通店</a>
             <a href="https://www.google.com/maps/search/?api=1&query=iias+沖繩豐崎" target="_blank" class="map-btn">③ iias 沖繩豐崎 1F/3F</a>
@@ -951,24 +1271,104 @@
   </nav>
 
   <script>
-    // 1. 出發倒數計時器
+    // 1. 精確到秒的出發倒數計時器
     function updateCountdown() {
-      const tripDate = new Date('2026-12-31T15:20:00+08:00');
-      const now = new Date();
+      const tripDate = new Date('2026-12-31T15:20:00+08:00').getTime();
+      const now = new Date().getTime();
       const diff = tripDate - now;
-      const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-      const el = document.getElementById('countdown-days');
-      if (days > 0) {
-        el.textContent = days;
-      } else if (days >= -4) {
-        el.textContent = '出發中!';
+
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('cd-days').textContent = days;
+        document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+        document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
       } else {
-        el.textContent = '完美旅程';
+        document.getElementById('cd-days').textContent = '0';
+        document.getElementById('cd-hours').textContent = '00';
+        document.getElementById('cd-mins').textContent = '00';
+        document.getElementById('cd-secs').textContent = '00';
       }
     }
+    setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // 2. 分頁切換
+    // 2. 沖繩即時天氣 API (Open-Meteo 免金鑰即時抓取)
+    function weatherCodeToText(code) {
+      if (code === 0) return '☀️ 晴朗好天氣';
+      if (code <= 3) return '⛅ 多雲時晴';
+      if (code <= 48) return '🌫️ 多雲有霧';
+      if (code <= 67) return '🌧️ 局部陣雨';
+      if (code <= 82) return '🌦️ 陣雨天氣';
+      return '⛈️ 雷陣雨';
+    }
+
+    async function fetchOkinawaWeather() {
+      try {
+        // 那霸 (26.2124, 127.6809) & 名護 (26.5915, 127.9773)
+        const [nahaRes, nagoRes] = await Promise.all([
+          fetch('https://api.open-meteo.com/v1/forecast?latitude=26.2124&longitude=127.6809&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FTokyo'),
+          fetch('https://api.open-meteo.com/v1/forecast?latitude=26.5915&longitude=127.9773&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FTokyo')
+        ]);
+        const nahaData = await nahaRes.json();
+        const nagoData = await nagoRes.json();
+
+        if (nahaData.current) {
+          document.getElementById('weather-naha-temp').textContent = `${Math.round(nahaData.current.temperature_2m)}°C`;
+          document.getElementById('weather-naha-desc').textContent = `${weatherCodeToText(nahaData.current.weather_code)}・風 ${Math.round(nahaData.current.wind_speed_10m)}km/h`;
+        }
+        if (nagoData.current) {
+          document.getElementById('weather-nago-temp').textContent = `${Math.round(nagoData.current.temperature_2m)}°C`;
+          document.getElementById('weather-nago-desc').textContent = `${weatherCodeToText(nagoData.current.weather_code)}・風 ${Math.round(nagoData.current.wind_speed_10m)}km/h`;
+        }
+      } catch (e) {
+        document.getElementById('weather-naha-temp').textContent = '19°C ~ 22°C';
+        document.getElementById('weather-naha-desc').textContent = '⛅ 舒適海島氣候';
+        document.getElementById('weather-nago-temp').textContent = '18°C ~ 21°C';
+        document.getElementById('weather-nago-desc').textContent = '⛅ 舒適海島氣候';
+      }
+    }
+    fetchOkinawaWeather();
+
+    // 3. 隨身換匯計算機邏輯
+    function getRate() {
+      return parseFloat(localStorage.getItem('okinawa_rate') || '0.215');
+    }
+
+    function syncRate(val) {
+      const num = parseFloat(val);
+      if (!isNaN(num) && num > 0) {
+        localStorage.setItem('okinawa_rate', num);
+        document.getElementById('quick-rate').value = num;
+        document.getElementById('exchange-rate').value = num;
+        convertCurrency('JPY');
+        renderExpenses();
+      }
+    }
+
+    function convertCurrency(source) {
+      const rate = getRate();
+      const jpyInput = document.getElementById('calc-jpy');
+      const twdInput = document.getElementById('calc-twd');
+      if (source === 'JPY') {
+        const jpy = parseFloat(jpyInput.value);
+        twdInput.value = isNaN(jpy) ? '' : Math.round(jpy * rate);
+      } else {
+        const twd = parseFloat(twdInput.value);
+        jpyInput.value = isNaN(twd) ? '' : Math.round(twd / rate);
+      }
+    }
+
+    function setQuickJpy(amount) {
+      document.getElementById('calc-jpy').value = amount;
+      convertCurrency('JPY');
+    }
+
+    // 4. 分頁與天數切換 (Day 2 & Day 3 自動隱藏那霸總整理)
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById('tab-' + tabName).classList.add('active');
@@ -982,22 +1382,27 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 3. 天數切換
     function switchDay(dayNum) {
       document.querySelectorAll('.day-content').forEach(el => el.classList.remove('active'));
       document.getElementById('day-' + dayNum).classList.add('active');
-      const labels = ['12/31 跨年', '1/1 北部水族館', '1/2 美國村煙火', '1/3 玉泉洞購物', '1/4 瀨長島返台'];
       for (let i = 1; i <= 5; i++) {
         const btn = document.getElementById('day-btn-' + i);
         if (i === dayNum) {
-          btn.className = 'day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md';
+          btn.className = 'day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md';
         } else {
-          btn.className = 'day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100';
+          btn.className = 'day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100';
         }
+      }
+      // 只在 Day 1, 4, 5 顯示那霸・國際通吃喝逛街導航總整理
+      const nahaBox = document.getElementById('naha-guide-box');
+      if (dayNum === 1 || dayNum === 4 || dayNum === 5) {
+        nahaBox.style.display = 'block';
+      } else {
+        nahaBox.style.display = 'none';
       }
     }
 
-    // 4. 互動式費用記帳本邏輯
+    // 5. 互動式費用記帳本邏輯
     const defaultExpenses = [
       { id: 101, day: 'Day 1 (12/31)', cat: '⛽ 加油/停車/交通', title: '沖繩行腳租車現場尾款 (現金)', currency: 'JPY', amount: 94000, payer: '公費' }
     ];
@@ -1009,16 +1414,6 @@
 
     function saveExpenses(list) {
       localStorage.setItem('okinawa_expenses_v2', JSON.stringify(list));
-    }
-
-    function getRate() {
-      return parseFloat(localStorage.getItem('okinawa_rate') || '0.215');
-    }
-
-    function updateRate() {
-      const val = parseFloat(document.getElementById('exchange-rate').value) || 0.215;
-      localStorage.setItem('okinawa_rate', val);
-      renderExpenses();
     }
 
     function addExpense(e) {
@@ -1033,15 +1428,7 @@
       if (!title || isNaN(amount)) return;
 
       const list = getExpenses();
-      list.unshift({
-        id: Date.now(),
-        day,
-        cat,
-        title,
-        currency,
-        amount,
-        payer
-      });
+      list.unshift({ id: Date.now(), day, cat, title, currency, amount, payer });
       saveExpenses(list);
       document.getElementById('exp-title').value = '';
       document.getElementById('exp-amount').value = '';
@@ -1064,6 +1451,7 @@
     function renderExpenses() {
       const rate = getRate();
       document.getElementById('exchange-rate').value = rate;
+      document.getElementById('quick-rate').value = rate;
       const list = getExpenses();
       const container = document.getElementById('expense-list');
 
@@ -1131,60 +1519,77 @@
       });
     }
 
-    // 5. 必買購物清單
+    // 6. 必買購物清單 (整齊卡片排版 + 進度條統計)
     const shoppingData = [
       { category: "🍪 伴手禮・零食（唐吉訶德 / 機場）", items: [
-        { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", note: "¥550｜那霸機場購入" },
-        { id: "s2", name: "Orion 島唐辛子蝦餅", note: "¥500｜唐吉訶德購入" },
-        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", note: "¥398 / ¥298｜唐吉訶德購入" },
-        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", note: "¥552｜唐吉訶德購入" },
-        { id: "s5", name: "山本海苔店 雪鹽味付海苔 & 海帶芽", note: "沖繩限定鐵罐" },
-        { id: "s6", name: "宮古島 島唐辛子煎餅 (ぱりぱり煎餅)", note: "粉色包裝酥脆微辣" },
-        { id: "s7", name: "【徐要的】沖繩島辣椒蝦餅 (黑盒) & 雪塩夾心餅乾 (さんど)", note: "指定代購！" },
-        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅 (8入)", note: "黃黑盒人氣伴手禮" },
-        { id: "s9", name: "喜島商店 沖繩香檬戶外萬用香料粉 (ほりにし)", note: "¥1,300｜沖繩限定柑橘風味" }
+        { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", price: "¥550", where: "那霸機場" },
+        { id: "s2", name: "Orion 島唐辛子蝦餅", price: "¥500", where: "唐吉訶德" },
+        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", price: "¥398 / ¥298", where: "唐吉訶德" },
+        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", price: "¥552", where: "唐吉訶德" },
+        { id: "s5", name: "山本海苔店 雪鹽味付海苔 & 海帶芽", price: "沖繩限定", where: "伴手禮店" },
+        { id: "s6", name: "宮古島 島唐辛子煎餅 (ぱりぱり煎餅)", price: "人氣必買", where: "伴手禮店" },
+        { id: "s7", name: "【徐要的】沖繩島辣椒蝦餅 & 雪塩夾心餅(さんど)", price: "指定代購", where: "國際通/機場" },
+        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅", price: "8入禮盒", where: "機場/商場" },
+        { id: "s9", name: "喜島商店 沖繩香檬萬用香料粉 (ほりにし)", price: "¥1,300", where: "國際通/喜島" }
       ]},
       { category: "🏪 超商必吃甜點飲品（Lawson / 全家 / 7-11）", items: [
-        { id: "c1", name: "【Lawson】焙茶拿鐵 (ほうじ茶ラテ)", note: "¥238 (約NT$49)｜生乳50%以上使用" },
-        { id: "c2", name: "【Lawson】奶油起司生火腿捲", note: "¥570 (約NT$115)｜配酒神物" },
-        { id: "c3", name: "【全家】美食家布丁 & 奶茶的束縛 (ミルクの束縛)", note: "¥162 (約NT$32) & ¥254 (約NT$51)" },
-        { id: "c4", name: "【全家限定】Blue Seal 薄荷巧克力棉花糖", note: "¥238｜沖繩全家限定發售" },
-        { id: "c5", name: "【7-11】砂糖奶油樹 濃苺巧克力夾心餅", note: "¥300 (約NT$60)｜3個入" }
+        { id: "c1", name: "焙茶拿鐵 (ほうじ茶ラテ)", price: "¥238 (約NT$49)", where: "Lawson" },
+        { id: "c2", name: "奶油起司生火腿捲", price: "¥570 (約NT$115)", where: "Lawson" },
+        { id: "c3", name: "美食家布丁 & 奶茶的束縛", price: "¥162 & ¥254", where: "FamilyMart 全家" },
+        { id: "c4", name: "Blue Seal 薄荷巧克力棉花糖", price: "¥238", where: "沖繩全家限定" },
+        { id: "c5", name: "砂糖奶油樹 濃苺巧克力夾心餅 (3入)", price: "¥300 (約NT$60)", where: "7-11" }
       ]},
       { category: "🛒 3COINS 必買好物（PARCO CITY 1F GREEN ZONE）", items: [
-        { id: "t1", name: "迷你相片印表機 & 5種專用相紙 (一般/貼紙/熱轉印/紋身貼/磁鐵)", note: "主機 ¥14,300、相紙 ¥550~880" },
-        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", note: "¥3,850｜手機藍牙連線印標籤" },
-        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 行李箱拉桿飲料收納架", note: "各 ¥550 (約NT$110)｜解放雙手神器" },
-        { id: "t4", name: "USB 迷你自動壓縮機 & 旅行分類收納袋", note: "¥1,100 (約NT$203)｜行李瞬間縮小" },
-        { id: "t5", name: "可變高度密封保存容器 (M) & 易清潔可拆洗美髮梳", note: "¥330 (約NT$66) & ¥550 (約NT$110)" },
-        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", note: "¥1,980｜3段色溫自拍神器" }
+        { id: "t1", name: "迷你相片印表機 & 5種專用相紙", price: "主機¥14,300", where: "3COINS+plus" },
+        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", price: "¥3,850", where: "3COINS+plus" },
+        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 拉桿飲料架", price: "各 ¥550", where: "3COINS+plus" },
+        { id: "t4", name: "USB 迷你自動壓縮機 & 旅行分類收納袋", price: "¥1,100 (約$203)", where: "3COINS+plus" },
+        { id: "t5", name: "可變高度密封罐(M) & 易清潔可拆美髮梳", price: "¥330 & ¥550", where: "3COINS+plus" },
+        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", price: "¥1,980", where: "3COINS+plus" }
       ]},
       { category: "💄 藥妝・服飾・雜貨（GU / UNIQLO / 大創）", items: [
-        { id: "d1", name: "OKUCHI 隨身漱口水 (水蜜桃/檸檬)", note: "¥250/5入｜一般藥妝店皆有" },
-        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", note: "約NT$141｜貼肩頸或腰部促進血液循環" },
-        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", note: "約NT$401｜數量限定超划算" },
-        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (喚羽淨露/凝脂/精華)", note: "比價參考：台灣400ml賣NT$2,200、補充包700ml賣NT$3,100、精華100ml賣NT$1,700" },
-        { id: "d5", name: "【GU】高領羅紋打底衫 (貨號 360579) & 灰色蝴蝶結針織開襟外套", note: "PARCO CITY 2F GREEN ZONE" },
-        { id: "d6", name: "【UNIQLO】迷你麻花編織圓領開襟外套 & 【大創】Hello Kitty 拖鞋", note: "PARCO CITY 3F ORANGE ZONE" }
+        { id: "d1", name: "OKUCHI 隨身漱口水 (水蜜桃/檸檬 5入)", price: "¥250", where: "各大藥妝店" },
+        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", price: "約NT$141", where: "唐吉訶德/藥妝" },
+        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", price: "約NT$401", where: "藥妝店數量限定" },
+        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (淨露/凝脂/精華)", price: "比價台灣$2,200", where: "美妝/藥妝店" },
+        { id: "d5", name: "高領羅紋打底衫(#360579) & 蝴蝶結針織外套", price: "人氣穿搭", where: "GU (PARCO 2F)" },
+        { id: "d6", name: "麻花編織開襟外套 & 三麗鷗 Kitty 拖鞋", price: "必買單品", where: "UNIQLO / 大創 3F" }
       ]}
     ];
 
     function renderChecklist() {
       const saved = JSON.parse(localStorage.getItem('okinawa_checklist') || '{}');
       const container = document.getElementById('checklist-container');
+      let totalCount = 0;
+      let checkedCount = 0;
+
       container.innerHTML = shoppingData.map(group => `
         <div>
-          <h3 class="font-extrabold text-sky-900 bg-sky-100/80 px-3 py-1.5 rounded-xl mb-2 text-xs">${group.category}</h3>
-          <div class="space-y-1.5">
+          <h3 class="font-extrabold text-sky-900 bg-sky-100/90 px-3.5 py-2 rounded-xl mb-2.5 text-xs flex items-center justify-between">
+            <span>${group.category}</span>
+            <span class="text-[10px] text-sky-700 font-bold">${group.items.length} 項</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             ${group.items.map(item => {
-              const checked = saved[item.id] ? 'checked' : '';
-              const strike = saved[item.id] ? 'line-through text-slate-400' : 'text-slate-800';
+              totalCount++;
+              const isChecked = !!saved[item.id];
+              if (isChecked) checkedCount++;
+              const cardStyle = isChecked
+                ? 'bg-slate-50 border-slate-200 opacity-60'
+                : 'bg-white border-sky-100 hover:border-sky-300 shadow-sm';
+              const titleStyle = isChecked ? 'line-through text-slate-400' : 'text-slate-800';
+
               return `
-                <label class="flex items-start space-x-3 p-2.5 rounded-xl bg-white hover:bg-sky-50/40 cursor-pointer border border-slate-100 transition">
-                  <input type="checkbox" ${checked} onchange="toggleCheck('${item.id}')" class="mt-1 h-4 w-4 rounded text-sky-600 focus:ring-sky-500">
-                  <div class="flex-1 ${strike}">
-                    <div class="font-bold text-xs sm:text-sm">${item.name}</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">${item.note}</div>
+                <label class="flex items-center justify-between p-3 rounded-xl border ${cardStyle} cursor-pointer transition select-none">
+                  <div class="flex items-start gap-2.5 pr-2">
+                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="mt-0.5 h-4 w-4 rounded text-sky-600 focus:ring-sky-500">
+                    <div>
+                      <div class="font-extrabold text-xs ${titleStyle}">${item.name}</div>
+                      <div class="flex items-center gap-1.5 mt-1">
+                        <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded">${item.price}</span>
+                        <span class="text-[10px] bg-sky-50 text-sky-700 font-bold px-2 py-0.5 rounded">📍 ${item.where}</span>
+                      </div>
+                    </div>
                   </div>
                 </label>
               `;
@@ -1192,6 +1597,10 @@
           </div>
         </div>
       `).join('');
+
+      const pct = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
+      document.getElementById('checklist-progress-text').textContent = `${checkedCount} / ${totalCount} 項 (${pct}%)`;
+      document.getElementById('checklist-progress-bar').style.width = `${pct}%`;
     }
 
     function toggleCheck(id) {
@@ -1209,6 +1618,7 @@
     }
 
     // 初始化渲染
+    setQuickJpy(1000);
     renderExpenses();
     renderChecklist();
   </script>

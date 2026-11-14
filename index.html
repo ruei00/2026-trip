@@ -2,376 +2,1170 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026-2027 沖繩跨年五天四夜之旅</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌺 2026-2027 沖繩跨年五天四夜之旅 🦁</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f0f9ff; }
-    .tab-content { display: none; }
+    body {
+      font-family: 'M PLUS Rounded 1c', 'Noto Sans TC', sans-serif;
+      background-color: #FFFDF9;
+      background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .tab-content { display: none; animation: fadeIn 0.25s ease-in-out; }
     .tab-content.active { display: block; }
-    .day-content { display: none; }
+    .day-content { display: none; animation: fadeIn 0.25s ease-in-out; }
     .day-content.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .okinawa-card {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 1.25rem;
+      box-shadow: 0 8px 20px -4px rgba(14, 165, 233, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+      border: 2px solid #e0f2fe;
+    }
+    .map-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f0f9ff;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+    .map-btn:hover, .map-btn:active {
+      background: #0284c7;
+      color: white;
+    }
+    .book-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fff1f2;
+      color: #e11d48;
+      border: 1px solid #fecdd3;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
   </style>
 </head>
-<body class="pb-24 text-slate-800">
+<body class="pb-28 text-slate-800">
 
-  <!-- Header -->
-  <header class="bg-gradient-to-r from-sky-600 to-cyan-500 text-white p-5 shadow-md sticky top-0 z-30">
-    <div class="max-w-xl mx-auto flex justify-between items-center">
-      <div>
-        <span class="text-xs bg-white/20 px-2.5 py-0.5 rounded-full font-medium">2026/12/31 - 2027/01/04</span>
-        <h1 class="text-2xl font-bold mt-1">🌴 沖繩跨年五天四夜</h1>
-      </div>
-      <div class="text-right text-xs opacity-90">
-        <div><i class="fa-solid fa-plane-departure mr-1"></i>台中 ⇄ 那霸</div>
-        <div class="mt-1"><i class="fa-solid fa-car mr-1"></i>Alphard 自駕遊</div>
+  <!-- 頂部沖繩海島風橫幅 -->
+  <header class="relative bg-gradient-to-br from-cyan-500 via-sky-500 to-blue-600 text-white pt-6 pb-10 px-4 shadow-lg overflow-hidden">
+    <!-- 裝飾背景圖示 -->
+    <div class="absolute -right-6 -top-6 text-white/10 text-8xl rotate-12 pointer-events-none">🌺</div>
+    <div class="absolute left-2 bottom-2 text-white/10 text-7xl -rotate-12 pointer-events-none">🐋</div>
+
+    <div class="max-w-xl mx-auto relative z-10">
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 text-xs font-extrabold px-3 py-1 rounded-full shadow-sm">
+            <span>🦁 OKINAWA TRIP</span>
+            <span>•</span>
+            <span>2026/12/31 - 2027/1/4</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold mt-2 tracking-tight drop-shadow-sm">
+            🌺 沖繩跨年五天四夜
+          </h1>
+          <p class="text-xs text-sky-100 mt-1 font-medium">
+            ✈️ 星宇航空台中直飛 ・ 🚙 Alphard 豪華自駕遊 (6人同行)
+          </p>
+        </div>
+        <!-- 倒數計時器 -->
+        <div id="countdown-box" class="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 text-center min-w-[78px] shadow-sm">
+          <div class="text-[10px] text-sky-100 font-bold">距離出發</div>
+          <div id="countdown-days" class="text-xl font-black text-amber-300 leading-tight">--</div>
+          <div class="text-[10px] text-white font-bold">DAYS</div>
+        </div>
       </div>
     </div>
+
+    <!-- 海浪 SVG 裝飾 -->
+    <svg class="absolute bottom-0 left-0 w-full h-5 text-[#FFFDF9]" preserveAspectRatio="none" viewBox="0 0 1440 54" fill="currentColor">
+      <path d="M0 22L60 26.7C120 31 240 41 360 41.3C480 41 600 31 720 24.3C840 17 960 13 1080 16.3C1200 20 1320 31 1380 36.7L1440 42V54H1380C1320 54 1200 54 1080 54C960 54 840 54 720 54C600 54 480 54 360 54C240 54 120 54 60 54H0V22Z"></path>
+    </svg>
   </header>
 
-  <main class="max-w-xl mx-auto p-4">
+  <main class="max-w-xl mx-auto px-3.5 pt-2">
 
-    <!-- TAB 1: 每日行程 -->
+    <!-- ==================== TAB 1: 每日行程 ==================== -->
     <section id="tab-itinerary" class="tab-content active space-y-4">
-      <!-- Day Selector -->
-      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1">
-        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm bg-sky-600 text-white shadow">Day 1 (12/31)</button>
-        <button onclick="switchDay(2)" id="day-btn-2" class="day-btn flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm bg-white text-slate-600 border">Day 2 (1/1)</button>
-        <button onclick="switchDay(3)" id="day-btn-3" class="day-btn flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm bg-white text-slate-600 border">Day 3 (1/2)</button>
-        <button onclick="switchDay(4)" id="day-btn-4" class="day-btn flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm bg-white text-slate-600 border">Day 4 (1/3)</button>
-        <button onclick="switchDay(5)" id="day-btn-5" class="day-btn flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm bg-white text-slate-600 border">Day 5 (1/4)</button>
+
+      <!-- 天數切換按鈕 -->
+      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 sticky top-2 z-20 bg-[#FFFDF9]/90 backdrop-blur-sm rounded-2xl p-1">
+        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md">
+          Day 1 <span class="block text-[10px] font-normal opacity-90">12/31 跨年</span>
+        </button>
+        <button onclick="switchDay(2)" id="day-btn-2" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 2 <span class="block text-[10px] font-normal opacity-75">1/1 北部水族館</span>
+        </button>
+        <button onclick="switchDay(3)" id="day-btn-3" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 3 <span class="block text-[10px] font-normal opacity-75">1/2 美國村煙火</span>
+        </button>
+        <button onclick="switchDay(4)" id="day-btn-4" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 4 <span class="block text-[10px] font-normal opacity-75">1/3 玉泉洞購物</span>
+        </button>
+        <button onclick="switchDay(5)" id="day-btn-5" class="day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+          Day 5 <span class="block text-[10px] font-normal opacity-75">1/4 瀨長島返台</span>
+        </button>
       </div>
 
-      <!-- Day 1 -->
-      <div id="day-1" class="day-content active space-y-3">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-          <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-calendar-day mr-2"></i>12/31 (四) 抵達沖繩・國際通・跨年參拜</h2>
-          <div class="space-y-4 border-l-2 border-sky-200 ml-2 pl-4 text-sm">
-            <div><span class="font-bold text-sky-600">13:20前</span> 抵達臺中國際機場 T2 報到</div>
-            <div><span class="font-bold text-sky-600">15:20 - 17:50</span> ✈️ 搭乘星宇航空 JX302 飛往那霸機場</div>
-            <div><span class="font-bold text-sky-600">18:30</span> 🚙 提領行李、出機場搭接駁車至「沖繩行腳租車」取車 <a href="https://youtu.be/OPy06MllCJI?si=HpF6V38j4uNweEfl" target="_blank" class="text-blue-500 underline ml-1"><i class="fa-brands fa-youtube"></i> 接駁教學影片</a></div>
-            <div><span class="font-bold text-sky-600">晚上</span> 🏨 開車10分鐘至那霸市區飯店 Check-in<br><span class="text-xs text-slate-500">住宿：Hotel Lantana Naha Kokusai-Dori (15:00可入住)</span></div>
-            <div><span class="font-bold text-sky-600">晚餐推薦</span> 🍲 酒喜膳 一喜喜 (可訂位) / 🍜 暖暮拉麵 那霸牧志店 / 國際通覓食</div>
-            <div><span class="font-bold text-sky-600">跨年活動</span> 🛍️ 國際通逛街探路 ➡️ ⛩️ <b>波上宮</b>等待跨年與新年初詣參拜！</div>
+      <!-- ===== DAY 1 ===== -->
+      <div id="day-1" class="day-content active space-y-4">
+        <div class="okinawa-card overflow-hidden">
+          <div class="relative h-44 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=900&q=80" alt="那霸波上宮與國際通" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-4 right-4 text-white">
+              <span class="bg-rose-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 1 ・ 12/31 (四)</span>
+              <h2 class="text-xl font-extrabold mt-1">✈️ 抵達沖繩・國際通・波上宮跨年參拜</h2>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Day 2 -->
-      <div id="day-2" class="day-content space-y-3">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-          <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-water mr-2"></i>1/1 (五) 古宇利島・美麗海水族館・名護</h2>
-          <div class="space-y-4 border-l-2 border-sky-200 ml-2 pl-4 text-sm">
-            <div><span class="font-bold text-sky-600">08:30</span> 準時退房出門！(開車20分鐘)</div>
-            <div><span class="font-bold text-sky-600">早餐</span> 🍔 美式漢堡 A&W 牧港店 (06:00–02:00)</div>
-            <div><span class="font-bold text-sky-600">上午</span> 🌉 (開車1.5小時) <b>古宇利大橋</b>＋海邊走走</div>
-            <div><span class="font-bold text-sky-600">午餐</span> 🍤 <b>古宇利蝦蝦飯</b> (11:00–16:00)<br>☕ 順路經過：The Sinmay 外帶咖啡店 (10:00–16:30)</div>
-            <div><span class="font-bold text-sky-600">下午</span> 🐋 (開車30分) <b>沖繩美麗海水族館</b> (08:30–18:30)<br>
-              <span class="inline-block bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded mt-1">🔺 鯨鯊餵食秀：15:00 / 17:00 (2樓黑潮之海)</span><br>
-              <span class="inline-block bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded mt-1">🔺 海豚秀：13:00 / 15:00 / 17:00 (海豚劇場)</span>
-            </div>
-            <div><span class="font-bold text-sky-600">傍晚</span> 🏨 名護飯店 Check-in：New Normal Hotel in NAGO</div>
-            <div><span class="font-bold text-sky-600">晚餐選擇</span><br>
-              • 拉麵：暖暮拉麵 名護店 (10:00–00:00)<br>
-              • 純豬肉燒肉：島豬七輪燒肉 滿味 (17:00–21:30)<br>
-              • 吃到飽燒肉：焼肉五苑 名護店、焼肉きんぐ 名護店<br>
-              • 阿古豬涮涮鍋：Hisui / ちゃぁぶ～名護店 / 松の古民家
-            </div>
-            <div><span class="font-bold text-sky-600">晚上逛街</span> 🛒 AEON永旺名護店 (至23:00)、MEGA唐吉訶德名護店 (至02:00)、BIG Express 超市 (至22:00)</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Day 3 -->
-      <div id="day-3" class="day-content space-y-3">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-          <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-fire-flame-curved mr-2"></i>1/2 (六) 部瀨名・萬座毛・美國村煙火秀</h2>
-          <div class="space-y-4 border-l-2 border-sky-200 ml-2 pl-4 text-sm">
-            <div><span class="font-bold text-sky-600">08:30</span> 出門！早餐：Kaito 麵包 (08:00–17:00) / 星巴克 名護21世紀之森公園店 / 便利商店</div>
-            <div><span class="font-bold text-sky-600">上午</span> 🐟 星巴克坐坐 / 名護城公園 / (開車15分) <b>部瀨名海中公園</b> (09:00–17:30)</div>
-            <div><span class="font-bold text-sky-600">午餐</span> 🥩 (開車15分) <b>百年古家 大家 阿古豬</b> (可訂位) 或 Hisui 阿古豬涮涮鍋<br>🍩 點心：島甜甜圈 (11:00–15:00)、Blue Seal 冰淇淋</div>
-            <div><span class="font-bold text-sky-600">下午</span> 🐘 (開車45分) <b>萬座毛</b> (08:00–20:00)</div>
-            <div><span class="font-bold text-sky-600">傍晚</span> 🎡 (開車40分) <b>美國村</b> (10:00–22:00)<br>
-              • 晚餐：塔可飯 Kijimuna / 迴轉壽司市場 美浜店 / 拉麵 Kiseki Soba / Red Lobster / 蒸気海鮮
-            </div>
-            <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
-              <div class="font-bold text-indigo-700">🎆 20:00 美國村煙火秀 最佳觀賞位置：</div>
-              <ul class="text-xs text-indigo-900 mt-1 space-y-1 list-decimal pl-4">
-                <li><b>Depot Island 海邊步道 Boardwalk</b>：吃完晚餐直接散步過去最方便。</li>
-                <li><b>Sunset Beach 日落海灘旁大階梯</b>：前方無遮蔽物，煙火在正前方升空！</li>
-                <li><b>北谷 Fisherina 海岸一帶</b>：不想人擠人可沿著海邊往北走。</li>
-              </ul>
-            </div>
-            <div><span class="font-bold text-sky-600">宵夜採買</span> 🛒 美國村 AEON 北谷店，或開車1小時回名護逛 MEGA唐吉訶德 / AEON名護店<br><span class="text-xs text-slate-500">續住：New Normal Hotel in NAGO</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Day 4 -->
-      <div id="day-4" class="day-content space-y-3">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-          <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-bag-shopping mr-2"></i>1/3 (日) 玉泉洞・奧武島・PARCO CITY</h2>
-          <div class="space-y-4 border-l-2 border-sky-200 ml-2 pl-4 text-sm">
-            <div><span class="font-bold text-sky-600">08:30</span> 退房出門！早餐：Kaito 麵包 / 星巴克 / 便利商店</div>
-            <div><span class="font-bold text-sky-600">上午</span> 🦇 (開車1小時15分) <b>玉泉洞 (沖繩世界)</b> (09:00–16:00)</div>
-            <div><span class="font-bold text-sky-600">午餐</span> 🍤 (開車15分) <b>奧武島</b>：大城天婦羅店 / 中本天婦羅店 / 奥武島海產物食堂</div>
-            <div><span class="font-bold text-sky-600">下午～晚餐</span> 🛍️ (開車40分) <b>PARCO CITY 浦添西海岸</b> (10:00–22:00)<br>
-              <div class="text-xs bg-slate-50 p-2.5 rounded-lg mt-1 space-y-1 border">
-                <div><b>1F：</b>松本清、SAN-A食品館、3COINS+plus、萬代扭蛋</div>
-                <div><b>2F：</b>GU、ZARA、H&M、COACH、北臉、niko and...、PLAZA、鳥玉丼飯 (Toritama)</div>
-                <div><b>3F：</b>UNIQLO、無印良品、DAISO大創、任天堂區、西村裕二、POP MART、迴轉壽司 Yazaemon、炸豬排 Katsuno-ya</div>
+          <div class="p-4 space-y-4">
+            <!-- 時間軸項目 -->
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">13:20</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">抵達臺中國際機場 T2 報到</div>
+                <p class="text-xs text-slate-500 mt-0.5">搭乘星宇航空 JX302（15:20 起飛 ➔ 17:50 抵達那霸機場 I）</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=臺中國際機場" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 台中機場導航</a>
+                </div>
               </div>
             </div>
-            <div><span class="font-bold text-sky-600">晚上</span> 🏨 (開車40分) 那霸飯店 Check-in＋<b>市區國際通最後採買時刻！</b><br><span class="text-xs text-slate-500">住宿：Hotel Cocktail Stay Naha (15:00可入住)</span></div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2 py-1 rounded-lg">18:30</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🚙 沖繩行腳租車 取車</div>
+                <p class="text-xs text-slate-500 mt-0.5">提領行李後出機場等租車公司接駁。記得準備<b>台灣駕照＋日文譯本＋護照</b>，以及現場尾款現金 <b>94,000 日圓</b>！</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <a href="https://youtu.be/OPy06MllCJI?si=HpF6V38j4uNweEfl" target="_blank" class="book-btn"><i class="fa-brands fa-youtube"></i> 機場接駁影片教學</a>
+                  <a href="https://footprint-rentacar.com/tw/" target="_blank" class="map-btn"><i class="fa-solid fa-globe"></i> 行腳租車官網</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">19:30</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🏨 飯店 Check-in（開車約 10 分鐘）</div>
+                <p class="text-xs text-slate-600 mt-0.5"><b>Hotel Lantana Naha Kokusai-Dori</b>（那霸國際通蘭塔納飯店）</p>
+                <p class="text-[11px] text-slate-400">入住 15:00~23:30 / 退房 11:00 前｜沖繩, 那霸, Matsuo 2-8-1</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Lantana+Naha+Kokusai-Dori" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至飯店</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">晚餐</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🍜 國際通美食晚餐 & 逛街探路</div>
+                <p class="text-xs text-slate-500 mt-0.5">可先逛逛比價，伴手禮最後幾天再買齊！推薦晚餐選擇：</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=酒喜膳+一喜喜+那霸" target="_blank" class="map-btn">🍲 酒喜膳 一喜喜</a>
+                  <a href="https://kazuki-okinawa.com/" target="_blank" class="book-btn"><i class="fa-solid fa-calendar-check"></i> 一喜喜官網訂位</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+那霸牧志店" target="_blank" class="map-btn">🍜 暖暮拉麵 牧志店</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=那霸國際通" target="_blank" class="map-btn">🛍️ 國際通商店街</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-purple-100 text-purple-800 text-xs font-extrabold px-2 py-1 rounded-lg">跨年</span>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold text-slate-800">⛩️ 波上宮 跨年倒數 & 新年初詣參拜</div>
+                <p class="text-xs text-slate-500 mt-0.5">沖繩最著名的懸崖神社！跨年夜會有熱鬧的屋台小吃攤與敲鐘祈福，迎接 2027 新年！</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=波上宮+那霸" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 波上宮導航</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Day 5 -->
-      <div id="day-5" class="day-content space-y-3">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-          <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-plane-up mr-2"></i>1/4 (一) 牧志市場・瀨長島・平安返台</h2>
-          <div class="space-y-4 border-l-2 border-sky-200 ml-2 pl-4 text-sm">
-            <div><span class="font-bold text-sky-600">08:15</span> 出門！早餐 (開車7分)：Pork Tamago Onigiri 豬肉蛋飯糰 (牧志市場) 或 福助の玉子焼き</div>
-            <div><span class="font-bold text-sky-600">上午</span> 🐟 國際通最後衝刺＋第一牧志公設市場 / 泊港漁市場 / 波上宮</div>
-            <div><span class="font-bold text-sky-600">下午</span> 🥞 (開車20分) <b>瀨長島 Umikaji Terrace</b>：幸福鬆餅 (11:00–21:00)、看飛機起降</div>
-            <div><span class="font-bold text-sky-600">17:00</span> ⛽ 準時離開瀨長島 (開車10分鐘)，先加滿油 ➡️ <b>沖繩行腳租車還車</b> (預約18:30前)</div>
-            <div><span class="font-bold text-sky-600">18:00前</span> 抵達那霸機場國際線航廈＋機台退稅＋逛免稅店</div>
-            <div><span class="font-bold text-sky-600">20:30 - 21:20</span> ✈️ 搭乘星宇航空 JX313 返回臺中國際機場 T2</div>
+      <!-- ===== DAY 2 ===== -->
+      <div id="day-2" class="day-content space-y-4">
+        <div class="okinawa-card overflow-hidden">
+          <div class="relative h-44 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80" alt="美麗海水族館黑潮之海" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-4 right-4 text-white">
+              <span class="bg-sky-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 2 ・ 1/1 (五) 元旦</span>
+              <h2 class="text-xl font-extrabold mt-1">🐋 古宇利大橋・蝦蝦飯・美麗海水族館</h2>
+            </div>
+          </div>
+
+          <div class="p-4 space-y-4">
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:30</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🍔 出門 & 早餐：A&W 美式漢堡 牧港店</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 20 分鐘（營業 06:00–02:00）。沖繩必吃經典麥根沙士 (Root Beer) 與捲捲薯條！</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=A%26W+Makiminato" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> A&W 牧港店導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">10:30</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🌉 古宇利大橋 & 海灘踏浪</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 1 小時 30 分。跨越漸層古宇利藍大海的絕美跨海大橋！</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=古宇利大橋" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 古宇利大橋導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">午餐</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🍤 古宇利蝦蝦飯 + The Sinmay 外帶咖啡</div>
+                <p class="text-xs text-slate-500 mt-0.5">蝦蝦飯營業 11:00–16:00（蒜香奶油超濃郁）；順路經過買杯 The Sinmay 咖啡（10:00–16:30）。</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=Kouri+Shrimp+古宇利蝦蝦飯" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 古宇利蝦蝦飯</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=The+Sinmay+Okinawa+Coffee" target="_blank" class="map-btn">☕ The Sinmay 咖啡</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-blue-100 text-blue-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🐋 沖繩美麗海水族館（海洋博公園）</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 30 分鐘（營業 08:30–18:30）。建議停在 <b>P7 北門立體停車場</b> 離水族館最近！</p>
+                <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5 mt-2 text-xs space-y-1">
+                  <div class="font-bold text-sky-900">⏰ 必看表演時刻表：</div>
+                  <div>🔺 <b>鯨鯊餵食秀：</b>15:00 / 17:00（位置：2樓 黑潮之海）</div>
+                  <div>🔺 <b>Okichan 海豚秀：</b>13:00 / 15:00 / 17:00（位置：戶外海豚劇場）</div>
+                  <div>🔺 <b>其他設施：</b>海龜館、海牛館、翡翠海灘</div>
+                </div>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩美麗海水族館" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 美麗海水族館導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2 py-1 rounded-lg">傍晚</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🏨 名護飯店 Check-in（連住兩晚）</div>
+                <p class="text-xs text-slate-600 mt-0.5"><b>New Normal Hotel in NAGO</b>（沖繩, 名護, Miyazato 949）</p>
+                <p class="text-[11px] text-slate-400">入住 15:00~00:00 / 退房 10:00 前</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=New+Normal+Hotel+in+NAGO" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至名護飯店</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">晚餐</span>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold text-slate-800">🥩 名護晚餐口袋名單 & 夜間採買</div>
+                <div class="text-xs text-slate-600 mt-1 space-y-1.5">
+                  <div>• <b>拉麵：</b>暖暮拉麵 名護店 (10:00–00:00)</div>
+                  <div>• <b>純豬肉燒肉：</b>島豬七輪燒肉 滿味 (17:00–21:30 / 週日一休)</div>
+                  <div>• <b>吃到飽燒肉：</b>焼肉五苑 名護店、焼肉きんぐ (燒肉王) 名護店</div>
+                  <div>• <b>阿古豬涮涮鍋 (皆可訂位)：</b>Hisui (11:00–15:00/17:00–22:00)、ちゃぁぶ～名護店 (週三休)、やんばるダイニング 松の古民家 (週日休)</div>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+名護店" target="_blank" class="map-btn">🍜 暖暮名護</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=満味+名護" target="_blank" class="map-btn">🥩 燒肉滿味</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=焼肉きんぐ+名護店" target="_blank" class="map-btn">🔥 燒肉王名護</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=松の古民家+名護" target="_blank" class="map-btn">🍲 松の古民家</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=MEGA+Don+Quijote+Nago" target="_blank" class="map-btn">🐧 MEGA唐吉訶德名護(至02:00)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=AEON+Nago" target="_blank" class="map-btn">🛒 AEON永旺名護(至23:00)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=BIG+Express+Nago" target="_blank" class="map-btn">🍎 BIG Express超市</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 那霸國際通美食與逛街口袋名單 -->
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100 mt-4">
-        <h3 class="font-bold text-base text-slate-800 mb-2">🍜 那霸・國際通美食與逛街口袋名單</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-          <div class="p-2.5 bg-orange-50 rounded-xl">
-            <div class="font-bold text-orange-800 mb-1">🍴 吃吃喝喝推薦</div>
-            <ul class="space-y-1 text-slate-700">
-              <li><b>拉麵：</b>暖暮拉麵 (09:00-02:00)、琉家拉麵 (週三四休)</li>
-              <li><b>沖繩麵：</b>EIBUN (11:00-20:00) <a href="https://www.tablecheck.com/shops/soba-eibun/reserve" target="_blank" class="text-blue-600 underline">線上預約</a></li>
-              <li><b>鍋物：</b>酒喜膳 一喜喜 (週日休)、Shima Shabu-Shabu NAKAMA</li>
-              <li><b>居酒屋：</b>Uguisu串燒、新時代 久茂地店、屋台村(鮭魚卵丼飯)</li>
-              <li><b>飯糰/點心：</b>豬肉蛋飯糰牧志店、福助玉子燒、Blue Seal、JEF苦瓜漢堡、hoppepan麵包</li>
-            </ul>
+      <!-- ===== DAY 3 ===== -->
+      <div id="day-3" class="day-content space-y-4">
+        <div class="okinawa-card overflow-hidden">
+          <div class="relative h-44 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80" alt="萬座毛與美國村海景" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-4 right-4 text-white">
+              <span class="bg-indigo-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 3 ・ 1/2 (六)</span>
+              <h2 class="text-xl font-extrabold mt-1">🎆 部瀨名海中公園・萬座毛・美國村煙火</h2>
+            </div>
           </div>
-          <div class="p-2.5 bg-emerald-50 rounded-xl">
-            <div class="font-bold text-emerald-800 mb-1">🛍️ 逛街伴手禮・藥妝</div>
-            <ul class="space-y-1 text-slate-700">
-              <li><b>唐吉訶德：</b>國際通店 (09:00-05:00 免手續費)、久茂地店</li>
-              <li><b>伴手禮：</b>塩屋、Calbee+、福木屋、御菓子御殿、Orion官方商店、Splash</li>
-              <li><b>藥妝/超市：</b>大國藥妝、松本清、札幌藥妝、MaxValu牧志店 (24H)</li>
-              <li><b>世界第一蘋果派：</b>已搬至那霸機場國際線，或去浮島通門市免排隊！</li>
-              <li><b>扭蛋聖地：</b>那霸OPA 2F、國際通唐吉訶德、美國村 Dragon Palace 1F / GIGO</li>
-            </ul>
+
+          <div class="p-4 space-y-4">
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:30</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🥐 出門早餐 & 上午悠閒時光</div>
+                <p class="text-xs text-slate-500 mt-0.5">早餐選擇：Kaito 麵包 (08:00–17:00)、星巴克 名護21世紀之森公園店 (07:30–21:00) 或便利商店。</p>
+                <p class="text-xs text-slate-600 mt-1">上午可去：名護城公園 / 開車15分鐘至 <b>部瀨名海中公園</b> (09:00–17:30 海中展望塔＆玻璃底船)。</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=パン屋+Kaito+名護" target="_blank" class="map-btn">🥖 Kaito 麵包</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=Starbucks+Nago" target="_blank" class="map-btn">☕ 星巴克名護店</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=部瀨名海中公園" target="_blank" class="map-btn">🐠 部瀨名海中公園</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">午餐</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🐖 百年古家 大家 (Agu豬) & 島甜甜圈</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車 15 分鐘。在百年古民家品嚐阿古豬涮涮鍋/沖繩麵 (11:00–15:30，可訂位) 或吃 Hisui。<br>飯後點心：島甜甜圈 しまドーナッツ (11:00–15:00 / 週一二三休)、Blue Seal。</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=百年古家+大家" target="_blank" class="map-btn">🍲 百年古家 大家</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=しまドーナッツ+名護" target="_blank" class="map-btn">🍩 島甜甜圈</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🐘 萬座毛（開車約 45 分鐘）</div>
+                <p class="text-xs text-slate-500 mt-0.5">營業 08:00–20:00。沖繩代表性象鼻珊瑚礁斷崖與無敵海景步道。</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=萬座毛" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 萬座毛導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-extrabold px-2 py-1 rounded-lg">傍晚</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🎡 北谷美國村 (開車 40 分鐘｜10:00–22:00)</div>
+                <div class="text-xs text-slate-600 mt-1 space-y-1">
+                  <div>• <b>甜點：</b>Blue Seal Depot Island (11:00–21:00)</div>
+                  <div>• <b>晚餐選擇：</b>塔可飯 Taco Rice Cafe Kijimuna (11:00–22:00)、グルメ回転寿司市場 美浜店 (11:30–14:00/16:30–21:50)、拉麵 Kiseki Soba (11:00–20:45)、Red Lobster 龍蝦餐廳、蒸気海鮮 (吃到飽)</div>
+                  <div>• <b>扭蛋聖地：</b>Dragon Palace 1F、GIGO 北谷</div>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=American+Village+Okinawa" target="_blank" class="map-btn">🎡 美國村導航</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=Taco+Rice+Cafe+Kijimuna+Depot+Island" target="_blank" class="map-btn">🌮 Kijimuna 塔可飯</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=グルメ回転寿司市場+美浜店" target="_blank" class="map-btn">🍣 迴轉壽司市場</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 煙火特別攻略卡 -->
+            <div class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-3.5 rounded-2xl shadow-md">
+              <div class="font-extrabold text-amber-300 text-sm flex items-center gap-1.5">
+                <span>🎆 20:00 美國村週末煙火秀</span>
+                <span class="text-[10px] bg-amber-400/20 border border-amber-300/40 px-2 py-0.5 rounded-full">私房最佳視野</span>
+              </div>
+              <ul class="text-xs text-slate-200 mt-2 space-y-1.5">
+                <li><b>① Depot Island 海邊步道 Boardwalk：</b>沿海岸找無遮蔽處，吃完晚餐散步過去最方便！</li>
+                <li><b>② Sunset Beach 日落海灘旁大階梯（超推⭐）：</b>前方無遮蔽物，直接看煙火在正前方升空！</li>
+                <li><b>③ 北谷 Fisherina 海岸一帶：</b>不想擠在正中央可沿著海邊往北走。</li>
+              </ul>
+              <div class="mt-2.5 flex gap-2">
+                <a href="https://www.google.com/maps/search/?api=1&query=Sunset+Beach+Chatan" target="_blank" class="map-btn !bg-white/15 !text-white !border-white/30">📍 日落海灘導航</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=AEON+Chatan" target="_blank" class="map-btn !bg-white/15 !text-white !border-white/30">🛒 AEON 北谷店買宵夜</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DAY 4 ===== -->
+      <div id="day-4" class="day-content space-y-4">
+        <div class="okinawa-card overflow-hidden">
+          <div class="relative h-44 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=900&q=80" alt="沖繩玉泉洞與南部海景" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-4 right-4 text-white">
+              <span class="bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 4 ・ 1/3 (日)</span>
+              <h2 class="text-xl font-extrabold mt-1">🦇 玉泉洞・奧武島天婦羅・PARCO CITY</h2>
+            </div>
+          </div>
+
+          <div class="p-4 space-y-4">
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:30</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🦇 退房出門 ➔ 玉泉洞 (沖繩世界文化王國)</div>
+                <p class="text-xs text-slate-500 mt-0.5">早餐吃 Kaito 麵包 / 星巴克 / 超商。開車 1 小時 15 分抵達玉泉洞（09:00–16:00），欣賞壯觀鐘乳石洞！</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩世界+玉泉洞" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 玉泉洞導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">午餐</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🍤 奧武島（貓島）現炸天婦羅 & 海產食堂</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 15 分鐘。必吃銅板價現炸海蘊天婦羅！</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=大城天婦羅店+奧武島" target="_blank" class="map-btn">🍤 大城天婦羅 (週一二休)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=中本鮮魚天婦羅店" target="_blank" class="map-btn">🦑 中本天婦羅 (週四休)</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=奥武島海産物食堂" target="_blank" class="map-btn">🐟 奥武島海產物食堂</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-purple-100 text-purple-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🛍️ PARCO CITY 浦添西海岸（10:00–22:00）</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 40 分鐘。沖繩最大海景購物中心！樓層重點攻略：</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 mt-2 text-xs space-y-1.5">
+                  <div><span class="font-bold text-orange-600">1F：</span><b>3COINS+plus</b> (Green)、松本清 & SAN-A食品館 (Orange)、萬代扭蛋</div>
+                  <div><span class="font-bold text-emerald-600">2F：</span><b>GU</b>、PEACH JOHN、PLAZA、niko and…、Calvin Klein (Green)｜ZARA、H&M、COACH、北臉、POLO (Blue)｜染髮 fufu (Orange)｜🍴 <b>鳥玉丼飯 (Toritama)</b></div>
+                  <div><span class="font-bold text-sky-600">3F：</span><b>UNIQLO、無印良品、DAISO 大創</b> (Orange)｜任天堂區、西村裕二、POP MART (Green)｜🍴 <b>迴轉壽司 Yazaemon、炸豬排 Katsuno-ya</b></div>
+                </div>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=SAN-A+Urasoe+West+Coast+PARCO+CITY" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> PARCO CITY 導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2 py-1 rounded-lg">晚上</span>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold text-slate-800">🏨 那霸飯店 Check-in + 市區最後採買時刻！</div>
+                <p class="text-xs text-slate-600 mt-0.5"><b>Hotel Cocktail Stay Naha</b>（沖繩, 那霸, Matsuyama 1-29-7）</p>
+                <p class="text-[11px] text-slate-400">入住 15:00~23:00 / 退房 11:00 前</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Cocktail+Stay+Naha" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至那霸飯店</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DAY 5 ===== -->
+      <div id="day-5" class="day-content space-y-4">
+        <div class="okinawa-card overflow-hidden">
+          <div class="relative h-44 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=900&q=80" alt="瀨長島純白海景" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-4 right-4 text-white">
+              <span class="bg-amber-500 text-slate-900 text-[11px] font-bold px-2.5 py-0.5 rounded-full">DAY 5 ・ 1/4 (一)</span>
+              <h2 class="text-xl font-extrabold mt-1">🥞 豬肉蛋飯糰・瀨長島幸福鬆餅・平安返台</h2>
+            </div>
+          </div>
+
+          <div class="p-4 space-y-4">
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-1 rounded-lg">08:15</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🍙 出門早餐：沖繩豬肉蛋飯糰 / 福助玉子燒</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 7 分鐘至牧志市場周邊，接著進行國際通最後伴手禮補貨、第一牧志公設市場、泊港漁市場、波上宮。</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=Pork+Tamago+Onigiri+Makishi+Market" target="_blank" class="map-btn">🍙 豬肉蛋飯糰 牧志店</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=福助の玉子焼き+市場本通り店" target="_blank" class="map-btn">🍳 福助玉子燒</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=那霸市第一牧志公設市場" target="_blank" class="map-btn">🐟 牧志公設市場</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=泊港漁市場" target="_blank" class="map-btn">🍣 泊港漁市場</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-sky-100 text-sky-800 text-xs font-extrabold px-2 py-1 rounded-lg">下午</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">🥞 瀨長島 Umikaji Terrace：幸福鬆餅</div>
+                <p class="text-xs text-slate-500 mt-0.5">開車約 20 分鐘（幸福鬆餅營業 11:00–21:00）。在純白地中海風山丘一邊吃舒芙蕾鬆餅、一邊看飛機起降！</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=瀨長島+Umikaji+Terrace" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 瀨長島導航</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=幸せのパンケーキ+ウミカジテラス沖縄店" target="_blank" class="map-btn">🥞 幸福鬆餅導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-2 py-1 rounded-lg">17:00</span>
+              </div>
+              <div class="flex-1 pb-3 border-b border-slate-100">
+                <div class="font-bold text-slate-800">⛽ 離開瀨長島 ➔ 加滿油 ➔ 沖繩行腳還車</div>
+                <p class="text-xs text-slate-500 mt-0.5">車程約 10 分鐘。還車前務必加滿油（Regular 紅色油槍）並保留收據，搭接駁車於 <b>18:00 前抵達那霸機場</b>辦理機台退稅與報到。</p>
+                <div class="mt-2">
+                  <a href="https://www.google.com/maps/search/?api=1&query=那霸機場國際線航廈" target="_blank" class="map-btn"><i class="fa-solid fa-plane-departure"></i> 那霸機場國際線導航</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="w-16 flex-shrink-0 text-center">
+                <span class="inline-block bg-slate-800 text-white text-xs font-extrabold px-2 py-1 rounded-lg">20:30</span>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold text-slate-800">✈️ 星宇航空 JX313 飛返臺中</div>
+                <p class="text-xs text-slate-500 mt-0.5">20:30 那霸機場 I 起飛 ➔ 21:20 抵達臺中國際機場 T2。帶著滿滿戰利品平安回家！</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 那霸＆國際通 吃喝逛街全攻略 (Day 1 / 4 / 5 通用) ===== -->
+      <div class="okinawa-card p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-extrabold text-base text-sky-900">🏮 那霸・國際通吃喝逛街導航總整理</h3>
+          <span class="text-[11px] bg-sky-100 text-sky-700 font-bold px-2.5 py-0.5 rounded-full">點店名直接導航</span>
+        </div>
+
+        <!-- 美食分類 -->
+        <div class="bg-orange-50/70 border border-orange-200/70 rounded-xl p-3 space-y-2 text-xs">
+          <div class="font-extrabold text-orange-800 text-sm">🍜 國際通周邊必吃美食（含營業時間）</div>
+          <div class="grid grid-cols-1 gap-2">
+            <div><b>拉麵/沖繩麵：</b>
+              <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+那霸牧志店" target="_blank" class="map-btn mt-1">暖暮牧志店 (09:00-02:00)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=琉家拉麵+國際通本店" target="_blank" class="map-btn mt-1">琉家拉麵 (11:30-00:00/週三四休)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=Okinawa+Soba+EIBUN" target="_blank" class="map-btn mt-1">沖繩麵 EIBUN (11:00-20:00)</a>
+              <a href="https://www.tablecheck.com/shops/soba-eibun/reserve" target="_blank" class="book-btn mt-1">EIBUN 預約</a>
+            </div>
+            <div><b>壽喜燒/涮涮鍋：</b>
+              <a href="https://www.google.com/maps/search/?api=1&query=酒喜膳+一喜喜" target="_blank" class="map-btn mt-1">酒喜膳 一喜喜 (17:30-22:00/週日休)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=Shima+Shabu-Shabu+NAKAMA" target="_blank" class="map-btn mt-1">Shima Shabu NAKAMA</a>
+              <a href="https://yoyaku.toreta.in/shabushabu-nakama/#/" target="_blank" class="book-btn mt-1">NAKAMA 訂位</a>
+            </div>
+            <div><b>居酒屋/串燒：</b>
+              <a href="https://www.google.com/maps/search/?api=1&query=TACHINOMIYA+BAR+國際通" target="_blank" class="map-btn mt-1">TACHINOMIYA黑糖牛奶 (10:00-02:00)</a>
+              <a href="https://tabelog.com/tw/okinawa/A4701/A470101/47029335/" target="_blank" class="book-btn mt-1">Uguisu串燒 (17:00-00:00)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=新時代+沖縄+那覇久茂地店" target="_blank" class="map-btn mt-1">新時代 久茂地店 (16:00-02:00)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=Chokotto+Sushi+Kokusai-dori+Yataimura" target="_blank" class="map-btn mt-1">屋台村 鮭魚卵丼飯 (12:00-00:00)</a>
+            </div>
+            <div><b>豬排/飯糰/點心：</b>
+              <a href="https://www.google.com/maps/search/?api=1&query=とんかつ小やじ+那覇店" target="_blank" class="map-btn mt-1">炸豬排 小やじ (11:00-17:00/週三休)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=福助の玉子焼き+久茂地店" target="_blank" class="map-btn mt-1">福助玉子燒 久茂地 (07:00-19:30)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=Blue+Seal+國際通店" target="_blank" class="map-btn mt-1">Blue Seal (10:00-23:00)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=JEF+Sunrise+Naha" target="_blank" class="map-btn mt-1">JEF苦瓜漢堡 (09:00-20:00)</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=hoppepan+那霸" target="_blank" class="map-btn mt-1">hoppepan麵包 (週一二三休)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 逛街藥妝伴手禮分類 -->
+        <div class="bg-emerald-50/70 border border-emerald-200/70 rounded-xl p-3 space-y-2 text-xs">
+          <div class="font-extrabold text-emerald-800 text-sm">🛍️ 藥妝・伴手禮・超市（含營業時間）</div>
+          <div class="flex flex-wrap gap-1.5">
+            <a href="https://www.google.com/maps/search/?api=1&query=Don+Quijote+Kokusai-dori" target="_blank" class="map-btn">🐧 唐吉訶德 國際通 (09:00-05:00)</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=ドン・キホーテ国際通りくもじ店" target="_blank" class="map-btn">🐧 唐吉訶德 久茂地 (08:00-01:00)</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=大國藥妝+國際通縣廳前" target="_blank" class="map-btn">💊 大國藥妝 (10:05-22:50)</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=札幌藥妝+沖繩國際通店" target="_blank" class="map-btn">💊 札幌藥妝 (11:00-22:00)</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Matsumoto+Kiyoshi+Asato+Kokusai+Street" target="_blank" class="map-btn">💊 松本清 (10:00-22:00)</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=MaxValu+牧志店" target="_blank" class="map-btn">🛒 MaxValu 牧志店 (24H)</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=塩屋+松尾店" target="_blank" class="map-btn">🍦 塩屋 松尾店</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Calbee%2B+沖繩國際通店" target="_blank" class="map-btn">🍟 Calbee+ 國際通</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=福木屋+國際通" target="_blank" class="map-btn">🍰 福木屋年輪蛋糕</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=御菓子御殿+國際通松尾店" target="_blank" class="map-btn">🍠 御菓子御殿 松尾店</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Orion+Official+Store+Naha" target="_blank" class="map-btn">🍺 Orion 官方商店</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Splash+Okinawa" target="_blank" class="map-btn">🐚 Splash 紀念品</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=世界一のアップルパイ+mille+mele+沖縄" target="_blank" class="map-btn">🍎 世界第一蘋果派 (浮島通/國際線機場)</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- TAB 2: 航班・住宿・租車 -->
+    <!-- ==================== TAB 2: 航班・住宿・租車 ==================== -->
     <section id="tab-info" class="tab-content space-y-4">
-      <!-- 航班 -->
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-        <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-plane mr-2"></i>星宇航空航班資訊</h2>
+      <!-- 航班資訊 -->
+      <div class="okinawa-card p-4">
+        <h2 class="font-extrabold text-lg text-sky-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-plane-up text-sky-500"></i> 星宇航空 航班資訊
+        </h2>
         <div class="space-y-3 text-sm">
-          <div class="p-3 bg-sky-50 rounded-xl flex justify-between items-center">
-            <div>
-              <span class="bg-sky-600 text-white text-xs px-2 py-0.5 rounded">去程 12/31 (四)</span>
-              <div class="font-bold text-base mt-1">15:20 臺中 T2 ➔ 17:50 那霸 I</div>
-              <div class="text-xs text-slate-500">星宇航空 JX302（經濟艙）</div>
+          <div class="p-3.5 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-xl border border-sky-100">
+            <div class="flex justify-between items-center">
+              <span class="bg-sky-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">去程｜2026/12/31 (四)</span>
+              <span class="text-xs font-bold text-sky-700">星宇航空 JX302（經濟艙）</span>
+            </div>
+            <div class="flex justify-between items-center mt-2.5">
+              <div>
+                <div class="text-xl font-black text-slate-800">15:20</div>
+                <div class="text-xs text-slate-500">臺中國際機場 T2</div>
+              </div>
+              <div class="text-center text-sky-400 flex-1 px-2">
+                <i class="fa-solid fa-plane text-base"></i>
+                <div class="border-t border-dashed border-sky-300 my-1"></div>
+                <div class="text-[10px] text-slate-400">13:20 前報到</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-black text-slate-800">17:50</div>
+                <div class="text-xs text-slate-500">那霸機場 國際線 I</div>
+              </div>
             </div>
           </div>
-          <div class="p-3 bg-sky-50 rounded-xl flex justify-between items-center">
-            <div>
-              <span class="bg-slate-700 text-white text-xs px-2 py-0.5 rounded">回程 01/04 (一)</span>
-              <div class="font-bold text-base mt-1">20:30 那霸 I ➔ 21:20 臺中 T2</div>
-              <div class="text-xs text-slate-500">星宇航空 JX313（經濟艙）</div>
+
+          <div class="p-3.5 bg-gradient-to-r from-slate-50 to-sky-50 rounded-xl border border-slate-200">
+            <div class="flex justify-between items-center">
+              <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">回程｜2027/01/04 (一)</span>
+              <span class="text-xs font-bold text-slate-700">星宇航空 JX313（經濟艙）</span>
+            </div>
+            <div class="flex justify-between items-center mt-2.5">
+              <div>
+                <div class="text-xl font-black text-slate-800">20:30</div>
+                <div class="text-xs text-slate-500">那霸機場 國際線 I</div>
+              </div>
+              <div class="text-center text-slate-400 flex-1 px-2">
+                <i class="fa-solid fa-plane text-base"></i>
+                <div class="border-t border-dashed border-slate-300 my-1"></div>
+                <div class="text-[10px] text-slate-400">18:00 前抵機場</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-black text-slate-800">21:20</div>
+                <div class="text-xs text-slate-500">臺中國際機場 T2</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 住宿 -->
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-        <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-hotel mr-2"></i>住宿資訊 (皆訂 3 間房)</h2>
+      <!-- 住宿資訊 -->
+      <div class="okinawa-card p-4">
+        <h2 class="font-extrabold text-lg text-sky-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-hotel text-sky-500"></i> 住宿資訊（Booking.com 皆訂 3 間房）
+        </h2>
         <div class="space-y-3 text-sm">
-          <div class="border-b pb-3">
-            <div class="text-xs text-sky-600 font-bold">Day 1：12/31 (四) 那霸市區</div>
-            <div class="font-bold text-base">Hotel Lantana Naha Kokusai-Dori</div>
-            <div class="text-xs text-slate-600 mt-1">📍 沖繩, 那霸, Matsuo 2-8-1｜入住 15:00~23:30 / 退房 11:00前</div>
-            <div class="text-xs text-emerald-700 font-medium mt-1">💰 NT$8,866 / 3間雙床房 (12/23收費)</div>
+          <div class="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold text-rose-500">Day 1｜12/31 (四) 那霸南部</span>
+                <h3 class="font-extrabold text-base text-slate-800">Hotel Lantana Naha Kokusai-Dori ⭐⭐⭐</h3>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Lantana+Naha+Kokusai-Dori" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuo 2-8-1｜入住 15:00~23:30 / 退房 11:00 前</p>
+            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 8,866 / 1晚 / 3間雙床房 (12/23 收費)</p>
           </div>
-          <div class="border-b pb-3">
-            <div class="text-xs text-sky-600 font-bold">Day 2 & 3：1/1 (五) - 1/3 (日) 北部名護</div>
-            <div class="font-bold text-base">New Normal Hotel in NAGO</div>
-            <div class="text-xs text-slate-600 mt-1">📍 沖繩, 名護, Miyazato 949｜入住 15:00~00:00 / 退房 10:00前</div>
-            <div class="text-xs text-emerald-700 font-medium mt-1">💰 NT$19,676 / 兩晚 / 3間雙人房 (12/27收費)</div>
+
+          <div class="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold text-sky-600">Day 2 & 3｜1/1 (五) - 1/3 (日) 北部名護</span>
+                <h3 class="font-extrabold text-base text-slate-800">New Normal Hotel in NAGO ⭐⭐⭐⭐</h3>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=New+Normal+Hotel+in+NAGO" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 名護, Miyazato 949｜入住 15:00~00:00 / 退房 10:00 前</p>
+            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 19,676 / 2晚 / 3間雙人房 (12/27 收費)</p>
           </div>
-          <div>
-            <div class="text-xs text-sky-600 font-bold">Day 4：1/3 (日) 那霸市區</div>
-            <div class="font-bold text-base">Hotel Cocktail Stay Naha</div>
-            <div class="text-xs text-slate-600 mt-1">📍 沖繩, 那霸, Matsuyama 1-29-7｜入住 15:00~23:00 / 退房 11:00前</div>
-            <div class="text-xs text-emerald-700 font-medium mt-1">💰 NT$6,493 / 3間特大雙人床房 (12/28收費)</div>
+
+          <div class="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold text-purple-600">Day 4｜1/3 (日) 那霸南部</span>
+                <h3 class="font-extrabold text-base text-slate-800">Hotel Cocktail Stay Naha ⭐⭐⭐⭐</h3>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Cocktail+Stay+Naha" target="_blank" class="map-btn">📍 導航</a>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuyama 1-29-7｜入住 15:00~23:00 / 退房 11:00 前</p>
+            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 6,493 / 1晚 / 3間特大雙人床房 (12/28 收費)</p>
           </div>
         </div>
       </div>
 
-      <!-- 租車 -->
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-        <h2 class="font-bold text-lg text-sky-700 mb-3"><i class="fa-solid fa-van-shuttle mr-2"></i>沖繩行腳租車 (訂單：W100109)</h2>
-        <div class="text-sm space-y-2">
-          <div><b>車款：</b>ALPHARD 30系 (7-8人座)｜含高級全險＋ETC吃到飽</div>
-          <div><b>取車：</b>2026/12/31 (四) 18:30 那霸機場</div>
-          <div><b>還車：</b>2027/01/04 (一) 18:30 那霸機場</div>
-          <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs space-y-1">
-            <div class="font-bold text-amber-800 text-sm"><i class="fa-solid fa-triangle-exclamation mr-1"></i>駕駛人必帶 3 大證件（缺一不可！）</div>
-            <div>① <b>台灣駕照正本</b> ＋ ② <b>台灣駕照日文譯本</b>（台灣監理站先辦好） ＋ ③ <b>護照</b></div>
+      <!-- 租車資訊 -->
+      <div class="okinawa-card p-4">
+        <h2 class="font-extrabold text-lg text-sky-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-van-shuttle text-sky-500"></i> 沖繩行腳租車（預約編號：W100109）
+        </h2>
+        <div class="text-sm space-y-2.5">
+          <div class="p-3 bg-sky-50 rounded-xl border border-sky-100">
+            <div class="font-extrabold text-base text-sky-900">🚐 ALPHARD 30系（7-8人座）</div>
+            <div class="text-xs text-slate-600 mt-1 space-y-0.5">
+              <div>• <b>取車：</b>2026/12/31 (四) 18:30 那霸機場</div>
+              <div>• <b>還車：</b>2027/01/04 (一) 18:30 那霸機場</div>
+              <div>• <b>方案包含：</b>租車 88,000円 + ETC吃到飽 3,700円 + 高級全險 13,200円 - 優惠券 500円 = <b>總額 104,400 日圓</b></div>
+              <div>• <b>付款狀態：</b>已刷訂金 10,400 日圓 (NT$2,239 瑞已刷)｜<span class="text-rose-600 font-bold">現場取車付現金尾款：94,000 日圓</span></div>
+            </div>
           </div>
-          <div class="text-xs text-slate-600 pt-1">
-            總額 104,400 日圓｜已付訂金 10,400 日圓 (NT$2,239 瑞已刷)<br>
-            <b class="text-rose-600">👉 現場取車需付尾款現金：94,000 日圓（約 2 萬台幣）</b>
+
+          <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-3 text-xs">
+            <div class="font-extrabold text-amber-900 text-sm mb-1">⚠️ 日本自駕必備 3 大證件（缺一不可！）</div>
+            <p class="text-amber-800">① <b>台灣駕照正本</b> ＋ ② <b>台灣駕照日文譯本</b>（必須在台灣監理站先辦妥，日本當地無法辦理）＋ ③ <b>護照</b></p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- TAB 3: 費用明細 -->
+    <!-- ==================== TAB 3: 費用明細 & 互動記帳本 ==================== -->
     <section id="tab-cost" class="tab-content space-y-4">
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-sky-100">
-        <h2 class="font-bold text-lg text-sky-700 mb-4"><i class="fa-solid fa-coins mr-2"></i>每人固定費用明細（共 6 人分攤）</h2>
-        <div class="space-y-3 text-sm">
-          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+
+      <!-- 固定行前分攤費用 -->
+      <div class="okinawa-card p-4">
+        <h2 class="font-extrabold text-lg text-sky-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-file-invoice-dollar text-sky-500"></i> 行前固定費用明細（6 人平分）
+        </h2>
+        <div class="space-y-2.5 text-sm">
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
             <div>
-              <div class="font-bold">✈️ 星宇航空來回機票</div>
-              <div class="text-xs text-slate-500">總計 TWD 63,288｜統一轉交給 <b>瑞</b></div>
+              <div class="font-bold text-slate-800">✈️ 星宇航空來回機票</div>
+              <div class="text-xs text-slate-500">總計 TWD 63,288｜請給 <b class="text-sky-700">瑞</b></div>
             </div>
-            <div class="font-bold text-lg text-sky-700">NT$ 10,548 <span class="text-xs font-normal">/人</span></div>
+            <div class="font-extrabold text-base text-sky-700">NT$ 10,548 <span class="text-xs font-normal">/人</span></div>
           </div>
-          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
             <div>
-              <div class="font-bold">🏡 四晚住宿費 (含稅金)</div>
-              <div class="text-xs text-slate-500">總計 8,866 + 19,676 + 6,493 = 35,035｜給 <b>瑞</b></div>
+              <div class="font-bold text-slate-800">🏡 四晚住宿費（含稅金）</div>
+              <div class="text-xs text-slate-500">總計 NT$ 35,035 (8866+19676+6493)｜請給 <b class="text-sky-700">瑞</b></div>
             </div>
-            <div class="font-bold text-lg text-sky-700">NT$ 5,839 <span class="text-xs font-normal">/人</span></div>
+            <div class="font-extrabold text-base text-sky-700">NT$ 5,839 <span class="text-xs font-normal">/人</span></div>
           </div>
-          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+
+          <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
             <div>
-              <div class="font-bold">🚙 租車費用 (Alphard 4天)</div>
-              <div class="text-xs text-slate-500">總計 104,400 日圓｜統一轉交給 <b>茹</b></div>
+              <div class="font-bold text-slate-800">🚙 租車費用（Alphard 4天）</div>
+              <div class="text-xs text-slate-500">總計 104,400 日圓｜請給 <b class="text-emerald-700">茹</b></div>
             </div>
-            <div class="font-bold text-lg text-emerald-700">NT$ 3,600 <span class="text-xs font-normal">/人</span></div>
+            <div class="font-extrabold text-base text-emerald-700">NT$ 3,600 <span class="text-xs font-normal">/人</span></div>
           </div>
-          <div class="border-t pt-3 flex justify-between items-center">
-            <div class="font-bold text-base">💰 每人行前總計（機+酒+車）</div>
-            <div class="font-extrabold text-xl text-rose-600">NT$ 19,987 <span class="text-xs font-normal">/人</span></div>
+
+          <div class="bg-gradient-to-r from-sky-500 to-cyan-500 text-white p-3.5 rounded-xl flex justify-between items-center shadow-sm">
+            <div>
+              <div class="font-extrabold text-sm">💰 行前每人應繳總計</div>
+              <div class="text-[11px] text-sky-100">給瑞 NT$16,387 ＋ 給茹 NT$3,600</div>
+            </div>
+            <div class="text-xl font-black">NT$ 19,987</div>
           </div>
-          <div class="text-xs text-slate-500 bg-sky-50 p-3 rounded-xl">
-            💡 <b>收款小幫手：</b><br>
-            • 給 <b>瑞</b>（機票＋住宿）：每人 <b>NT$ 16,387</b><br>
-            • 給 <b>茹</b>（租車）：每人 <b>NT$ 3,600</b>
+        </div>
+      </div>
+
+      <!-- 互動式新增花費記帳本 -->
+      <div class="okinawa-card p-4">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="font-extrabold text-lg text-rose-600 flex items-center gap-2">
+            <i class="fa-solid fa-calculator"></i> 旅途現場記帳本（可隨時新增）
+          </h2>
+          <div class="flex items-center gap-1 text-xs bg-slate-100 px-2.5 py-1 rounded-lg">
+            <span>匯率:</span>
+            <input type="number" id="exchange-rate" value="0.215" step="0.001" onchange="updateRate()" class="w-14 bg-white border rounded px-1 text-center font-bold text-sky-700">
           </div>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">在這裡紀錄公費、油資、過路費、聚餐或個人戰利品！資料會自動保存在手機裡。</p>
+
+        <!-- 新增表單 -->
+        <form onsubmit="addExpense(event)" class="bg-rose-50/60 border border-rose-200 rounded-2xl p-3.5 space-y-3 text-sm">
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1">📅 日期 / 天數</label>
+              <select id="exp-day" class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs font-bold">
+                <option value="Day 1 (12/31)">Day 1 (12/31)</option>
+                <option value="Day 2 (1/1)">Day 2 (1/1)</option>
+                <option value="Day 3 (1/2)">Day 3 (1/2)</option>
+                <option value="Day 4 (1/3)">Day 4 (1/3)</option>
+                <option value="Day 5 (1/4)">Day 5 (1/4)</option>
+                <option value="行前/其他">行前/其他</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1">🏷️ 花費分類</label>
+              <select id="exp-cat" class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs font-bold">
+                <option value="🍜 餐飲美食">🍜 餐飲美食</option>
+                <option value="⛽ 加油/停車/交通">⛽ 加油/停車/交通</option>
+                <option value="🎫 門票/體驗">🎫 門票/體驗</option>
+                <option value="🛍️ 購物/伴手禮">🛍️ 購物/伴手禮</option>
+                <option value="🏪 超商/宵夜">🏪 超商/宵夜</option>
+                <option value="✨ 其他公費">✨ 其他公費</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1">📝 花費項目 / 地點（花在哪邊？）</label>
+            <input type="text" id="exp-title" required placeholder="例如：古宇利蝦蝦飯、大國藥妝、還車加油..." class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs">
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1">💱 幣別</label>
+              <select id="exp-currency" class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs font-bold">
+                <option value="JPY">¥ 日圓 (JPY)</option>
+                <option value="TWD">NT$ 台幣</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1">💰 金額</label>
+              <input type="number" id="exp-amount" required min="1" step="any" placeholder="輸入金額" class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs font-bold">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1">🙋 誰先付/墊錢</label>
+              <input type="text" id="exp-payer" placeholder="例如：瑞、茹、公費" value="公費" class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-gradient-to-r from-rose-500 to-orange-500 text-white font-extrabold py-2.5 rounded-xl shadow hover:opacity-95 transition text-sm">
+            <i class="fa-solid fa-plus-circle mr-1"></i> 新增這筆花費明細
+          </button>
+        </form>
+
+        <!-- 統計看板 -->
+        <div class="grid grid-cols-3 gap-2 my-3 text-center">
+          <div class="bg-sky-50 p-2.5 rounded-xl border border-sky-100">
+            <div class="text-[10px] text-slate-500 font-bold">日圓花費合計</div>
+            <div id="sum-jpy" class="text-sm font-black text-sky-700 mt-0.5">¥ 0</div>
+          </div>
+          <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
+            <div class="text-[10px] text-slate-500 font-bold">折合台幣總計</div>
+            <div id="sum-twd" class="text-sm font-black text-emerald-700 mt-0.5">NT$ 0</div>
+          </div>
+          <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-100">
+            <div class="text-[10px] text-slate-500 font-bold">6人平均分攤</div>
+            <div id="sum-per-person" class="text-sm font-black text-amber-700 mt-0.5">NT$ 0/人</div>
+          </div>
+        </div>
+
+        <!-- 明細列表 -->
+        <div id="expense-list" class="space-y-2 mt-3"></div>
+
+        <!-- 匯出與清空按鈕 -->
+        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-100">
+          <button onclick="exportExpenses()" class="text-xs bg-sky-100 text-sky-700 font-bold px-3 py-1.5 rounded-lg">
+            <i class="fa-regular fa-copy mr-1"></i>複製帳目文字傳到 LINE
+          </button>
+          <button onclick="clearAllExpenses()" class="text-xs text-slate-400 underline">清空所有紀錄</button>
         </div>
       </div>
     </section>
 
-    <!-- TAB 4: 必買購物清單 -->
+    <!-- ==================== TAB 4: 必買購物 & 退稅攻略 ==================== -->
     <section id="tab-shopping" class="tab-content space-y-4">
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100">
-        <div class="flex justify-between items-center mb-3">
-          <h2 class="font-bold text-lg text-sky-700"><i class="fa-solid fa-cart-shopping mr-2"></i>沖繩必買清單 (可打勾紀錄)</h2>
+      <div class="okinawa-card p-4">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
+            <i class="fa-solid fa-bag-shopping text-rose-500"></i> 沖繩必買清單（可打勾紀錄）
+          </h2>
           <button onclick="resetChecklist()" class="text-xs text-slate-400 underline">重置勾選</button>
         </div>
-        <p class="text-xs text-slate-500 mb-3">勾選狀態會自動儲存在你的手機瀏覽器裡，方便逛街時對照！</p>
+        <p class="text-xs text-slate-500 mb-3">完整收錄檔案內所有零食、超商甜點、3COINS、藥妝與服飾！點擊即可打勾。</p>
         <div id="checklist-container" class="space-y-4 text-sm"></div>
+      </div>
+
+      <!-- 沖繩 20 大商場退稅友善排行榜 -->
+      <div class="okinawa-card p-4 space-y-3">
+        <h3 class="font-extrabold text-base text-sky-800 flex items-center gap-2">
+          <i class="fa-solid fa-Scale-balanced text-amber-500"></i> 沖繩熱門商場退稅友善度 & 扭蛋攻略
+        </h3>
+        <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-xs space-y-1.5">
+          <div class="font-bold text-amber-900">🏆 免手續費「全額退稅」重點店鋪：</div>
+          <ul class="list-disc pl-4 space-y-1 text-slate-700">
+            <li><b>唐吉訶德：</b>國際通店、宜野灣店、名護店（免手續費全額退）</li>
+            <li><b>藥妝店：</b>松本清國際通店、大國藥妝國際通各店（免手續費全額退）</li>
+            <li><b>大型商場：</b>那霸新都心 San-A / PARCO CITY、AEON 永旺直營區（免手續費）</li>
+            <li><b>電器行：</b>Bic Camera 那霸天久店、Yamada 電器、EDION 愛電王（免手續費）</li>
+            <li><b>其他注意：</b>美國村 Depot Island（部分店家免稅）、美麗海水族館特產店（滿額免稅）、琉貿百貨 RYUBO（扣 1.55% 手續費）</li>
+          </ul>
+        </div>
+        <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-3 text-xs space-y-1.5">
+          <div class="font-bold text-purple-900">💊 沖繩 5 大扭蛋機聖地：</div>
+          <div class="flex flex-wrap gap-1.5 mt-1">
+            <a href="https://www.google.com/maps/search/?api=1&query=那霸+OPA" target="_blank" class="map-btn">① 那霸 OPA 百貨 2F (旭橋站)</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Don+Quijote+Kokusai-dori" target="_blank" class="map-btn">② 唐吉訶德國際通店</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=iias+沖繩豐崎" target="_blank" class="map-btn">③ iias 沖繩豐崎 1F/3F</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Dragon+Palace+Chatan" target="_blank" class="map-btn">④ 美國村 Dragon Palace 1F</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=GiGO+Chatan" target="_blank" class="map-btn">⑤ 美國村 GIGO 北谷</a>
+          </div>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Bottom Navigation -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-40">
-    <div class="max-w-xl mx-auto grid grid-cols-4 text-center">
-      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn py-2.5 text-sky-600 font-bold">
+  <!-- 底部固定導覽列 -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t-2 border-sky-100 shadow-lg z-40">
+    <div class="max-w-xl mx-auto grid grid-cols-4 text-center py-1">
+      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn py-2 text-sky-600 font-extrabold">
         <i class="fa-solid fa-map-location-dot text-lg block"></i>
-        <span class="text-xs">每日行程</span>
+        <span class="text-[11px]">每日行程</span>
       </button>
-      <button onclick="switchTab('info')" id="nav-info" class="nav-btn py-2.5 text-slate-400">
-        <i class="fa-solid fa-suitcase-rolling text-lg block"></i>
-        <span class="text-xs">航班/住宿</span>
+      <button onclick="switchTab('info')" id="nav-info" class="nav-btn py-2 text-slate-400 font-medium">
+        <i class="fa-solid fa-plane-circle-check text-lg block"></i>
+        <span class="text-[11px]">航班/住宿</span>
       </button>
-      <button onclick="switchTab('cost')" id="nav-cost" class="nav-btn py-2.5 text-slate-400">
-        <i class="fa-solid fa-calculator text-lg block"></i>
-        <span class="text-xs">費用明細</span>
+      <button onclick="switchTab('cost')" id="nav-cost" class="nav-btn py-2 text-slate-400 font-medium">
+        <i class="fa-solid fa-coins text-lg block"></i>
+        <span class="text-[11px]">記帳/分帳</span>
       </button>
-      <button onclick="switchTab('shopping')" id="nav-shopping" class="nav-btn py-2.5 text-slate-400">
-        <i class="fa-solid fa-bag-shopping text-lg block"></i>
-        <span class="text-xs">必買清單</span>
+      <button onclick="switchTab('shopping')" id="nav-shopping" class="nav-btn py-2 text-slate-400 font-medium">
+        <i class="fa-solid fa-gift text-lg block"></i>
+        <span class="text-[11px]">必買清單</span>
       </button>
     </div>
   </nav>
 
   <script>
+    // 1. 出發倒數計時器
+    function updateCountdown() {
+      const tripDate = new Date('2026-12-31T15:20:00+08:00');
+      const now = new Date();
+      const diff = tripDate - now;
+      const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      const el = document.getElementById('countdown-days');
+      if (days > 0) {
+        el.textContent = days;
+      } else if (days >= -4) {
+        el.textContent = '出發中!';
+      } else {
+        el.textContent = '完美旅程';
+      }
+    }
+    updateCountdown();
+
+    // 2. 分頁切換
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById('tab-' + tabName).classList.add('active');
       document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-sky-600', 'font-bold');
-        btn.classList.add('text-slate-400');
+        btn.classList.remove('text-sky-600', 'font-extrabold');
+        btn.classList.add('text-slate-400', 'font-medium');
       });
       const activeBtn = document.getElementById('nav-' + tabName);
-      activeBtn.classList.remove('text-slate-400');
-      activeBtn.classList.add('text-sky-600', 'font-bold');
+      activeBtn.classList.remove('text-slate-400', 'font-medium');
+      activeBtn.classList.add('text-sky-600', 'font-extrabold');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // 3. 天數切換
     function switchDay(dayNum) {
       document.querySelectorAll('.day-content').forEach(el => el.classList.remove('active'));
       document.getElementById('day-' + dayNum).classList.add('active');
-      document.querySelectorAll('.day-btn').forEach(btn => {
-        btn.className = 'day-btn flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm bg-white text-slate-600 border';
-      });
-      document.getElementById('day-btn-' + dayNum).className = 'day-btn flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm bg-sky-600 text-white shadow';
+      const labels = ['12/31 跨年', '1/1 北部水族館', '1/2 美國村煙火', '1/3 玉泉洞購物', '1/4 瀨長島返台'];
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById('day-btn-' + i);
+        if (i === dayNum) {
+          btn.className = 'day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md';
+        } else {
+          btn.className = 'day-btn flex-shrink-0 px-3.5 py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100';
+        }
+      }
     }
 
+    // 4. 互動式費用記帳本邏輯
+    const defaultExpenses = [
+      { id: 101, day: 'Day 1 (12/31)', cat: '⛽ 加油/停車/交通', title: '沖繩行腳租車現場尾款 (現金)', currency: 'JPY', amount: 94000, payer: '公費' }
+    ];
+
+    function getExpenses() {
+      const saved = localStorage.getItem('okinawa_expenses_v2');
+      return saved ? JSON.parse(saved) : defaultExpenses;
+    }
+
+    function saveExpenses(list) {
+      localStorage.setItem('okinawa_expenses_v2', JSON.stringify(list));
+    }
+
+    function getRate() {
+      return parseFloat(localStorage.getItem('okinawa_rate') || '0.215');
+    }
+
+    function updateRate() {
+      const val = parseFloat(document.getElementById('exchange-rate').value) || 0.215;
+      localStorage.setItem('okinawa_rate', val);
+      renderExpenses();
+    }
+
+    function addExpense(e) {
+      e.preventDefault();
+      const day = document.getElementById('exp-day').value;
+      const cat = document.getElementById('exp-cat').value;
+      const title = document.getElementById('exp-title').value.trim();
+      const currency = document.getElementById('exp-currency').value;
+      const amount = parseFloat(document.getElementById('exp-amount').value);
+      const payer = document.getElementById('exp-payer').value.trim() || '公費';
+
+      if (!title || isNaN(amount)) return;
+
+      const list = getExpenses();
+      list.unshift({
+        id: Date.now(),
+        day,
+        cat,
+        title,
+        currency,
+        amount,
+        payer
+      });
+      saveExpenses(list);
+      document.getElementById('exp-title').value = '';
+      document.getElementById('exp-amount').value = '';
+      renderExpenses();
+    }
+
+    function deleteExpense(id) {
+      const list = getExpenses().filter(item => item.id !== id);
+      saveExpenses(list);
+      renderExpenses();
+    }
+
+    function clearAllExpenses() {
+      if (confirm('確定要清空所有自訂記帳紀錄嗎？')) {
+        saveExpenses([]);
+        renderExpenses();
+      }
+    }
+
+    function renderExpenses() {
+      const rate = getRate();
+      document.getElementById('exchange-rate').value = rate;
+      const list = getExpenses();
+      const container = document.getElementById('expense-list');
+
+      let totalJPY = 0;
+      let totalTWD = 0;
+
+      if (list.length === 0) {
+        container.innerHTML = '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-xl">目前還沒有記帳紀錄，可在上方新增喔！</div>';
+      } else {
+        container.innerHTML = list.map(item => {
+          const isJPY = item.currency === 'JPY';
+          const twdEquivalent = isJPY ? Math.round(item.amount * rate) : Math.round(item.amount);
+          if (isJPY) totalJPY += item.amount;
+          totalTWD += twdEquivalent;
+
+          return `
+            <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+              <div class="flex-1 pr-2">
+                <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-bold">
+                  <span class="bg-sky-50 text-sky-700 px-2 py-0.5 rounded">${item.day}</span>
+                  <span>${item.cat}</span>
+                  <span>• 付款: <b class="text-slate-600">${item.payer}</b></span>
+                </div>
+                <div class="font-extrabold text-sm text-slate-800 mt-1">${item.title}</div>
+              </div>
+              <div class="text-right flex items-center gap-2.5">
+                <div>
+                  <div class="font-black text-sm ${isJPY ? 'text-sky-700' : 'text-emerald-700'}">
+                    ${isJPY ? '¥ ' + item.amount.toLocaleString() : 'NT$ ' + item.amount.toLocaleString()}
+                  </div>
+                  ${isJPY ? `<div class="text-[10px] text-slate-400">≈ NT$ ${twdEquivalent.toLocaleString()}</div>` : ''}
+                </div>
+                <button onclick="deleteExpense(${item.id})" class="text-slate-300 hover:text-rose-500 p-1">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('sum-jpy').textContent = '¥ ' + totalJPY.toLocaleString();
+      document.getElementById('sum-twd').textContent = 'NT$ ' + totalTWD.toLocaleString();
+      document.getElementById('sum-per-person').textContent = 'NT$ ' + Math.round(totalTWD / 6).toLocaleString() + '/人';
+    }
+
+    function exportExpenses() {
+      const rate = getRate();
+      const list = getExpenses();
+      if (list.length === 0) {
+        alert('目前沒有記帳紀錄可複製喔！');
+        return;
+      }
+      let totalTWD = 0;
+      let text = '🌺【沖繩之旅 現場記帳明細】\n';
+      list.forEach((item, idx) => {
+        const twd = item.currency === 'JPY' ? Math.round(item.amount * rate) : Math.round(item.amount);
+        totalTWD += twd;
+        const amtStr = item.currency === 'JPY' ? `¥${item.amount} (約NT$${twd})` : `NT$${item.amount}`;
+        text += `${idx + 1}. [${item.day}] ${item.title} - ${amtStr} (${item.payer}付)\n`;
+      });
+      text += `------------------\n💰 總計約：NT$ ${totalTWD.toLocaleString()}\n👥 6人平均：NT$ ${Math.round(totalTWD / 6).toLocaleString()} /人`;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已複製帳目明細！可以直接貼到 LINE 群組分享囉！');
+      });
+    }
+
+    // 5. 必買購物清單
     const shoppingData = [
       { category: "🍪 伴手禮・零食（唐吉訶德 / 機場）", items: [
         { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", note: "¥550｜那霸機場購入" },
         { id: "s2", name: "Orion 島唐辛子蝦餅", note: "¥500｜唐吉訶德購入" },
-        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", note: "¥398 / ¥298｜唐吉訶德" },
-        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", note: "¥552｜唐吉訶德" },
+        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", note: "¥398 / ¥298｜唐吉訶德購入" },
+        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", note: "¥552｜唐吉訶德購入" },
         { id: "s5", name: "山本海苔店 雪鹽味付海苔 & 海帶芽", note: "沖繩限定鐵罐" },
-        { id: "s6", name: "宮古島 島唐辛子煎餅", note: "酥脆微辣伴手禮" },
+        { id: "s6", name: "宮古島 島唐辛子煎餅 (ぱりぱり煎餅)", note: "粉色包裝酥脆微辣" },
         { id: "s7", name: "【徐要的】沖繩島辣椒蝦餅 (黑盒) & 雪塩夾心餅乾 (さんど)", note: "指定代購！" },
-        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅", note: "人氣伴手禮" },
-        { id: "s9", name: "喜島商店 沖繩香檬戶外萬用香料粉 (ほりにし)", note: "¥1,300｜露營烤肉神粉" }
+        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅 (8入)", note: "黃黑盒人氣伴手禮" },
+        { id: "s9", name: "喜島商店 沖繩香檬戶外萬用香料粉 (ほりにし)", note: "¥1,300｜沖繩限定柑橘風味" }
       ]},
-      { category: "🏪 超商必吃（Lawson / 全家 / 7-11）", items: [
-        { id: "c1", name: "【Lawson】焙茶拿鐵 (ほうじ茶ラテ)", note: "¥238 (約NT$49)" },
+      { category: "🏪 超商必吃甜點飲品（Lawson / 全家 / 7-11）", items: [
+        { id: "c1", name: "【Lawson】焙茶拿鐵 (ほうじ茶ラテ)", note: "¥238 (約NT$49)｜生乳50%以上使用" },
         { id: "c2", name: "【Lawson】奶油起司生火腿捲", note: "¥570 (約NT$115)｜配酒神物" },
-        { id: "c3", name: "【全家】美食家布丁 & 奶茶的束縛", note: "¥162 & ¥254" },
-        { id: "c4", name: "【全家限定】Blue Seal 薄荷巧克力棉花糖", note: "¥238｜沖繩全家限定" },
-        { id: "c5", name: "【7-11】砂糖奶油樹 濃苺巧克力夾心餅", note: "¥300 (約NT$60)" }
+        { id: "c3", name: "【全家】美食家布丁 & 奶茶的束縛 (ミルクの束縛)", note: "¥162 (約NT$32) & ¥254 (約NT$51)" },
+        { id: "c4", name: "【全家限定】Blue Seal 薄荷巧克力棉花糖", note: "¥238｜沖繩全家限定發售" },
+        { id: "c5", name: "【7-11】砂糖奶油樹 濃苺巧克力夾心餅", note: "¥300 (約NT$60)｜3個入" }
       ]},
-      { category: "🛒 3COINS 必買好物（PARCO CITY 1F）", items: [
-        { id: "t1", name: "迷你相片印表機 & 專用相紙 (貼紙/熱轉印/磁鐵)", note: "主機 ¥14,300、相紙 ¥550~880" },
-        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", note: "¥3,850" },
-        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 拉桿飲料收納架", note: "各 ¥550 (約NT$110)" },
-        { id: "t4", name: "USB 迷你自動壓縮機 & 壓縮收納袋", note: "¥1,100 (約NT$203)" },
-        { id: "t5", name: "可變高度密封保存容器 (M) & 易清潔可拆美髮梳", note: "¥330 & ¥550" },
-        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", note: "¥1,980" }
+      { category: "🛒 3COINS 必買好物（PARCO CITY 1F GREEN ZONE）", items: [
+        { id: "t1", name: "迷你相片印表機 & 5種專用相紙 (一般/貼紙/熱轉印/紋身貼/磁鐵)", note: "主機 ¥14,300、相紙 ¥550~880" },
+        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", note: "¥3,850｜手機藍牙連線印標籤" },
+        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 行李箱拉桿飲料收納架", note: "各 ¥550 (約NT$110)｜解放雙手神器" },
+        { id: "t4", name: "USB 迷你自動壓縮機 & 旅行分類收納袋", note: "¥1,100 (約NT$203)｜行李瞬間縮小" },
+        { id: "t5", name: "可變高度密封保存容器 (M) & 易清潔可拆洗美髮梳", note: "¥330 (約NT$66) & ¥550 (約NT$110)" },
+        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", note: "¥1,980｜3段色溫自拍神器" }
       ]},
       { category: "💄 藥妝・服飾・雜貨（GU / UNIQLO / 大創）", items: [
         { id: "d1", name: "OKUCHI 隨身漱口水 (水蜜桃/檸檬)", note: "¥250/5入｜一般藥妝店皆有" },
-        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", note: "約NT$141｜舒緩肩頸腰部" },
-        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", note: "約NT$401｜數量限定" },
-        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (喚羽淨露/凝脂/精華)", note: "比價台灣售價 (400ml 台灣賣$2,200)" },
-        { id: "d5", name: "【GU】高領羅紋打底衫 (貨號 360579) & 蝴蝶結針織外套", note: "PARCO CITY 2F" },
-        { id: "d6", name: "【UNIQLO】迷你麻花編織圓領開襟外套 & 【大創】Hello Kitty 拖鞋", note: "PARCO CITY 3F" }
+        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", note: "約NT$141｜貼肩頸或腰部促進血液循環" },
+        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", note: "約NT$401｜數量限定超划算" },
+        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (喚羽淨露/凝脂/精華)", note: "比價參考：台灣400ml賣NT$2,200、補充包700ml賣NT$3,100、精華100ml賣NT$1,700" },
+        { id: "d5", name: "【GU】高領羅紋打底衫 (貨號 360579) & 灰色蝴蝶結針織開襟外套", note: "PARCO CITY 2F GREEN ZONE" },
+        { id: "d6", name: "【UNIQLO】迷你麻花編織圓領開襟外套 & 【大創】Hello Kitty 拖鞋", note: "PARCO CITY 3F ORANGE ZONE" }
       ]}
     ];
 
@@ -380,17 +1174,17 @@
       const container = document.getElementById('checklist-container');
       container.innerHTML = shoppingData.map(group => `
         <div>
-          <h3 class="font-bold text-sky-800 bg-sky-50 px-3 py-1.5 rounded-lg mb-2">${group.category}</h3>
-          <div class="space-y-2">
+          <h3 class="font-extrabold text-sky-900 bg-sky-100/80 px-3 py-1.5 rounded-xl mb-2 text-xs">${group.category}</h3>
+          <div class="space-y-1.5">
             ${group.items.map(item => {
               const checked = saved[item.id] ? 'checked' : '';
               const strike = saved[item.id] ? 'line-through text-slate-400' : 'text-slate-800';
               return `
-                <label class="flex items-start space-x-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer border border-transparent hover:border-slate-100">
+                <label class="flex items-start space-x-3 p-2.5 rounded-xl bg-white hover:bg-sky-50/40 cursor-pointer border border-slate-100 transition">
                   <input type="checkbox" ${checked} onchange="toggleCheck('${item.id}')" class="mt-1 h-4 w-4 rounded text-sky-600 focus:ring-sky-500">
-                  <div class="flex-1 ${strike}" id="text-${item.id}">
-                    <div class="font-medium">${item.name}</div>
-                    <div class="text-xs text-slate-400">${item.note}</div>
+                  <div class="flex-1 ${strike}">
+                    <div class="font-bold text-xs sm:text-sm">${item.name}</div>
+                    <div class="text-[11px] text-slate-500 mt-0.5">${item.note}</div>
                   </div>
                 </label>
               `;
@@ -408,10 +1202,14 @@
     }
 
     function resetChecklist() {
-      localStorage.removeItem('okinawa_checklist');
-      renderChecklist();
+      if (confirm('確定要重置所有購物清單勾選狀態嗎？')) {
+        localStorage.removeItem('okinawa_checklist');
+        renderChecklist();
+      }
     }
 
+    // 初始化渲染
+    renderExpenses();
     renderChecklist();
   </script>
 </body>

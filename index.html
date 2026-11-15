@@ -3,8 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="沖繩跨年遊">
+  <meta name="theme-color" content="#0284c7">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌺</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230284c7%22/><text x=%2250%22 y=%2268%22 font-size=%2265%22 text-anchor=%22middle%22>🌺</text></svg>">
   <title>🌺 2026-2027 沖繩跨年五天四夜之旅 🦁</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
@@ -13,15 +20,22 @@
       background-color: #FFFDF9;
       background-image: radial-gradient(#bae6fd 1px, transparent 1px);
       background-size: 20px 20px;
+      -webkit-tap-highlight-color: transparent;
     }
-    .tab-content { display: none; animation: fadeIn 0.25s ease-in-out; }
+    .tab-content { display: none; animation: springIn 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
     .tab-content.active { display: block; }
-    .day-content { display: none; animation: fadeIn 0.25s ease-in-out; }
+    .day-content { display: none; animation: springIn 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
     .day-content.active { display: block; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes springIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
+    @keyframes waveMove {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(-25px); }
+      100% { transform: translateX(0); }
+    }
+    .wave-anim { animation: waveMove 6s ease-in-out infinite; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .okinawa-card {
@@ -45,10 +59,7 @@
       transition: all 0.15s;
       white-space: nowrap;
     }
-    .map-btn:hover, .map-btn:active {
-      background: #0284c7;
-      color: white;
-    }
+    .map-btn:hover, .map-btn:active { background: #0284c7; color: white; transform: scale(0.96); }
     .book-btn {
       display: inline-flex;
       align-items: center;
@@ -62,7 +73,26 @@
       font-size: 0.72rem;
       font-weight: 700;
       white-space: nowrap;
+      transition: all 0.15s;
     }
+    .book-btn:active { transform: scale(0.96); }
+    .mapcode-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: #fefce8;
+      color: #a16207;
+      border: 1px solid #fde047;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mapcode-btn:hover, .mapcode-btn:active { background: #eab308; color: white; transform: scale(0.96); }
     .spot-intro {
       background: #f8fafc;
       border-left: 3px solid #38bdf8;
@@ -77,8 +107,123 @@
 </head>
 <body class="pb-28 text-slate-800">
 
+  <!-- 頂部輕量提示框 (Toast) -->
+  <div id="toast-msg" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl z-50 hidden transition-all"></div>
+
+  <!-- 圖片全螢幕放大檢視器 (Lightbox) -->
+  <div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex-col items-center justify-center p-4">
+    <div class="relative max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute top-3 right-3 bg-slate-900/60 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <img id="lightbox-img" src="" alt="商品放大圖" class="w-full max-h-[65vh] object-contain bg-slate-100">
+      <div class="p-3.5 text-center">
+        <div id="lightbox-title" class="font-extrabold text-base text-slate-800"></div>
+        <div id="lightbox-sub" class="text-xs text-rose-600 font-bold mt-1"></div>
+        <p class="text-[11px] text-slate-400 mt-1">💡 可直接將此畫面出示給店員詢問商品位置</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 必買商品隨選編輯彈出視窗 (Edit Modal) -->
+  <div id="edit-shop-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-3 border-2 border-sky-100" onclick="event.stopPropagation()">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-extrabold text-base text-sky-900"><i class="fa-solid fa-pen-to-square text-sky-500 mr-1.5"></i>編輯必買商品資訊</h3>
+        <button onclick="closeEditShopModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <input type="hidden" id="edit-shop-id">
+      <div class="space-y-2.5 text-xs">
+        <div>
+          <label class="font-bold text-slate-600 block mb-1">🛍️ 商品名稱</label>
+          <input type="text" id="edit-shop-name" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-bold text-slate-600 block mb-1">💰 實際價格 / 數量備註</label>
+            <input type="text" id="edit-shop-price" placeholder="例如：¥580 (買3盒)" class="w-full p-2.5 rounded-xl border border-rose-200 bg-rose-50/30 font-bold text-rose-700">
+          </div>
+          <div>
+            <label class="font-bold text-slate-600 block mb-1">📍 購買地點 / 誰要的</label>
+            <input type="text" id="edit-shop-where" placeholder="例如：國際通大國藥妝" class="w-full p-2.5 rounded-xl border border-sky-200 bg-sky-50/30 font-bold text-sky-700">
+          </div>
+        </div>
+        <div>
+          <label class="font-bold text-slate-600 block mb-1">🖼️ 圖片網址 (可更換為自己拍的照片網址)</label>
+          <input type="url" id="edit-shop-img" class="w-full p-2.5 rounded-xl border border-slate-200 text-slate-600">
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeEditShopModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">取消</button>
+        <button onclick="saveEditedShopItem()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-extrabold text-xs shadow">💾 儲存修改</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 記帳明細編輯彈出視窗 (Edit Expense Modal) -->
+  <div id="edit-exp-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-3 border-2 border-rose-100" onclick="event.stopPropagation()">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-extrabold text-base text-rose-700"><i class="fa-solid fa-pen-to-square mr-1.5"></i>修改這筆花費明細</h3>
+        <button onclick="closeEditExpModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <input type="hidden" id="edit-exp-id">
+      <div class="space-y-2.5 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-bold text-slate-600 block mb-1">📅 日期 / 天數</label>
+            <select id="edit-exp-day" class="w-full p-2 rounded-xl border border-slate-200 font-bold">
+              <option value="Day 1 (12/31)">Day 1 (12/31)</option>
+              <option value="Day 2 (1/1)">Day 2 (1/1)</option>
+              <option value="Day 3 (1/2)">Day 3 (1/2)</option>
+              <option value="Day 4 (1/3)">Day 4 (1/3)</option>
+              <option value="Day 5 (1/4)">Day 5 (1/4)</option>
+              <option value="行前/其他">行前/其他</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-600 block mb-1">🏷️ 分類</label>
+            <select id="edit-exp-cat" class="w-full p-2 rounded-xl border border-slate-200 font-bold">
+              <option value="🍜 餐飲美食">🍜 餐飲美食</option>
+              <option value="⛽ 加油/停車/交通">⛽ 加油/停車/交通</option>
+              <option value="🎫 門票/體驗">🎫 門票/體驗</option>
+              <option value="🛍️ 購物/伴手禮">🛍️ 購物/伴手禮</option>
+              <option value="🏪 超商/宵夜">🏪 超商/宵夜</option>
+              <option value="✨ 其他公費">✨ 其他公費</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="font-bold text-slate-600 block mb-1">📝 花費項目 / 地點</label>
+          <input type="text" id="edit-exp-title" class="w-full p-2 rounded-xl border border-slate-200 font-bold">
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="font-bold text-slate-600 block mb-1">💱 幣別</label>
+            <select id="edit-exp-currency" class="w-full p-2 rounded-xl border border-slate-200 font-bold">
+              <option value="JPY">¥ 日圓</option>
+              <option value="TWD">NT$ 台幣</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-600 block mb-1">💰 金額</label>
+            <input type="number" id="edit-exp-amount" step="any" class="w-full p-2 rounded-xl border border-slate-200 font-bold">
+          </div>
+          <div>
+            <label class="font-bold text-slate-600 block mb-1">🙋 誰先付</label>
+            <input type="text" id="edit-exp-payer" class="w-full p-2 rounded-xl border border-slate-200 font-bold">
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeEditExpModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">取消</button>
+        <button onclick="saveEditedExpense()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 text-white font-extrabold text-xs shadow">💾 儲存修改</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== 頂部沖繩海島風橫幅 + 精確到秒倒數計時 ==================== -->
-  <header class="relative bg-gradient-to-br from-cyan-500 via-sky-500 to-blue-600 text-white pt-5 pb-10 px-4 shadow-lg overflow-hidden">
+  <header class="relative bg-gradient-to-br from-cyan-500 via-sky-500 to-blue-600 text-white pt-5 pb-11 px-4 shadow-lg overflow-hidden">
     <div class="absolute -right-6 -top-6 text-white/10 text-8xl rotate-12 pointer-events-none">🌺</div>
     <div class="absolute left-2 bottom-2 text-white/10 text-7xl -rotate-12 pointer-events-none">🐋</div>
 
@@ -125,9 +270,12 @@
       </div>
     </div>
 
-    <!-- 海浪 SVG 裝飾 -->
-    <svg class="absolute bottom-0 left-0 w-full h-5 text-[#FFFDF9]" preserveAspectRatio="none" viewBox="0 0 1440 54" fill="currentColor">
-      <path d="M0 22L60 26.7C120 31 240 41 360 41.3C480 41 600 31 720 24.3C840 17 960 13 1080 16.3C1200 20 1320 31 1380 36.7L1440 42V54H1380C1320 54 1200 54 1080 54C960 54 840 54 720 54C600 54 480 54 360 54C240 54 120 54 60 54H0V22Z"></path>
+    <!-- 雙層動態海浪 SVG 裝飾 -->
+    <svg class="absolute bottom-0 left-0 w-[110%] h-6 text-white/25 wave-anim pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1440 54" fill="currentColor">
+      <path d="M0 10L60 18C120 26 240 42 360 40C480 38 600 18 720 15C840 12 960 26 1080 32C1200 38 1320 36 1380 35L1440 34V54H0V10Z"></path>
+    </svg>
+    <svg class="absolute bottom-0 left-0 w-full h-5 text-[#FFFDF9] pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1440 54" fill="currentColor">
+      <path d="M0 22L60 26.7C120 31 240 41 360 41.3C480 41 600 31 720 24.3C840 17 960 13 1080 16.3C1200 20 1320 31 1380 36.7L1440 42V54H0V22Z"></path>
     </svg>
   </header>
 
@@ -142,7 +290,7 @@
             <i class="fa-solid fa-cloud-sun text-amber-500 text-sm"></i> 沖繩即時天氣 (自動更新)
           </div>
           <button onclick="fetchOkinawaWeather()" class="text-[11px] text-sky-600 hover:underline">
-            <i class="fa-solid fa-rotate-right"></i> 重新整理
+            <i class="fa-solid fa-rotate-right"></i> 更新
           </button>
         </div>
 
@@ -189,7 +337,6 @@
           </div>
         </div>
 
-        <!-- 常用面額快速按鈕 -->
         <div class="flex items-center justify-between gap-1 mt-1.5">
           <span class="text-[10px] text-slate-400 font-bold">快選:</span>
           <button onclick="setQuickJpy(500)" class="flex-1 bg-slate-100 hover:bg-sky-100 text-slate-700 text-[11px] font-bold py-1 rounded-lg transition">¥500</button>
@@ -205,20 +352,20 @@
     <section id="tab-itinerary" class="tab-content active space-y-4">
 
       <!-- 天數切換按鈕 -->
-      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 sticky top-2 z-20 bg-[#FFFDF9]/95 backdrop-blur-sm rounded-2xl p-1 shadow-sm border border-sky-100">
-        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md">
+      <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-1 sticky top-2 z-20 bg-[#FFFDF9]/95 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-sky-100">
+        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-1 min-w-[62px] py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md">
           Day 1 <span class="block text-[10px] font-normal opacity-90">12/31 那霸</span>
         </button>
-        <button onclick="switchDay(2)" id="day-btn-2" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+        <button onclick="switchDay(2)" id="day-btn-2" class="day-btn flex-1 min-w-[62px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
           Day 2 <span class="block text-[10px] font-normal opacity-75">1/1 北部</span>
         </button>
-        <button onclick="switchDay(3)" id="day-btn-3" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+        <button onclick="switchDay(3)" id="day-btn-3" class="day-btn flex-1 min-w-[62px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
           Day 3 <span class="block text-[10px] font-normal opacity-75">1/2 美國村</span>
         </button>
-        <button onclick="switchDay(4)" id="day-btn-4" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+        <button onclick="switchDay(4)" id="day-btn-4" class="day-btn flex-1 min-w-[62px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
           Day 4 <span class="block text-[10px] font-normal opacity-75">1/3 南部/那霸</span>
         </button>
-        <button onclick="switchDay(5)" id="day-btn-5" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
+        <button onclick="switchDay(5)" id="day-btn-5" class="day-btn flex-1 min-w-[62px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100">
           Day 5 <span class="block text-[10px] font-normal opacity-75">1/4 瀨長島</span>
         </button>
       </div>
@@ -271,8 +418,9 @@
                 <div class="font-bold text-slate-800">🏨 那霸市區飯店 Check-in（車程 10 分鐘）</div>
                 <p class="text-xs text-slate-600 mt-0.5"><b>Hotel Lantana Naha Kokusai-Dori</b>（國際通蘭塔納飯店）</p>
                 <p class="text-[11px] text-slate-400">入住 15:00~23:30 / 退房 11:00 前｜就在國際通正中央，下樓即逛街！</p>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Lantana+Naha+Kokusai-Dori" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至飯店</a>
+                  <button onclick="copyMapCode('33 157 412*55', '蘭塔納飯店 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 157 412*55</button>
                 </div>
               </div>
             </div>
@@ -304,8 +452,9 @@
                 <div class="spot-intro">
                   💡 <b>景點介紹｜波上宮（琉球八社之首）：</b>矗立在珊瑚礁斷崖上的絕美朱紅神社，是沖繩守護航海平安與開運的最高聖地。12/31 跨年夜到元旦凌晨會有熱鬧的日本祭典屋台小吃攤（炒麵、章魚燒、甘酒），午夜 00:00 準時敲響新年鐘聲，必買超可愛的「紅型書包御守」！
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=波上宮+那霸" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 波上宮導航</a>
+                  <button onclick="copyMapCode('33 185 023*00', '波上宮 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 185 023*00</button>
                 </div>
               </div>
             </div>
@@ -335,8 +484,9 @@
                 <div class="spot-intro">
                   💡 <b>景點介紹｜A&W 牧港店：</b>日本唯一的 A&W 連鎖美式漢堡就在沖繩！牧港店擁有復古美式汽車餐廳霓虹招牌與大片草皮，非常適合跟小橘熊吉祥物拍照，必點 Mozza Burger、捲捲薯條與經典麥根沙士（Root Beer）。
                 </div>
-                <div class="mt-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=A%26W+Makiminato" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> A&W 牧港店導航 (06:00-02:00)</a>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=A%26W+Makiminato" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> A&W 牧港店 (06:00-02:00)</a>
+                  <button onclick="copyMapCode('33 341 502*52', 'A&W 牧港店 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 341 502*52</button>
                 </div>
               </div>
             </div>
@@ -350,8 +500,9 @@
                 <div class="spot-intro">
                   💡 <b>景點介紹｜古宇利島（戀之島）：</b>全長 1,960 公尺的跨海大橋，開車筆直衝向翡翠綠漸層大海的視覺震撼堪稱沖繩第一！過橋後右側就是古宇利海灘，沙質細白清澈，可下水踏浪拍大橋全景。
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=古宇利大橋" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 古宇利大橋導航</a>
+                  <button onclick="copyMapCode('485 692 084*77', '古宇利海灘 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 485 692 084*77</button>
                 </div>
               </div>
             </div>
@@ -365,8 +516,9 @@
                 <div class="spot-intro">
                   💡 <b>美食介紹｜Kouri Shrimp 蝦蝦飯：</b>從夏威夷餐車紅到蓋起海景大樓的超人氣名店！大尾彈牙蝦仁裹滿濃郁奶油大蒜醬，可上頂樓露台邊看古宇利大橋邊享用。離開前順路買杯 The Sinmay 手沖咖啡。
                 </div>
-                <div class="mt-2 flex flex-wrap gap-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=Kouri+Shrimp+古宇利蝦蝦飯" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 古宇利蝦蝦飯 (11:00-16:00)</a>
+                  <button onclick="copyMapCode('485 692 168*28', '古宇利蝦蝦飯 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 485 692 168*28</button>
                   <a href="https://www.google.com/maps/search/?api=1&query=The+Sinmay+Okinawa+Coffee" target="_blank" class="map-btn">☕ The Sinmay 咖啡 (10:00-16:30)</a>
                 </div>
               </div>
@@ -386,8 +538,9 @@
                   <div>🔺 <b>鯨鯊垂直餵食秀：</b>15:00 / 17:00（位置：2樓 黑潮之海大水槽）</div>
                   <div>🔺 <b>Okichan 海豚劇場秀：</b>13:00 / 15:00 / 17:00（位置：戶外海豚劇場，完全免費）</div>
                 </div>
-                <div class="mt-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩美麗海水族館+P7停車場" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 美麗海水族館 P7 停車場導航</a>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <a href="https://www.google.com/maps/search/?api=1&query=沖繩美麗海水族館+P7停車場" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 美麗海水族館 P7 導航</a>
+                  <button onclick="copyMapCode('553 075 797*77', '美麗海水族館 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 553 075 797*77</button>
                 </div>
               </div>
             </div>
@@ -400,8 +553,9 @@
                 <div class="font-bold text-slate-800">🏨 名護飯店 Check-in（連住兩晚）</div>
                 <p class="text-xs text-slate-600 mt-0.5"><b>New Normal Hotel in NAGO</b>（沖繩, 名護, Miyazato 949）</p>
                 <p class="text-[11px] text-slate-400">入住 15:00~00:00 / 退房 10:00 前｜公寓式寬敞房型，周邊超市賣場超齊全</p>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=New+Normal+Hotel+in+NAGO" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至名護飯店</a>
+                  <button onclick="copyMapCode('206 626 588*66', '名護飯店 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 206 626 588*66</button>
                 </div>
               </div>
             </div>
@@ -433,7 +587,7 @@
         </div>
       </div>
 
-      <!-- ===== DAY 3 (已新增返回名護飯店 + 名護晚餐選擇與賣場夜間採買) ===== -->
+      <!-- ===== DAY 3 ===== -->
       <div id="day-3" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
           <div class="relative h-44 bg-slate-200">
@@ -460,6 +614,7 @@
                   <a href="https://www.google.com/maps/search/?api=1&query=パン屋+Kaito+名護" target="_blank" class="map-btn">🥖 Kaito 麵包</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=Starbucks+Nago" target="_blank" class="map-btn">☕ 星巴克名護店</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=部瀨名海中公園" target="_blank" class="map-btn">🐠 部瀨名海中公園 (09:00-17:30)</a>
+                  <button onclick="copyMapCode('206 442 075*11', '部瀨名海中公園 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 206 442 075*11</button>
                 </div>
               </div>
             </div>
@@ -475,6 +630,7 @@
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=百年古家+大家" target="_blank" class="map-btn">🍲 百年古家 大家 (11:00-15:30)</a>
+                  <button onclick="copyMapCode('206 745 056*82', '百年古家大家 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 206 745 056*82</button>
                   <a href="https://www.google.com/maps/search/?api=1&query=しまドーナッツ+名護" target="_blank" class="map-btn">🍩 島甜甜圈 (11:00-15:00)</a>
                 </div>
               </div>
@@ -489,8 +645,9 @@
                 <div class="spot-intro">
                   💡 <b>景點介紹｜萬座毛：</b>琉球國王曾讚嘆「能供萬人齊坐的原野」！20 公尺高的珊瑚礁斷崖長年受海浪侵蝕，形成神似「大象鼻子」的奇岩，搭配平坦無際的翠綠草地與深藍海浪，繞行步道一圈約 20 分鐘非常好拍。
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=萬座毛" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 萬座毛導航</a>
+                  <button onclick="copyMapCode('206 312 039*17', '萬座毛 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 206 312 039*17</button>
                 </div>
               </div>
             </div>
@@ -510,6 +667,7 @@
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=American+Village+Okinawa" target="_blank" class="map-btn">🎡 美國村導航</a>
+                  <button onclick="copyMapCode('33 526 360*03', '美國村 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 526 360*03</button>
                   <a href="https://www.google.com/maps/search/?api=1&query=Taco+Rice+Cafe+Kijimuna+Depot+Island" target="_blank" class="map-btn">🌮 Kijimuna 塔可飯</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=グルメ回転寿司市場+美浜店" target="_blank" class="map-btn">🍣 迴轉壽司市場</a>
                 </div>
@@ -533,7 +691,7 @@
               </div>
             </div>
 
-            <!-- 新增：返回名護飯店 + 名護晚餐/宵夜與賣場採買 -->
+            <!-- 返回名護飯店 + 名護晚餐/宵夜與賣場採買 -->
             <div class="flex gap-3 items-start pt-2 border-t border-slate-100">
               <div class="w-16 flex-shrink-0 text-center">
                 <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2 py-1 rounded-lg">返回名護</span>
@@ -575,7 +733,7 @@
         </div>
       </div>
 
-      <!-- ===== DAY 4 (退房出門後先去那霸飯店寄放行李，再接續玉泉洞行程) ===== -->
+      <!-- ===== DAY 4 ===== -->
       <div id="day-4" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
           <div class="relative h-44 bg-slate-200">
@@ -596,8 +754,9 @@
                 <div class="font-bold text-slate-800">🏨 退房出門 ➔ 那霸飯店 Check-in 寄放行李</div>
                 <p class="text-xs text-slate-500 mt-0.5">早餐吃 Kaito 麵包 / 星巴克 / 便利商店。退房後先南下至那霸市區飯店 <b>Hotel Cocktail Stay Naha</b> 寄放行李，車廂空間清空後輕鬆出遊！</p>
                 <p class="text-[11px] text-slate-400 mt-0.5">地址：沖繩, 那霸, Matsuyama 1-29-7（入住 15:00~23:00 / 退房 11:00 前）</p>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Cocktail+Stay+Naha" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 導航至那霸飯店 (Hotel Cocktail Stay)</a>
+                  <button onclick="copyMapCode('33 156 588*14', 'Cocktail Stay MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 156 588*14</button>
                 </div>
               </div>
             </div>
@@ -611,8 +770,9 @@
                 <div class="spot-intro">
                   💡 <b>景點介紹｜玉泉洞（Okinawa World）：</b>歷經 30 萬年歲月形成的日本第二大鐘乳石洞！全長 5 公里（開放 890 公尺），洞內有超過 100 萬株石筍與打上藍光的「青泉」地下河，長年恆溫 21°C。出洞後還可逛琉球王國城下町與欣賞魄力十足的 EISA 太鼓舞表演！
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=沖繩世界+玉泉洞" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 玉泉洞導航 (09:00-16:00)</a>
+                  <button onclick="copyMapCode('232 495 330*28', '玉泉洞 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 232 495 330*28</button>
                 </div>
               </div>
             </div>
@@ -630,6 +790,7 @@
                   <a href="https://www.google.com/maps/search/?api=1&query=大城天婦羅店+奧武島" target="_blank" class="map-btn">🍤 大城天婦羅 (10:30-17:45)</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=中本鮮魚天婦羅店" target="_blank" class="map-btn">🦑 中本天婦羅 (10:30-18:00)</a>
                   <a href="https://www.google.com/maps/search/?api=1&query=奥武島海産物食堂" target="_blank" class="map-btn">🐟 奥武島海產物食堂</a>
+                  <button onclick="copyMapCode('232 468 240*25', '奧武島 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 232 468 240*25</button>
                 </div>
               </div>
             </div>
@@ -648,8 +809,9 @@
                   <div><span class="font-bold text-emerald-600">2F：</span><b>GU</b>、PEACH JOHN、PLAZA、niko and…、CK (Green)｜ZARA、H&M、COACH、北臉、POLO (Blue)｜🍴 <b>鳥玉丼飯 (Toritama)</b></div>
                   <div><span class="font-bold text-sky-600">3F：</span><b>UNIQLO、無印良品、DAISO 大創</b> (Orange)｜任天堂區、西村裕二、POP MART (Green)｜🍴 <b>迴轉壽司 Yazaemon、炸豬排 Katsuno-ya</b></div>
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=SAN-A+Urasoe+West+Coast+PARCO+CITY" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> PARCO CITY 導航</a>
+                  <button onclick="copyMapCode('33 308 838*82', 'PARCO CITY MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 308 838*82</button>
                 </div>
               </div>
             </div>
@@ -671,7 +833,7 @@
         </div>
       </div>
 
-      <!-- ===== DAY 5 (早餐後新增波上宮，17:00 還車導航改為沖繩行腳租車) ===== -->
+      <!-- ===== DAY 5 ===== -->
       <div id="day-5" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
           <div class="relative h-44 bg-slate-200">
@@ -702,7 +864,6 @@
               </div>
             </div>
 
-            <!-- 新增：波上宮日間參拜與拍照 -->
             <div class="flex gap-3 items-start">
               <div class="w-16 flex-shrink-0 text-center">
                 <span class="inline-block bg-purple-100 text-purple-800 text-xs font-extrabold px-2 py-1 rounded-lg">上午</span>
@@ -712,8 +873,9 @@
                 <div class="spot-intro">
                   💡 <b>景點介紹｜白天的波上宮與斷崖海景：</b>不同於跨年夜的祭典熱鬧氛圍，白天來到波上宮可以清楚拍下朱紅神殿聳立在珊瑚礁斷崖上的壯麗景色，還能走到旁邊的「波之上海灘」踏踏清澈海水、挑選精緻御守！
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=波上宮+那霸" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 波上宮導航</a>
+                  <button onclick="copyMapCode('33 185 023*00', '波上宮 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 185 023*00</button>
                 </div>
               </div>
             </div>
@@ -729,6 +891,7 @@
                 </div>
                 <div class="mt-2 flex flex-wrap gap-1.5">
                   <a href="https://www.google.com/maps/search/?api=1&query=瀨長島+Umikaji+Terrace" target="_blank" class="map-btn"><i class="fa-solid fa-location-dot"></i> 瀨長島導航</a>
+                  <button onclick="copyMapCode('33 002 602*06', '瀨長島 MapCode')" class="mapcode-btn"><i class="fa-solid fa-car-side"></i> MapCode: 33 002 602*06</button>
                   <a href="https://www.google.com/maps/search/?api=1&query=幸せのパンケーキ+ウミカジテラス沖縄店" target="_blank" class="map-btn">🥞 幸福鬆餅 (11:00-21:00)</a>
                 </div>
               </div>
@@ -760,248 +923,38 @@
         </div>
       </div>
 
-      <!-- ===== 🏮 那霸・國際通吃喝逛街導航總整理 (僅在 Day 1、Day 4、Day 5 顯示！) ===== -->
+      <!-- ===== 🏮 那霸・國際通吃喝逛街導航總整理 (僅在 Day 1、Day 4、Day 5 顯示！含即時營業狀態) ===== -->
       <div id="naha-guide-box" class="okinawa-card p-4 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-sky-100 pb-2.5">
           <div>
             <h3 class="font-extrabold text-base text-sky-900">🏮 那霸・國際通吃喝逛街導航總整理</h3>
-            <p class="text-[11px] text-slate-500">專為 Day 1、Day 4、Day 5 那霸市區行程整理，點擊按鈕直接導航或預約！</p>
+            <p class="text-[11px] text-slate-500">專為 Day 1、Day 4、Day 5 那霸市區整理，自動顯示當下日本時間營業狀態！</p>
           </div>
           <span class="text-[10px] bg-rose-100 text-rose-700 font-extrabold px-2.5 py-1 rounded-full">Day 1 / 4 / 5 專用</span>
         </div>
 
-        <!-- 🍴 美食整齊網格 -->
+        <!-- 🍴 美食整齊網格 (由 JS 渲染並標示即時營業狀態) -->
         <div>
           <div class="font-extrabold text-xs text-orange-800 bg-orange-100/80 px-3 py-1.5 rounded-xl mb-2.5 flex items-center justify-between">
-            <span>🍜 吃吃喝喝口袋名單（16 間精選）</span>
-            <span class="text-[10px] font-normal">附營業時間 & 訂位</span>
+            <span>🍜 吃吃喝喝口袋名單（14 間精選）</span>
+            <span id="okinawa-time-badge" class="text-[10px] font-bold text-orange-700">沖繩時間載入中</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-orange-600 font-bold">拉麵</span>
-                <div class="font-bold text-slate-800">暖暮拉麵 那霸牧志店</div>
-                <div class="text-[11px] text-slate-400">🕒 09:00–02:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=暖暮拉麵+那霸牧志店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-orange-600 font-bold">拉麵</span>
-                <div class="font-bold text-slate-800">琉家拉麵 國際通本店</div>
-                <div class="text-[11px] text-slate-400">🕒 11:30–00:00 (週三四休)</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=琉家拉麵+國際通本店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-orange-600 font-bold">沖繩麵</span>
-                <div class="font-bold text-slate-800">沖繩麵 EIBUN</div>
-                <div class="text-[11px] text-slate-400">🕒 11:00–20:00</div>
-              </div>
-              <div class="flex flex-col gap-1">
-                <a href="https://www.google.com/maps/search/?api=1&query=Okinawa+Soba+EIBUN" target="_blank" class="map-btn">📍 導航</a>
-                <a href="https://www.tablecheck.com/shops/soba-eibun/reserve" target="_blank" class="book-btn">📅 預約</a>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-rose-600 font-bold">壽喜燒/涮涮鍋</span>
-                <div class="font-bold text-slate-800">酒喜膳 一喜喜</div>
-                <div class="text-[11px] text-slate-400">🕒 17:30–22:00 (週日休)</div>
-              </div>
-              <div class="flex flex-col gap-1">
-                <a href="https://www.google.com/maps/search/?api=1&query=酒喜膳+一喜喜" target="_blank" class="map-btn">📍 導航</a>
-                <a href="https://kazuki-okinawa.com/" target="_blank" class="book-btn">📅 官網</a>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-rose-600 font-bold">涮涮鍋</span>
-                <div class="font-bold text-slate-800">Shima Shabu NAKAMA</div>
-                <div class="text-[11px] text-slate-400">🕒 11:30-15:00 / 17:00-22:30</div>
-              </div>
-              <div class="flex flex-col gap-1">
-                <a href="https://www.google.com/maps/search/?api=1&query=Shima+Shabu-Shabu+NAKAMA" target="_blank" class="map-btn">📍 導航</a>
-                <a href="https://yoyaku.toreta.in/shabushabu-nakama/#/" target="_blank" class="book-btn">📅 訂位</a>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-purple-600 font-bold">居酒屋/串燒</span>
-                <div class="font-bold text-slate-800">Uguisu 串燒</div>
-                <div class="text-[11px] text-slate-400">🕒 17:00–00:00</div>
-              </div>
-              <div class="flex flex-col gap-1">
-                <a href="https://www.google.com/maps/search/?api=1&query=Uguisu+那霸" target="_blank" class="map-btn">📍 導航</a>
-                <a href="https://tabelog.com/tw/okinawa/A4701/A470101/47029335/" target="_blank" class="book-btn">🍽️ 食評</a>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-purple-600 font-bold">黑糖牛奶/酒吧</span>
-                <div class="font-bold text-slate-800">TACHINOMIYA BAR</div>
-                <div class="text-[11px] text-slate-400">🕒 10:00–02:00 (國際通店)</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=TACHINOMIYA+BAR+國際通" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-purple-600 font-bold">居酒屋</span>
-                <div class="font-bold text-slate-800">新時代 那覇久茂地店</div>
-                <div class="text-[11px] text-slate-400">🕒 16:00–02:00 (傳串炸雞皮)</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=新時代+沖縄+那覇久茂地店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-purple-600 font-bold">屋台村/鮭魚卵</span>
-                <div class="font-bold text-slate-800">屋台村 じゅんちゃん</div>
-                <div class="text-[11px] text-slate-400">🕒 12:00–00:00 (Chokotto壽司)</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Chokotto+Sushi+Kokusai-dori+Yataimura" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-amber-600 font-bold">炸豬排</span>
-                <div class="font-bold text-slate-800">とんかつ小やじ 那覇店</div>
-                <div class="text-[11px] text-slate-400">🕒 11:00–17:00 (週三休)</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=とんかつ小やじ+那覇店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-emerald-600 font-bold">沖繩飯糰</span>
-                <div class="font-bold text-slate-800">Pork Tamago 牧志市場店</div>
-                <div class="text-[11px] text-slate-400">🕒 07:00–20:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Pork+Tamago+Onigiri+Makishi+Market" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-emerald-600 font-bold">玉子燒飯糰</span>
-                <div class="font-bold text-slate-800">福助の玉子焼き (市場/久茂地)</div>
-                <div class="text-[11px] text-slate-400">🕒 07:00–20:00 (久茂地至19:30)</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=福助の玉子焼き+市場本通り店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-sky-600 font-bold">冰淇淋/速食</span>
-                <div class="font-bold text-slate-800">Blue Seal 國際通 / JEF漢堡</div>
-                <div class="text-[11px] text-slate-400">🕒 10:00–23:00 / 09:00–20:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Blue+Seal+國際通店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-sky-600 font-bold">麵包/市場</span>
-                <div class="font-bold text-slate-800">hoppepan / 牧志公設市場</div>
-                <div class="text-[11px] text-slate-400">🕒 10:00-19:00 / 08:00-22:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=那霸市第一牧志公設市場" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-          </div>
+          <div id="naha-food-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
         </div>
 
         <!-- 🛍️ 逛街伴手禮藥妝整齊網格 -->
         <div>
           <div class="font-extrabold text-xs text-emerald-800 bg-emerald-100/80 px-3 py-1.5 rounded-xl mb-2.5 flex items-center justify-between">
-            <span>🛍️ 藥妝・伴手禮・唐吉訶德・超市（13 間精選）</span>
+            <span>🛍️ 藥妝・伴手禮・唐吉訶德・超市</span>
             <span class="text-[10px] font-normal">點擊直接開啟 Google Maps</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-amber-600 font-bold">唐吉訶德 (免手續費)</span>
-                <div class="font-bold text-slate-800">Don Quijote 國際通店</div>
-                <div class="text-[11px] text-slate-400">🕒 09:00–05:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Don+Quijote+Kokusai-dori" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-amber-600 font-bold">唐吉訶德</span>
-                <div class="font-bold text-slate-800">唐吉訶德 國際通久茂地店</div>
-                <div class="text-[11px] text-slate-400">🕒 08:00–01:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=ドン・キホーテ国際通りくもじ店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-rose-600 font-bold">藥妝 (全額退稅)</span>
-                <div class="font-bold text-slate-800">大國藥妝 國際通縣廳前店</div>
-                <div class="text-[11px] text-slate-400">🕒 10:05–22:50</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Daikoku+Drug+Kokusai+Dori+Kenchomae" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-rose-600 font-bold">藥妝 (全額退稅)</span>
-                <div class="font-bold text-slate-800">松本清 安里國際通 / 札幌藥妝</div>
-                <div class="text-[11px] text-slate-400">🕒 10:00–22:00 / 11:00–22:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Matsumoto+Kiyoshi+Asato+Kokusai+Street" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-emerald-600 font-bold">伴手禮</span>
-                <div class="font-bold text-slate-800">御菓子御殿 (松尾店/牧志店)</div>
-                <div class="text-[11px] text-slate-400">🕒 09:00–22:00 (牧志至21:00)</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=御菓子御殿+國際通松尾店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-emerald-600 font-bold">伴手禮</span>
-                <div class="font-bold text-slate-800">塩屋 松尾店 / Calbee+</div>
-                <div class="text-[11px] text-slate-400">🕒 10:00–21:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=塩屋+松尾店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-emerald-600 font-bold">伴手禮/紀念品</span>
-                <div class="font-bold text-slate-800">福木屋 / Orion 官方商店</div>
-                <div class="text-[11px] text-slate-400">🕒 10:00–20:00</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Orion+Official+Store+Naha" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-
-            <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
-              <div>
-                <span class="text-[10px] text-sky-600 font-bold">24H超市 / 紀念品</span>
-                <div class="font-bold text-slate-800">MaxValu 牧志店 / Splash</div>
-                <div class="text-[11px] text-slate-400">🕒 24小時營業 / 10:00–21:30</div>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=MaxValu+牧志店" target="_blank" class="map-btn">📍 導航</a>
-            </div>
-          </div>
+          <div id="naha-shop-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
         </div>
       </div>
 
     </section>
 
-    <!-- ==================== TAB 2: 航班・住宿・租車 ==================== -->
+    <!-- ==================== TAB 2: 航班・住宿・租車・手指日語 ==================== -->
     <section id="tab-info" class="tab-content space-y-4">
       <!-- 航班資訊 -->
       <div class="okinawa-card p-4">
@@ -1121,9 +1074,42 @@
           </div>
         </div>
       </div>
+
+      <!-- 🗣️ 實用手指日語字卡 & 緊急聯絡資訊 -->
+      <div class="okinawa-card p-4 space-y-3">
+        <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
+          <i class="fa-solid fa-comments text-rose-500"></i> 自駕＆購物實用手指日語卡
+        </h2>
+        <p class="text-xs text-slate-500">直接拿手機畫面指給日本店員看即可溝通！</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <div class="p-3 rounded-xl bg-rose-50/70 border border-rose-200">
+            <div class="text-[11px] font-bold text-rose-700">⛽ 還車加油時（加滿普通汽油＋收據）</div>
+            <div class="font-black text-sm text-slate-900 mt-1">レギュラー満タンでお願いします。レシートをください。</div>
+          </div>
+          <div class="p-3 rounded-xl bg-sky-50/70 border border-sky-200">
+            <div class="text-[11px] font-bold text-sky-700">🏨 飯店提早寄放行李（Day 4 用）</div>
+            <div class="font-black text-sm text-slate-900 mt-1">チェックイン前ですが、荷物を預かってもらえますか？</div>
+          </div>
+          <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200">
+            <div class="text-[11px] font-bold text-emerald-700">🛍️ 詢問免稅櫃檯位置</div>
+            <div class="font-black text-sm text-slate-900 mt-1">免税（めんぜい）カウンターはどこですか？</div>
+          </div>
+          <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200">
+            <div class="text-[11px] font-bold text-amber-800">🔍 拿圖片問店員有沒有貨</div>
+            <div class="font-black text-sm text-slate-900 mt-1">すみません、この商品はありますか？</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-100 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <div class="font-extrabold text-slate-800"><i class="fa-solid fa-phone-volume text-rose-600 mr-1"></i> 旅途緊急聯絡電話 & App 安裝提示</div>
+          <div>• <b>日本報警：</b>110 ｜ <b>救護車/火警：</b>119（若有擦撞必須報警取得事故證明才能理賠高級全險）</div>
+          <div>• <b>駐那霸辦事處急難救助：</b>+81-90-1942-1107（境內直撥 090-1942-1107）</div>
+          <div class="text-sky-700 font-bold pt-1">📲 <b>變成手機 App 秘訣：</b>iPhone 請用 Safari 點底部「分享 ➔ 加入主畫面」；Android 請用 Chrome 點右上角「⋮ ➔ 加到主畫面」，桌面就會有專屬圖示囉！</div>
+        </div>
+      </div>
     </section>
 
-    <!-- ==================== TAB 3: 費用明細 & 互動記帳本 (已移除租車費用欄位) ==================== -->
+    <!-- ==================== TAB 3: 費用明細 & 互動記帳本 (含代墊結算) ==================== -->
     <section id="tab-cost" class="tab-content space-y-4">
 
       <!-- 固定行前分攤費用 (已移除租車欄位) -->
@@ -1162,14 +1148,14 @@
       <div class="okinawa-card p-4">
         <div class="flex justify-between items-center mb-2">
           <h2 class="font-extrabold text-lg text-rose-600 flex items-center gap-2">
-            <i class="fa-solid fa-calculator"></i> 旅途現場記帳本（可隨時新增）
+            <i class="fa-solid fa-calculator"></i> 旅途現場記帳本（可隨時新增/修改）
           </h2>
           <div class="flex items-center gap-1 text-xs bg-slate-100 px-2.5 py-1 rounded-lg">
             <span>匯率:</span>
             <input type="number" id="exchange-rate" value="0.215" step="0.001" oninput="syncRate(this.value)" class="w-14 bg-white border rounded px-1 text-center font-bold text-sky-700">
           </div>
         </div>
-        <p class="text-xs text-slate-500 mb-3">在這裡紀錄公費、油資、過路費、聚餐或個人戰利品！資料會自動保存在手機裡。</p>
+        <p class="text-xs text-slate-500 mb-3">紀錄公費、油資、聚餐或個人墊款！點擊明細旁的「✏️」可隨時修改金額。</p>
 
         <!-- 新增表單 -->
         <form onsubmit="addExpense(event)" class="bg-rose-50/60 border border-rose-200 rounded-2xl p-3.5 space-y-3 text-sm">
@@ -1217,7 +1203,13 @@
             </div>
             <div>
               <label class="text-xs font-bold text-slate-600 block mb-1">🙋 誰先付/墊錢</label>
-              <input type="text" id="exp-payer" placeholder="例如：瑞、茹、公費" value="公費" class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs">
+              <input type="text" id="exp-payer" list="payer-presets" placeholder="公費、瑞、茹..." value="公費" class="w-full p-2 rounded-xl border border-slate-200 bg-white text-xs font-bold">
+              <datalist id="payer-presets">
+                <option value="公費">
+                <option value="瑞">
+                <option value="茹">
+                <option value="徐">
+              </datalist>
             </div>
           </div>
 
@@ -1242,6 +1234,15 @@
           </div>
         </div>
 
+        <!-- 🧮 代墊款與各別付款統計看板 -->
+        <div id="payer-summary-box" class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-3 my-3 hidden">
+          <div class="text-xs font-extrabold text-indigo-900 mb-1.5 flex items-center justify-between">
+            <span>💳 各付款人代墊金額統計 (折合台幣)</span>
+            <span class="text-[10px] font-normal text-indigo-600">自動結算</span>
+          </div>
+          <div id="payer-summary-list" class="flex flex-wrap gap-1.5 text-xs"></div>
+        </div>
+
         <!-- 明細列表 -->
         <div id="expense-list" class="space-y-2 mt-3"></div>
 
@@ -1255,13 +1256,16 @@
       </div>
     </section>
 
-    <!-- ==================== TAB 4: 必買購物 (含圖片 + 自訂新增商品) & 退稅攻略 ==================== -->
+    <!-- ==================== TAB 4: 必買購物 (隨時編輯價格/放大圖片/篩選) & 退稅攻略 ==================== -->
     <section id="tab-shopping" class="tab-content space-y-4">
       <div class="okinawa-card p-4">
         <div class="flex justify-between items-center mb-2">
-          <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
-            <i class="fa-solid fa-bag-shopping text-rose-500"></i> 沖繩必買清單（圖文卡片點選）
-          </h2>
+          <div>
+            <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
+              <i class="fa-solid fa-bag-shopping text-rose-500"></i> 沖繩必買清單
+            </h2>
+            <p class="text-[11px] text-slate-500">點小圖可放大問店員，點右側「✏️」可隨時修改現場價格！</p>
+          </div>
           <button onclick="resetChecklist()" class="text-xs text-slate-400 underline">重置勾選</button>
         </div>
 
@@ -1276,45 +1280,55 @@
           </div>
         </div>
 
+        <!-- 智慧篩選按鈕列 -->
+        <div class="flex gap-1.5 mb-3">
+          <button onclick="setShopFilter('all')" id="filter-btn-all" class="flex-1 py-1.5 rounded-xl font-extrabold text-xs bg-sky-600 text-white shadow-sm">全部商品</button>
+          <button onclick="setShopFilter('unbought')" id="filter-btn-unbought" class="flex-1 py-1.5 rounded-xl font-bold text-xs bg-slate-100 text-slate-600">🔍 只看還沒買</button>
+          <button onclick="setShopFilter('bought')" id="filter-btn-bought" class="flex-1 py-1.5 rounded-xl font-bold text-xs bg-slate-100 text-slate-600">✅ 只看已買完</button>
+        </div>
+
         <!-- ➕ 使用者自行新增想要買的商品表單 -->
-        <form onsubmit="addCustomShoppingItem(event)" class="bg-amber-50/70 border border-amber-200 rounded-2xl p-3.5 mb-5 space-y-2.5 text-xs">
-          <div class="font-extrabold text-amber-900 text-sm flex items-center gap-1.5">
-            <i class="fa-solid fa-circle-plus text-amber-600"></i> 新增我想買的商品
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div>
-              <label class="font-bold text-slate-600 block mb-1">🛍️ 商品名稱 *</label>
-              <input type="text" id="shop-name" required placeholder="例如：紅芋塔、沖繩限定泡盛、眼藥水..." class="w-full p-2 rounded-xl border border-slate-200 bg-white">
+        <details class="bg-amber-50/70 border border-amber-200 rounded-2xl p-3 mb-4 text-xs group">
+          <summary class="font-extrabold text-amber-900 text-sm flex items-center justify-between cursor-pointer list-none">
+            <span><i class="fa-solid fa-circle-plus text-amber-600 mr-1.5"></i>新增我想買的商品（點此展開）</span>
+            <i class="fa-solid fa-chevron-down text-amber-600 group-open:rotate-180 transition-transform"></i>
+          </summary>
+          <form onsubmit="addCustomShoppingItem(event)" class="mt-3 space-y-2.5 pt-2 border-t border-amber-200/60">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="font-bold text-slate-600 block mb-1">🛍️ 商品名稱 *</label>
+                <input type="text" id="shop-name" required placeholder="例如：紅芋塔、沖繩限定泡盛..." class="w-full p-2 rounded-xl border border-slate-200 bg-white">
+              </div>
+              <div>
+                <label class="font-bold text-slate-600 block mb-1">📂 放入哪個分類</label>
+                <select id="shop-cat" class="w-full p-2 rounded-xl border border-slate-200 bg-white font-bold">
+                  <option value="✨ 我自己新增的必買清單">✨ 我自己新增的必買清單</option>
+                  <option value="🍪 伴手禮・零食（唐吉訶德 / 機場）">🍪 伴手禮・零食</option>
+                  <option value="🏪 超商必吃甜點飲品（Lawson / 全家 / 7-11）">🏪 超商必吃甜點飲品</option>
+                  <option value="🛒 3COINS 必買好物（PARCO CITY 1F GREEN ZONE）">🛒 3COINS 必買好物</option>
+                  <option value="💄 藥妝・服飾・雜貨（GU / UNIQLO / 大創）">💄 藥妝・服飾・雜貨</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label class="font-bold text-slate-600 block mb-1">📂 放入哪個分類</label>
-              <select id="shop-cat" class="w-full p-2 rounded-xl border border-slate-200 bg-white font-bold">
-                <option value="✨ 我自己新增的必買清單">✨ 我自己新增的必買清單</option>
-                <option value="🍪 伴手禮・零食（唐吉訶德 / 機場）">🍪 伴手禮・零食</option>
-                <option value="🏪 超商必吃甜點飲品（Lawson / 全家 / 7-11）">🏪 超商必吃甜點飲品</option>
-                <option value="🛒 3COINS 必買好物（PARCO CITY 1F GREEN ZONE）">🛒 3COINS 必買好物</option>
-                <option value="💄 藥妝・服飾・雜貨（GU / UNIQLO / 大創）">💄 藥妝・服飾・雜貨</option>
-              </select>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div>
+                <label class="font-bold text-slate-600 block mb-1">💰 參考價格 / 備註</label>
+                <input type="text" id="shop-price" placeholder="例如：¥1,000 或 買3盒" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
+              </div>
+              <div>
+                <label class="font-bold text-slate-600 block mb-1">📍 哪裡買</label>
+                <input type="text" id="shop-where" placeholder="例如：國際通、大國藥妝" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
+              </div>
+              <div class="col-span-2 sm:col-span-1">
+                <label class="font-bold text-slate-600 block mb-1">🖼️ 圖片網址 (選填)</label>
+                <input type="url" id="shop-img" placeholder="https://...(不填自動配圖)" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
+              </div>
             </div>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <div>
-              <label class="font-bold text-slate-600 block mb-1">💰 參考價格 / 備註</label>
-              <input type="text" id="shop-price" placeholder="例如：¥1,000 或 買3盒" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
-            </div>
-            <div>
-              <label class="font-bold text-slate-600 block mb-1">📍 哪裡買</label>
-              <input type="text" id="shop-where" placeholder="例如：國際通、大國藥妝" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
-            </div>
-            <div class="col-span-2 sm:col-span-1">
-              <label class="font-bold text-slate-600 block mb-1">🖼️ 圖片網址 (選填)</label>
-              <input type="url" id="shop-img" placeholder="https://...(不填自動配圖)" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
-            </div>
-          </div>
-          <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold py-2 rounded-xl shadow-sm hover:opacity-95 transition">
-            <i class="fa-solid fa-plus mr-1"></i> 加入必買清單
-          </button>
-        </form>
+            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold py-2 rounded-xl shadow-sm hover:opacity-95 transition">
+              <i class="fa-solid fa-plus mr-1"></i> 加入必買清單
+            </button>
+          </form>
+        </details>
 
         <!-- 購物清單容器 -->
         <div id="checklist-container" class="space-y-5 text-sm"></div>
@@ -1348,31 +1362,92 @@
       </div>
     </section>
 
+    <!-- ==================== TAB 5: 出發前行李 ＆ 證件檢查表 ==================== -->
+    <section id="tab-packing" class="tab-content space-y-4">
+      <div class="okinawa-card p-4">
+        <div class="flex justify-between items-center mb-2">
+          <div>
+            <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-emerald-500"></i> 行前行李 ＆ 證件檢查表
+            </h2>
+            <p class="text-[11px] text-slate-500">出發去台中機場前逐一打勾確認，100% 完成會有驚喜彩帶！</p>
+          </div>
+          <button onclick="resetPackingList()" class="text-xs text-slate-400 underline">重置勾選</button>
+        </div>
+
+        <!-- 行李準備進度條 -->
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
+          <div class="flex justify-between items-center text-xs font-bold text-emerald-800 mb-1.5">
+            <span>🧳 行李準備完成度</span>
+            <span id="packing-progress-text">0 / 18 項 (0%)</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+            <div id="packing-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- 自訂新增行李項目 -->
+        <form onsubmit="addCustomPackItem(event)" class="flex gap-2 mb-4">
+          <input type="text" id="pack-input" required placeholder="➕ 新增個人必帶物品（如：隱形眼鏡、兒童推車...）" class="flex-1 p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50 focus:bg-white">
+          <button type="submit" class="bg-emerald-600 text-white font-extrabold px-4 rounded-xl text-xs shadow-sm whitespace-nowrap">新增</button>
+        </form>
+
+        <!-- 行李檢查表容器 -->
+        <div id="packing-container" class="space-y-4 text-sm"></div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- 底部固定導覽列 -->
+  <!-- 底部固定導覽列 (升級為 5 大核心分頁) -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t-2 border-sky-100 shadow-lg z-40">
-    <div class="max-w-xl mx-auto grid grid-cols-4 text-center py-1">
+    <div class="max-w-xl mx-auto grid grid-cols-5 text-center py-1">
       <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn py-2 text-sky-600 font-extrabold">
-        <i class="fa-solid fa-map-location-dot text-lg block"></i>
-        <span class="text-[11px]">每日行程</span>
+        <i class="fa-solid fa-map-location-dot text-base sm:text-lg block"></i>
+        <span class="text-[10px]">每日行程</span>
       </button>
       <button onclick="switchTab('info')" id="nav-info" class="nav-btn py-2 text-slate-400 font-medium">
-        <i class="fa-solid fa-plane-circle-check text-lg block"></i>
-        <span class="text-[11px]">航班/住宿</span>
+        <i class="fa-solid fa-plane-circle-check text-base sm:text-lg block"></i>
+        <span class="text-[10px]">航班/日語</span>
       </button>
       <button onclick="switchTab('cost')" id="nav-cost" class="nav-btn py-2 text-slate-400 font-medium">
-        <i class="fa-solid fa-coins text-lg block"></i>
-        <span class="text-[11px]">記帳/分帳</span>
+        <i class="fa-solid fa-coins text-base sm:text-lg block"></i>
+        <span class="text-[10px]">記帳/分帳</span>
       </button>
       <button onclick="switchTab('shopping')" id="nav-shopping" class="nav-btn py-2 text-slate-400 font-medium">
-        <i class="fa-solid fa-gift text-lg block"></i>
-        <span class="text-[11px]">必買清單</span>
+        <i class="fa-solid fa-gift text-base sm:text-lg block"></i>
+        <span class="text-[10px]">必買清單</span>
+      </button>
+      <button onclick="switchTab('packing')" id="nav-packing" class="nav-btn py-2 text-slate-400 font-medium">
+        <i class="fa-solid fa-suitcase-rolling text-base sm:text-lg block"></i>
+        <span class="text-[10px]">行前檢查</span>
       </button>
     </div>
   </nav>
 
   <script>
+    // 0. 輕量提示框 (Toast) 與撒花特效 (Confetti)
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast-msg');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.add('hidden'), 2600);
+    }
+
+    function fireConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 70, spread: 65, origin: { y: 0.7 } });
+      }
+    }
+
+    function copyMapCode(code, title) {
+      navigator.clipboard.writeText(code).then(() => {
+        showToast(`🚗 已複製 ${title}：${code}`);
+      });
+    }
+
     // 1. 精確到秒的出發倒數計時器
     function updateCountdown() {
       const tripDate = new Date('2026-12-31T15:20:00+08:00').getTime();
@@ -1399,7 +1474,7 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // 2. 沖繩即時天氣 API (Open-Meteo 免金鑰即時抓取)
+    // 2. 沖繩即時天氣 API
     function weatherCodeToText(code) {
       if (code === 0) return '☀️ 晴朗好天氣';
       if (code <= 3) return '⛅ 多雲時晴';
@@ -1434,6 +1509,83 @@
       }
     }
     fetchOkinawaWeather();
+
+    // 2.5 那霸餐廳與商店清單 + 即時營業狀態判斷 (依日本時區 UTC+9)
+    const nahaFoodList = [
+      { tag: "拉麵", name: "暖暮拉麵 那霸牧志店", hours: "09:00–02:00", openH: 9, closeH: 26, query: "暖暮拉麵+那霸牧志店" },
+      { tag: "拉麵", name: "琉家拉麵 國際通本店", hours: "11:30–00:00 (週三四休)", openH: 11.5, closeH: 24, query: "琉家拉麵+國際通本店" },
+      { tag: "沖繩麵", name: "沖繩麵 EIBUN", hours: "11:00–20:00", openH: 11, closeH: 20, query: "Okinawa+Soba+EIBUN", bookUrl: "https://www.tablecheck.com/shops/soba-eibun/reserve" },
+      { tag: "壽喜燒/涮涮鍋", name: "酒喜膳 一喜喜", hours: "17:30–22:00 (週日休)", openH: 17.5, closeH: 22, query: "酒喜膳+一喜喜", bookUrl: "https://kazuki-okinawa.com/" },
+      { tag: "涮涮鍋", name: "Shima Shabu NAKAMA", hours: "11:30-15:00 / 17:00-22:30", openH: 11.5, closeH: 22.5, query: "Shima+Shabu-Shabu+NAKAMA", bookUrl: "https://yoyaku.toreta.in/shabushabu-nakama/#/" },
+      { tag: "居酒屋/串燒", name: "Uguisu 串燒", hours: "17:00–00:00", openH: 17, closeH: 24, query: "Uguisu+那霸", bookUrl: "https://tabelog.com/tw/okinawa/A4701/A470101/47029335/" },
+      { tag: "黑糖牛奶/酒吧", name: "TACHINOMIYA BAR", hours: "10:00–02:00 (國際通店)", openH: 10, closeH: 26, query: "TACHINOMIYA+BAR+國際通" },
+      { tag: "居酒屋", name: "新時代 那覇久茂地店", hours: "16:00–02:00 (傳串炸雞皮)", openH: 16, closeH: 26, query: "新時代+沖縄+那覇久茂地店" },
+      { tag: "屋台村/鮭魚卵", name: "屋台村 じゅんちゃん", hours: "12:00–00:00 (Chokotto壽司)", openH: 12, closeH: 24, query: "Chokotto+Sushi+Kokusai-dori+Yataimura" },
+      { tag: "炸豬排", name: "とんかつ小やじ 那覇店", hours: "11:00–17:00 (週三休)", openH: 11, closeH: 17, query: "とんかつ小やじ+那覇店" },
+      { tag: "沖繩飯糰", name: "Pork Tamago 牧志市場店", hours: "07:00–20:00", openH: 7, closeH: 20, query: "Pork+Tamago+Onigiri+Makishi+Market" },
+      { tag: "玉子燒飯糰", name: "福助の玉子焼き (市場/久茂地)", hours: "07:00–20:00", openH: 7, closeH: 20, query: "福助の玉子焼き+市場本通り店" },
+      { tag: "冰淇淋/速食", name: "Blue Seal 國際通 / JEF漢堡", hours: "10:00–23:00 / 09:00–20:00", openH: 9, closeH: 23, query: "Blue+Seal+國際通店" },
+      { tag: "麵包/市場", name: "hoppepan / 牧志公設市場", hours: "08:00–22:00 (市場)", openH: 8, closeH: 22, query: "那霸市第一牧志公設市場" }
+    ];
+
+    const nahaShopList = [
+      { tag: "唐吉訶德 (免手續費)", name: "Don Quijote 國際通店", hours: "09:00–05:00", openH: 9, closeH: 29, query: "Don+Quijote+Kokusai-dori" },
+      { tag: "唐吉訶德", name: "唐吉訶德 國際通久茂地店", hours: "08:00–01:00", openH: 8, closeH: 25, query: "ドン・キホーテ国際通りくもじ店" },
+      { tag: "藥妝 (全額退稅)", name: "大國藥妝 國際通縣廳前店", hours: "10:05–22:50", openH: 10, closeH: 22.8, query: "Daikoku+Drug+Kokusai+Dori+Kenchomae" },
+      { tag: "藥妝 (全額退稅)", name: "松本清 安里國際通 / 札幌藥妝", hours: "10:00–22:00", openH: 10, closeH: 22, query: "Matsumoto+Kiyoshi+Asato+Kokusai+Street" },
+      { tag: "伴手禮", name: "御菓子御殿 (松尾店/牧志店)", hours: "09:00–22:00", openH: 9, closeH: 22, query: "御菓子御殿+國際通松尾店" },
+      { tag: "伴手禮", name: "塩屋 松尾店 / Calbee+", hours: "10:00–21:00", openH: 10, closeH: 21, query: "塩屋+松尾店" },
+      { tag: "伴手禮/紀念品", name: "福木屋 / Orion 官方商店", hours: "10:00–20:00", openH: 10, closeH: 20, query: "Orion+Official+Store+Naha" },
+      { tag: "24H超市 / 紀念品", name: "MaxValu 牧志店 / Splash", hours: "24小時營業", openH: 0, closeH: 24, query: "MaxValu+牧志店" }
+    ];
+
+    function checkOpenStatus(openH, closeH, jstDecimalHour) {
+      let h = jstDecimalHour;
+      if (closeH > 24 && h < (closeH - 24)) h += 24;
+      const isOpen = h >= openH && h < closeH;
+      return isOpen
+        ? `<span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded">🟢 營業中</span>`
+        : `<span class="text-[10px] bg-slate-100 text-slate-400 font-bold px-1.5 py-0.5 rounded">⚪ 休息中</span>`;
+    }
+
+    function renderNahaGuide() {
+      const nowJST = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" }));
+      const jstH = nowJST.getHours() + nowJST.getMinutes() / 60;
+      const timeStr = `${String(nowJST.getHours()).padStart(2, '0')}:${String(nowJST.getMinutes()).padStart(2, '0')}`;
+      document.getElementById('okinawa-time-badge').textContent = `🇯🇵 沖繩現在時間 ${timeStr}`;
+
+      document.getElementById('naha-food-grid').innerHTML = nahaFoodList.map(item => `
+        <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-orange-600 font-bold">${item.tag}</span>
+              ${checkOpenStatus(item.openH, item.closeH, jstH)}
+            </div>
+            <div class="font-bold text-slate-800 mt-0.5">${item.name}</div>
+            <div class="text-[11px] text-slate-400">🕒 ${item.hours}</div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <a href="https://www.google.com/maps/search/?api=1&query=${item.query}" target="_blank" class="map-btn">📍 導航</a>
+            ${item.bookUrl ? `<a href="${item.bookUrl}" target="_blank" class="book-btn">📅 預約</a>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('naha-shop-grid').innerHTML = nahaShopList.map(item => `
+        <div class="p-2.5 rounded-xl border border-slate-100 bg-white flex justify-between items-center gap-2">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] text-emerald-600 font-bold">${item.tag}</span>
+              ${checkOpenStatus(item.openH, item.closeH, jstH)}
+            </div>
+            <div class="font-bold text-slate-800 mt-0.5">${item.name}</div>
+            <div class="text-[11px] text-slate-400">🕒 ${item.hours}</div>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=${item.query}" target="_blank" class="map-btn">📍 導航</a>
+        </div>
+      `).join('');
+    }
+    renderNahaGuide();
 
     // 3. 隨身換匯計算機邏輯
     function getRate() {
@@ -1489,12 +1641,11 @@
       for (let i = 1; i <= 5; i++) {
         const btn = document.getElementById('day-btn-' + i);
         if (i === dayNum) {
-          btn.className = 'day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md';
+          btn.className = 'day-btn flex-1 min-w-[62px] py-2 rounded-xl font-extrabold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md';
         } else {
-          btn.className = 'day-btn flex-1 min-w-[64px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100';
+          btn.className = 'day-btn flex-1 min-w-[62px] py-2 rounded-xl font-extrabold text-xs bg-white text-slate-600 border border-sky-100';
         }
       }
-      // 只在 Day 1, 4, 5 顯示那霸・國際通吃喝逛街導航總整理
       const nahaBox = document.getElementById('naha-guide-box');
       if (dayNum === 1 || dayNum === 4 || dayNum === 5) {
         nahaBox.style.display = 'block';
@@ -1503,7 +1654,7 @@
       }
     }
 
-    // 5. 互動式費用記帳本邏輯 (預設清空租車項目)
+    // 5. 互動式費用記帳本邏輯 (含代墊款統計 & 編輯明細功能)
     const defaultExpenses = [];
 
     function getExpenses() {
@@ -1532,6 +1683,46 @@
       document.getElementById('exp-title').value = '';
       document.getElementById('exp-amount').value = '';
       renderExpenses();
+      showToast('💰 已新增一筆花費紀錄！');
+    }
+
+    function openEditExpModal(id) {
+      const item = getExpenses().find(i => i.id === id);
+      if (!item) return;
+      document.getElementById('edit-exp-id').value = item.id;
+      document.getElementById('edit-exp-day').value = item.day;
+      document.getElementById('edit-exp-cat').value = item.cat;
+      document.getElementById('edit-exp-title').value = item.title;
+      document.getElementById('edit-exp-currency').value = item.currency;
+      document.getElementById('edit-exp-amount').value = item.amount;
+      document.getElementById('edit-exp-payer').value = item.payer;
+      const modal = document.getElementById('edit-exp-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeEditExpModal() {
+      const modal = document.getElementById('edit-exp-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveEditedExpense() {
+      const id = Number(document.getElementById('edit-exp-id').value);
+      const list = getExpenses();
+      const idx = list.findIndex(i => i.id === id);
+      if (idx > -1) {
+        list[idx].day = document.getElementById('edit-exp-day').value;
+        list[idx].cat = document.getElementById('edit-exp-cat').value;
+        list[idx].title = document.getElementById('edit-exp-title').value.trim() || list[idx].title;
+        list[idx].currency = document.getElementById('edit-exp-currency').value;
+        list[idx].amount = parseFloat(document.getElementById('edit-exp-amount').value) || list[idx].amount;
+        list[idx].payer = document.getElementById('edit-exp-payer').value.trim() || '公費';
+        saveExpenses(list);
+        renderExpenses();
+        showToast('✏️ 已更新帳目明細！');
+      }
+      closeEditExpModal();
     }
 
     function deleteExpense(id) {
@@ -1553,18 +1744,24 @@
       document.getElementById('quick-rate').value = rate;
       const list = getExpenses();
       const container = document.getElementById('expense-list');
+      const payerBox = document.getElementById('payer-summary-box');
+      const payerListEl = document.getElementById('payer-summary-list');
 
       let totalJPY = 0;
       let totalTWD = 0;
+      const payerMap = {};
 
       if (list.length === 0) {
         container.innerHTML = '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-xl">目前還沒有記帳紀錄，可在上方新增喔！</div>';
+        payerBox.classList.add('hidden');
       } else {
+        payerBox.classList.remove('hidden');
         container.innerHTML = list.map(item => {
           const isJPY = item.currency === 'JPY';
           const twdEquivalent = isJPY ? Math.round(item.amount * rate) : Math.round(item.amount);
           if (isJPY) totalJPY += item.amount;
           totalTWD += twdEquivalent;
+          payerMap[item.payer] = (payerMap[item.payer] || 0) + twdEquivalent;
 
           return `
             <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
@@ -1572,24 +1769,33 @@
                 <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-bold">
                   <span class="bg-sky-50 text-sky-700 px-2 py-0.5 rounded">${item.day}</span>
                   <span>${item.cat}</span>
-                  <span>• 付款: <b class="text-slate-600">${item.payer}</b></span>
+                  <span>• 付款: <b class="text-indigo-600">${item.payer}</b></span>
                 </div>
                 <div class="font-extrabold text-sm text-slate-800 mt-1">${item.title}</div>
               </div>
-              <div class="text-right flex items-center gap-2.5">
-                <div>
+              <div class="text-right flex items-center gap-1.5">
+                <div class="mr-1">
                   <div class="font-black text-sm ${isJPY ? 'text-sky-700' : 'text-emerald-700'}">
                     ${isJPY ? '¥ ' + item.amount.toLocaleString() : 'NT$ ' + item.amount.toLocaleString()}
                   </div>
                   ${isJPY ? `<div class="text-[10px] text-slate-400">≈ NT$ ${twdEquivalent.toLocaleString()}</div>` : ''}
                 </div>
-                <button onclick="deleteExpense(${item.id})" class="text-slate-300 hover:text-rose-500 p-1">
-                  <i class="fa-solid fa-trash-can"></i>
+                <button onclick="openEditExpModal(${item.id})" class="text-slate-400 hover:text-sky-600 p-1.5 bg-slate-50 rounded-lg" title="修改">
+                  <i class="fa-solid fa-pen text-xs"></i>
+                </button>
+                <button onclick="deleteExpense(${item.id})" class="text-slate-300 hover:text-rose-500 p-1.5" title="刪除">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
                 </button>
               </div>
             </div>
           `;
         }).join('');
+
+        payerListEl.innerHTML = Object.entries(payerMap).map(([payer, amt]) => `
+          <div class="bg-white border border-indigo-200 px-2.5 py-1 rounded-lg font-bold text-slate-700">
+            🙋 ${payer} 先付：<span class="text-indigo-700 font-extrabold">NT$ ${amt.toLocaleString()}</span>
+          </div>
+        `).join('');
       }
 
       document.getElementById('sum-jpy').textContent = '¥ ' + totalJPY.toLocaleString();
@@ -1605,56 +1811,82 @@
         return;
       }
       let totalTWD = 0;
+      const payerMap = {};
       let text = '🌺【沖繩之旅 現場記帳明細】\n';
       list.forEach((item, idx) => {
         const twd = item.currency === 'JPY' ? Math.round(item.amount * rate) : Math.round(item.amount);
         totalTWD += twd;
+        payerMap[item.payer] = (payerMap[item.payer] || 0) + twd;
         const amtStr = item.currency === 'JPY' ? `¥${item.amount} (約NT$${twd})` : `NT$${item.amount}`;
         text += `${idx + 1}. [${item.day}] ${item.title} - ${amtStr} (${item.payer}付)\n`;
       });
-      text += `------------------\n💰 總計約：NT$ ${totalTWD.toLocaleString()}\n👥 6人平均：NT$ ${Math.round(totalTWD / 6).toLocaleString()} /人`;
+      text += `------------------\n💰 總計約：NT$ ${totalTWD.toLocaleString()}\n👥 6人平均：NT$ ${Math.round(totalTWD / 6).toLocaleString()} /人\n`;
+      text += `💳 代墊統計：` + Object.entries(payerMap).map(([k, v]) => `${k}付 NT$${v.toLocaleString()}`).join('、');
       navigator.clipboard.writeText(text).then(() => {
-        alert('已複製帳目明細！可以直接貼到 LINE 群組分享囉！');
+        showToast('📋 已複製帳目明細！可直接貼到 LINE 群組');
       });
     }
 
-    // 6. 必買購物清單 (含圖片縮圖 + 使用者自訂新增商品功能)
+    // 6. 必買購物清單 (支援所有預設與自訂項目隨時編輯價格/名稱/地點 + 圖片放大 + 篩選)
     const defaultShoppingData = [
       { category: "🍪 伴手禮・零食（唐吉訶德 / 機場）", items: [
-        { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", price: "¥550", where: "那霸機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=200&q=80" },
-        { id: "s2", name: "Orion 島唐辛子蝦餅", price: "¥500", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=200&q=80" },
-        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", price: "¥398 / ¥298", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1621996346565-e3d5d6281298?auto=format&fit=crop&w=200&q=80" },
-        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", price: "¥552", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80" },
-        { id: "s5", name: "山本海苔店 雪鹽味付海苔 & 海帶芽", price: "沖繩限定", where: "伴手禮店", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=200&q=80" },
-        { id: "s6", name: "宮古島 島唐辛子煎餅 (ぱりぱり煎餅)", price: "人氣必買", where: "伴手禮店", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=200&q=80" },
-        { id: "s7", name: "【徐要的】沖繩島辣椒蝦餅 & 雪塩夾心餅(さんど)", price: "指定代購", where: "國際通/機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=200&q=80" },
-        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅", price: "8入禮盒", where: "機場/商場", img: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=200&q=80" },
-        { id: "s9", name: "喜島商店 沖繩香檬萬用香料粉 (ほりにし)", price: "¥1,300", where: "國際通/喜島", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=200&q=80" }
+        { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", price: "¥550", where: "那霸機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
+        { id: "s2", name: "Orion 島唐辛子蝦餅", price: "¥500", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=300&q=80" },
+        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", price: "¥398 / ¥298", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1621996346565-e3d5d6281298?auto=format&fit=crop&w=300&q=80" },
+        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", price: "¥552", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=300&q=80" },
+        { id: "s5", name: "山本海苔店 雪鹽味付海苔 & 海帶芽", price: "沖繩限定", where: "伴手禮店", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=300&q=80" },
+        { id: "s6", name: "宮古島 島唐辛子煎餅 (ぱりぱり煎餅)", price: "人氣必買", where: "伴手禮店", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
+        { id: "s7", name: "【徐要的】沖繩島辣椒蝦餅 & 雪塩夾心餅(さんど)", price: "指定代購", where: "國際通/機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
+        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅", price: "8入禮盒", where: "機場/商場", img: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=300&q=80" },
+        { id: "s9", name: "喜島商店 沖繩香檬萬用香料粉 (ほりにし)", price: "¥1,300", where: "國際通/喜島", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=300&q=80" }
       ]},
       { category: "🏪 超商必吃甜點飲品（Lawson / 全家 / 7-11）", items: [
-        { id: "c1", name: "焙茶拿鐵 (ほうじ茶ラテ)", price: "¥238 (約NT$49)", where: "Lawson", img: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=200&q=80" },
-        { id: "c2", name: "奶油起司生火腿捲", price: "¥570 (約NT$115)", where: "Lawson", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=200&q=80" },
-        { id: "c3", name: "美食家布丁 & 奶茶的束縛", price: "¥162 & ¥254", where: "FamilyMart 全家", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=200&q=80" },
-        { id: "c4", name: "Blue Seal 薄荷巧克力棉花糖", price: "¥238", where: "沖繩全家限定", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=200&q=80" },
-        { id: "c5", name: "砂糖奶油樹 濃苺巧克力夾心餅 (3入)", price: "¥300 (約NT$60)", where: "7-11", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=200&q=80" }
+        { id: "c1", name: "焙茶拿鐵 (ほうじ茶ラテ)", price: "¥238 (約NT$49)", where: "Lawson", img: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=300&q=80" },
+        { id: "c2", name: "奶油起司生火腿捲", price: "¥570 (約NT$115)", where: "Lawson", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=300&q=80" },
+        { id: "c3", name: "美食家布丁 & 奶茶的束縛", price: "¥162 & ¥254", where: "FamilyMart 全家", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80" },
+        { id: "c4", name: "Blue Seal 薄荷巧克力棉花糖", price: "¥238", where: "沖繩全家限定", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=300&q=80" },
+        { id: "c5", name: "砂糖奶油樹 濃苺巧克力夾心餅 (3入)", price: "¥300 (約NT$60)", where: "7-11", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" }
       ]},
       { category: "🛒 3COINS 必買好物（PARCO CITY 1F GREEN ZONE）", items: [
-        { id: "t1", name: "迷你相片印表機 & 5種專用相紙", price: "主機¥14,300", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=200&q=80" },
-        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", price: "¥3,850", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=200&q=80" },
-        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 拉桿飲料架", price: "各 ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=200&q=80" },
-        { id: "t4", name: "USB 迷你自動壓縮機 & 旅行分類收納袋", price: "¥1,100 (約$203)", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=200&q=80" },
-        { id: "t5", name: "可變高度密封罐(M) & 易清潔可拆美髮梳", price: "¥330 & ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=200&q=80" },
-        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", price: "¥1,980", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=200&q=80" }
+        { id: "t1", name: "迷你相片印表機 & 5種專用相紙", price: "主機¥14,300", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=300&q=80" },
+        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", price: "¥3,850", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=300&q=80" },
+        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 拉桿飲料架", price: "各 ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=300&q=80" },
+        { id: "t4", name: "USB 迷你自動壓縮機 & 旅行分類收納袋", price: "¥1,100 (約$203)", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=300&q=80" },
+        { id: "t5", name: "可變高度密封罐(M) & 易清潔可拆美髮梳", price: "¥330 & ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=300&q=80" },
+        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", price: "¥1,980", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80" }
       ]},
       { category: "💄 藥妝・服飾・雜貨（GU / UNIQLO / 大創）", items: [
-        { id: "d1", name: "OKUCHI 隨身漱口水 (水蜜桃/檸檬 5入)", price: "¥250", where: "各大藥妝店", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=200&q=80" },
-        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", price: "約NT$141", where: "唐吉訶德/藥妝", img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=200&q=80" },
-        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", price: "約NT$401", where: "藥妝店數量限定", img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=200&q=80" },
-        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (淨露/凝脂/精華)", price: "比價台灣$2,200", where: "美妝/藥妝店", img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=200&q=80" },
-        { id: "d5", name: "高領羅紋打底衫(#360579) & 蝴蝶結針織外套", price: "人氣穿搭", where: "GU (PARCO 2F)", img: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=200&q=80" },
-        { id: "d6", name: "麻花編織開襟外套 & 三麗鷗 Kitty 拖鞋", price: "必買單品", where: "UNIQLO / 大創 3F", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=200&q=80" }
+        { id: "d1", name: "OKUCHI 隨身漱口水 (水蜜桃/檸檬 5入)", price: "¥250", where: "各大藥妝店", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=300&q=80" },
+        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", price: "約NT$141", where: "唐吉訶德/藥妝", img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=300&q=80" },
+        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", price: "約NT$401", where: "藥妝店數量限定", img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80" },
+        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (淨露/凝脂/精華)", price: "比價台灣$2,200", where: "美妝/藥妝店", img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=300&q=80" },
+        { id: "d5", name: "高領羅紋打底衫(#360579) & 蝴蝶結針織外套", price: "人氣穿搭", where: "GU (PARCO 2F)", img: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=300&q=80" },
+        { id: "d6", name: "麻花編織開襟外套 & 三麗鷗 Kitty 拖鞋", price: "必買單品", where: "UNIQLO / 大創 3F", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=300&q=80" }
       ]}
     ];
+
+    let currentShopFilter = 'all';
+
+    function setShopFilter(filter) {
+      currentShopFilter = filter;
+      ['all', 'unbought', 'bought'].forEach(f => {
+        const btn = document.getElementById('filter-btn-' + f);
+        if (f === filter) {
+          btn.className = 'flex-1 py-1.5 rounded-xl font-extrabold text-xs bg-sky-600 text-white shadow-sm';
+        } else {
+          btn.className = 'flex-1 py-1.5 rounded-xl font-bold text-xs bg-slate-100 text-slate-600';
+        }
+      });
+      renderChecklist();
+    }
+
+    function getShopOverrides() {
+      return JSON.parse(localStorage.getItem('okinawa_shop_overrides_v1') || '{}');
+    }
+
+    function saveShopOverrides(obj) {
+      localStorage.setItem('okinawa_shop_overrides_v1', JSON.stringify(obj));
+    }
 
     function getCustomShopItems() {
       return JSON.parse(localStorage.getItem('okinawa_custom_shop_v1') || '[]');
@@ -1664,13 +1896,107 @@
       localStorage.setItem('okinawa_custom_shop_v1', JSON.stringify(list));
     }
 
+    function getAllMergedShopGroups() {
+      const overrides = getShopOverrides();
+      const customItems = getCustomShopItems();
+      const groups = JSON.parse(JSON.stringify(defaultShoppingData));
+
+      const myCustomGroupItems = customItems.filter(i => i.category === '✨ 我自己新增的必買清單');
+      if (myCustomGroupItems.length > 0) {
+        groups.unshift({ category: '✨ 我自己新增的必買清單', items: myCustomGroupItems });
+      }
+      customItems.forEach(item => {
+        if (item.category !== '✨ 我自己新增的必買清單') {
+          const targetGroup = groups.find(g => g.category === item.category);
+          if (targetGroup) targetGroup.items.unshift(item);
+        }
+      });
+
+      groups.forEach(g => {
+        g.items = g.items.map(item => {
+          if (overrides[item.id]) {
+            return { ...item, ...overrides[item.id] };
+          }
+          return item;
+        });
+      });
+      return groups;
+    }
+
+    function openLightbox(e, img, title, sub) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('lightbox-img').src = img;
+      document.getElementById('lightbox-title').textContent = title;
+      document.getElementById('lightbox-sub').textContent = sub;
+      const modal = document.getElementById('lightbox-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightbox-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openEditShopModal(e, id) {
+      e.preventDefault();
+      e.stopPropagation();
+      const groups = getAllMergedShopGroups();
+      let found = null;
+      for (const g of groups) {
+        const match = g.items.find(i => i.id === id);
+        if (match) { found = match; break; }
+      }
+      if (!found) return;
+
+      document.getElementById('edit-shop-id').value = found.id;
+      document.getElementById('edit-shop-name').value = found.name;
+      document.getElementById('edit-shop-price').value = found.price;
+      document.getElementById('edit-shop-where').value = found.where;
+      document.getElementById('edit-shop-img').value = found.img;
+
+      const modal = document.getElementById('edit-shop-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeEditShopModal() {
+      const modal = document.getElementById('edit-shop-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveEditedShopItem() {
+      const id = document.getElementById('edit-shop-id').value;
+      const name = document.getElementById('edit-shop-name').value.trim();
+      const price = document.getElementById('edit-shop-price').value.trim();
+      const where = document.getElementById('edit-shop-where').value.trim();
+      const img = document.getElementById('edit-shop-img').value.trim();
+
+      if (!name) return;
+
+      const overrides = getShopOverrides();
+      overrides[id] = {
+        name,
+        price: price || '現場確認',
+        where: where || '沖繩當地',
+        img: img || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80'
+      };
+      saveShopOverrides(overrides);
+      closeEditShopModal();
+      renderChecklist();
+      showToast('✏️ 已儲存商品價格與備註！');
+    }
+
     function addCustomShoppingItem(e) {
       e.preventDefault();
       const name = document.getElementById('shop-name').value.trim();
       const cat = document.getElementById('shop-cat').value;
       const price = document.getElementById('shop-price').value.trim() || '自訂必買';
       const where = document.getElementById('shop-where').value.trim() || '沖繩當地';
-      const img = document.getElementById('shop-img').value.trim() || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=200&q=80';
+      const img = document.getElementById('shop-img').value.trim() || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80';
 
       if (!name) return;
 
@@ -1691,6 +2017,7 @@
       document.getElementById('shop-where').value = '';
       document.getElementById('shop-img').value = '';
       renderChecklist();
+      showToast('🛍️ 已加入必買清單！');
     }
 
     function deleteCustomShopItem(e, id) {
@@ -1703,72 +2030,83 @@
 
     function renderChecklist() {
       const saved = JSON.parse(localStorage.getItem('okinawa_checklist') || '{}');
-      const customItems = getCustomShopItems();
       const container = document.getElementById('checklist-container');
-
-      // 合併預設分類與使用者自訂商品
-      const groups = JSON.parse(JSON.stringify(defaultShoppingData));
-      const myCustomGroupItems = customItems.filter(i => i.category === '✨ 我自己新增的必買清單');
-      if (myCustomGroupItems.length > 0) {
-        groups.unshift({
-          category: '✨ 我自己新增的必買清單',
-          items: myCustomGroupItems
-        });
-      }
-      customItems.forEach(item => {
-        if (item.category !== '✨ 我自己新增的必買清單') {
-          const targetGroup = groups.find(g => g.category === item.category);
-          if (targetGroup) targetGroup.items.unshift(item);
-        }
-      });
+      const groups = getAllMergedShopGroups();
 
       let totalCount = 0;
       let checkedCount = 0;
 
-      container.innerHTML = groups.map(group => `
-        <div>
-          <h3 class="font-extrabold text-sky-900 bg-sky-100/90 px-3.5 py-2 rounded-xl mb-2.5 text-xs flex items-center justify-between">
-            <span>${group.category}</span>
-            <span class="text-[10px] text-sky-700 font-bold">${group.items.length} 項</span>
-          </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            ${group.items.map(item => {
-              totalCount++;
-              const isChecked = !!saved[item.id];
-              if (isChecked) checkedCount++;
-              const cardStyle = isChecked
-                ? 'bg-slate-50 border-slate-200 opacity-60'
-                : 'bg-white border-sky-100 hover:border-sky-300 shadow-sm';
-              const titleStyle = isChecked ? 'line-through text-slate-400' : 'text-slate-800';
+      groups.forEach(g => {
+        g.items.forEach(item => {
+          totalCount++;
+          if (saved[item.id]) checkedCount++;
+        });
+      });
 
-              return `
-                <label class="flex items-center justify-between p-2.5 rounded-xl border ${cardStyle} cursor-pointer transition select-none gap-2.5">
-                  <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="h-4 w-4 rounded text-sky-600 focus:ring-sky-500 flex-shrink-0">
-                    <img src="${item.img}" alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=200&q=80'" class="w-12 h-12 rounded-lg object-cover border border-slate-100 flex-shrink-0">
-                    <div class="min-w-0 flex-1">
-                      <div class="font-extrabold text-xs ${titleStyle} truncate">${item.name}</div>
-                      <div class="flex flex-wrap items-center gap-1 mt-1">
-                        <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded">${item.price}</span>
-                        <span class="text-[10px] bg-sky-50 text-sky-700 font-bold px-2 py-0.5 rounded">📍 ${item.where}</span>
+      container.innerHTML = groups.map(group => {
+        const filteredItems = group.items.filter(item => {
+          const isChecked = !!saved[item.id];
+          if (currentShopFilter === 'unbought') return !isChecked;
+          if (currentShopFilter === 'bought') return isChecked;
+          return true;
+        });
+
+        if (filteredItems.length === 0) return '';
+
+        return `
+          <div>
+            <h3 class="font-extrabold text-sky-900 bg-sky-100/90 px-3.5 py-2 rounded-xl mb-2.5 text-xs flex items-center justify-between">
+              <span>${group.category}</span>
+              <span class="text-[10px] text-sky-700 font-bold">${filteredItems.length} 項</span>
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              ${filteredItems.map(item => {
+                const isChecked = !!saved[item.id];
+                const cardStyle = isChecked
+                  ? 'bg-slate-50 border-slate-200 opacity-60'
+                  : 'bg-white border-sky-100 hover:border-sky-300 shadow-sm';
+                const titleStyle = isChecked ? 'line-through text-slate-400' : 'text-slate-800';
+                const safeName = item.name.replace(/'/g, "\\'");
+                const safeSub = `${item.price} ・ 📍 ${item.where}`.replace(/'/g, "\\'");
+
+                return `
+                  <label class="flex items-center justify-between p-2.5 rounded-xl border ${cardStyle} cursor-pointer transition select-none gap-2">
+                    <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                      <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="h-4 w-4 rounded text-sky-600 focus:ring-sky-500 flex-shrink-0">
+                      <div class="relative flex-shrink-0" onclick="openLightbox(event, '${item.img}', '${safeName}', '${safeSub}')">
+                        <img src="${item.img}" alt="${safeName}" onerror="this.src='https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80'" class="w-12 h-12 rounded-lg object-cover border border-slate-100">
+                        <span class="absolute bottom-0 right-0 bg-slate-900/60 text-white text-[8px] px-1 rounded-tl"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <div class="font-extrabold text-xs ${titleStyle} truncate">${item.name}</div>
+                        <div class="flex flex-wrap items-center gap-1 mt-1">
+                          <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded">${item.price}</span>
+                          <span class="text-[10px] bg-sky-50 text-sky-700 font-bold px-2 py-0.5 rounded">📍 ${item.where}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  ${item.isCustom ? `
-                    <button type="button" onclick="deleteCustomShopItem(event, '${item.id}')" class="text-slate-300 hover:text-rose-500 p-1 flex-shrink-0" title="刪除此自訂商品">
-                      <i class="fa-solid fa-trash-can text-xs"></i>
-                    </button>
-                  ` : ''}
-                </label>
-              `;
-            }).join('')}
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                      <button type="button" onclick="openEditShopModal(event, '${item.id}')" class="text-slate-400 hover:text-sky-600 p-1.5 bg-slate-50 rounded-lg" title="修改價格或備註">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                      </button>
+                      ${item.isCustom ? `
+                        <button type="button" onclick="deleteCustomShopItem(event, '${item.id}')" class="text-slate-300 hover:text-rose-500 p-1" title="刪除">
+                          <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                      ` : ''}
+                    </div>
+                  </label>
+                `;
+              }).join('')}
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       const pct = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
       document.getElementById('checklist-progress-text').textContent = `${checkedCount} / ${totalCount} 項 (${pct}%)`;
       document.getElementById('checklist-progress-bar').style.width = `${pct}%`;
+      if (pct === 100 && totalCount > 0) fireConfetti();
     }
 
     function toggleCheck(id) {
@@ -1779,16 +2117,138 @@
     }
 
     function resetChecklist() {
-      if (confirm('確定要重置所有購物清單勾選狀態嗎？')) {
+      if (confirm('確定要重置所有購物清單勾選狀態嗎？（您編輯過的價格會保留）')) {
         localStorage.removeItem('okinawa_checklist');
         renderChecklist();
       }
     }
 
-    // 初始化渲染
+    // 7. 行前行李 ＆ 證件檢查表
+    const defaultPackingData = [
+      { category: "🪪 絕對必備證件與金流（沒帶上不了飛機/租不了車！）", items: [
+        { id: "p1", name: "中華民國護照正本（效期需滿 6 個月以上）", note: "最優先確認！" },
+        { id: "p2", name: "【司機必備】台灣汽車駕照正本", note: "正本不可過期" },
+        { id: "p3", name: "【司機必備】台灣駕照「日文譯本」", note: "台灣監理站先辦好，日本不能辦" },
+        { id: "p4", name: "Visit Japan Web 入境審查＆海關 QR Code 截圖", note: "預先填寫截圖省時間" },
+        { id: "p5", name: "日幣現金（含沖繩行腳租車尾款 94,000 日圓）", note: "取車現場需付現" },
+        { id: "p6", name: "海外高回饋信用卡 2 張 ＋ 台灣身分證", note: "商場刷卡與備用" }
+      ]},
+      { category: "📱 3C 電器與網路（行動電源嚴禁託運！）", items: [
+        { id: "p7", name: "日本漫遊網卡 SIM 卡 / eSIM（附退卡針）", note: "落地那霸馬上開通" },
+        { id: "p8", name: "行動電源（必須隨身攜帶上飛機，不可放託運行李）", note: "拍美照導航必備" },
+        { id: "p9", name: "手機充電線、多孔快充頭、車用充電線", note: "日本兩孔插座與台灣相同" }
+      ]},
+      { category: "🧥 12-1月沖繩跨年穿搭與個人衣物", items: [
+        { id: "p10", name: "防風保暖外套（海邊、跨年夜波上宮海風較大）", note: "洋蔥式最外層" },
+        { id: "p11", name: "薄長袖、針織衫、長褲/長裙（5天份換洗衣物）", note: "商場與車內有暖氣" },
+        { id: "p12", name: "好走的運動鞋 / 休閒鞋 ＋ 太陽眼鏡", note: "日照強、逛街步數多" }
+      ]},
+      { category: "💊 常備藥品與貼心盥洗雜貨", items: [
+        { id: "p13", name: "個人常備藥（感冒藥、腸胃藥、止痛藥、暈車藥、OK繃）", note: "隨身備用最安心" },
+        { id: "p14", name: "牙刷、牙膏、洗面乳、卸妝保養品", note: "日本飯店環保政策多不主動提供" },
+        { id: "p15", name: "輕便折疊購物袋 2~3 個 ＋ 晴雨兩用摺疊傘", note: "超市唐吉訶德採買超好用" },
+        { id: "p16", name: "行李秤（回程確認戰利品有沒有超重）", note: "星宇經濟艙 23kg" }
+      ]}
+    ];
+
+    function getCustomPackItems() {
+      return JSON.parse(localStorage.getItem('okinawa_custom_pack_v1') || '[]');
+    }
+
+    function saveCustomPackItems(list) {
+      localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(list));
+    }
+
+    function addCustomPackItem(e) {
+      e.preventDefault();
+      const input = document.getElementById('pack-input');
+      const name = input.value.trim();
+      if (!name) return;
+      const list = getCustomPackItems();
+      list.unshift({ id: 'cpack_' + Date.now(), name, note: '個人自訂必帶', isCustom: true });
+      saveCustomPackItems(list);
+      input.value = '';
+      renderPackingList();
+      showToast('🧳 已加入行前檢查表！');
+    }
+
+    function deleteCustomPackItem(e, id) {
+      e.preventDefault();
+      e.stopPropagation();
+      saveCustomPackItems(getCustomPackItems().filter(i => i.id !== id));
+      renderPackingList();
+    }
+
+    function togglePackCheck(id) {
+      const saved = JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}');
+      saved[id] = !saved[id];
+      localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(saved));
+      renderPackingList();
+    }
+
+    function resetPackingList() {
+      if (confirm('確定要重置所有行前檢查表的勾選狀態嗎？')) {
+        localStorage.removeItem('okinawa_pack_checked_v1');
+        renderPackingList();
+      }
+    }
+
+    function renderPackingList() {
+      const saved = JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}');
+      const customList = getCustomPackItems();
+      const groups = JSON.parse(JSON.stringify(defaultPackingData));
+      if (customList.length > 0) {
+        groups.unshift({ category: "✨ 我自己新增的必帶物品", items: customList });
+      }
+
+      let total = 0;
+      let checked = 0;
+
+      document.getElementById('packing-container').innerHTML = groups.map(group => `
+        <div>
+          <h3 class="font-extrabold text-emerald-900 bg-emerald-100/80 px-3.5 py-2 rounded-xl mb-2 text-xs">${group.category}</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${group.items.map(item => {
+              total++;
+              const isChecked = !!saved[item.id];
+              if (isChecked) checked++;
+              const style = isChecked ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-emerald-100 shadow-sm';
+              const textStyle = isChecked ? 'line-through text-slate-400' : 'text-slate-800';
+              return `
+                <label class="flex items-center justify-between p-2.5 rounded-xl border ${style} cursor-pointer select-none">
+                  <div class="flex items-start gap-2.5 pr-2">
+                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePackCheck('${item.id}')" class="mt-0.5 h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500">
+                    <div>
+                      <div class="font-extrabold text-xs ${textStyle}">${item.name}</div>
+                      <div class="text-[10px] text-emerald-700 font-bold mt-0.5">${item.note}</div>
+                    </div>
+                  </div>
+                  ${item.isCustom ? `
+                    <button type="button" onclick="deleteCustomPackItem(event, '${item.id}')" class="text-slate-300 hover:text-rose-500 p-1">
+                      <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                  ` : ''}
+                </label>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+      document.getElementById('packing-progress-text').textContent = `${checked} / ${total} 項 (${pct}%)`;
+      document.getElementById('packing-progress-bar').style.width = `${pct}%`;
+      if (pct === 100 && total > 0) {
+        fireConfetti();
+        showToast('🎉 行李 100% 準備完成！準備出發沖繩囉！');
+      }
+    }
+
+    // 初始化所有渲染
     setQuickJpy(1000);
     renderExpenses();
     renderChecklist();
+    renderPackingList();
   </script>
 </body>
 </html>

@@ -307,11 +307,11 @@
     </div>
   </div>
 
-  <!-- 必買商品隨選編輯彈出視窗 (支援從手機相簿選照片上傳) -->
+  <!-- 必買商品隨選編輯彈出視窗 (支援從手機相簿選照片上傳並同步至雲端) -->
   <div id="edit-shop-modal" onclick="closeEditShopModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3 border-2 border-sky-100" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="font-extrabold text-base text-sky-900"><i class="fa-solid fa-pen-to-square text-sky-500 mr-1.5"></i>編輯必買商品資訊</h3>
+        <h3 class="font-extrabold text-base text-sky-900"><i class="fa-solid fa-pen-to-square text-sky-500 mr-1.5"></i>編輯必買商品資訊 (全體同步)</h3>
         <button onclick="closeEditShopModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <input type="hidden" id="edit-shop-id">
@@ -343,7 +343,7 @@
       </div>
       <div class="flex gap-2 pt-2">
         <button onclick="closeEditShopModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">取消</button>
-        <button onclick="saveEditedShopItem()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-extrabold text-xs shadow">💾 儲存修改</button>
+        <button onclick="saveEditedShopItem()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-extrabold text-xs shadow">☁️ 儲存並同步給大家</button>
       </div>
     </div>
   </div>
@@ -352,7 +352,7 @@
   <div id="edit-exp-modal" onclick="closeEditExpModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3 border-2 border-rose-100" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="font-extrabold text-base text-rose-700"><i class="fa-solid fa-pen-to-square mr-1.5"></i>修改這筆花費明細</h3>
+        <h3 class="font-extrabold text-base text-rose-700"><i class="fa-solid fa-pen-to-square mr-1.5"></i>修改這筆花費明細 (全體同步)</h3>
         <button onclick="closeEditExpModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <input type="hidden" id="edit-exp-id">
@@ -413,12 +413,12 @@
       </div>
       <div class="flex gap-2 pt-2">
         <button onclick="closeEditExpModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">取消</button>
-        <button onclick="saveEditedExpense()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 text-white font-extrabold text-xs shadow">💾 儲存修改</button>
+        <button onclick="saveEditedExpense()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 text-white font-extrabold text-xs shadow">☁️ 儲存並同步</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== 頂部沖繩海島風橫幅 + 星空模式切換 + 精確到秒倒數 ==================== -->
+  <!-- ==================== 頂部沖繩海島風橫幅 + 雲端同步狀態燈 + 星空模式切換 + 精確到秒倒數 ==================== -->
   <header class="relative bg-gradient-to-br from-sky-600 via-cyan-500 to-teal-400 text-white pt-5 pb-12 px-4 shadow-xl overflow-hidden">
     <!-- 動態漂浮氣泡粒子 -->
     <div class="bubble w-4 h-4 left-[12%]" style="animation-duration: 4.5s; animation-delay: 0.2s;"></div>
@@ -430,17 +430,26 @@
     <div class="absolute left-2 bottom-2 text-white/10 text-7xl -rotate-12 pointer-events-none select-none">🐋</div>
 
     <div class="max-w-xl mx-auto relative z-10">
-      <div class="flex justify-between items-center mb-2">
+      <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
         <div class="inline-flex items-center gap-1.5 bg-amber-300 text-slate-900 text-[11px] font-black px-3 py-1 rounded-full shadow">
           <span>🦁 OKINAWA FAMILY TRIP</span>
           <span>•</span>
           <span>2026/12/31 - 2027/01/04</span>
         </div>
-        <!-- ☀️/🌙 日夜星空模式切換鈕 -->
-        <button onclick="toggleStarryMode()" id="theme-toggle-btn" class="bg-slate-900/35 hover:bg-slate-900/50 backdrop-blur-md border border-white/30 text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-moon text-amber-300"></i>
-          <span id="theme-toggle-text">星空模式</span>
-        </button>
+
+        <div class="flex items-center gap-1.5">
+          <!-- ☁️ Firebase 雲端即時同步狀態燈 -->
+          <button onclick="manualSyncCloud()" id="cloud-status-badge" class="bg-slate-900/40 hover:bg-slate-900/60 backdrop-blur-md border border-white/30 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow flex items-center gap-1.5 transition" title="點擊立即同步雲端最新資料">
+            <span id="cloud-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="cloud-text">雲端連線中...</span>
+          </button>
+
+          <!-- ☀️/🌙 日夜星空模式切換鈕 -->
+          <button onclick="toggleStarryMode()" id="theme-toggle-btn" class="bg-slate-900/35 hover:bg-slate-900/50 backdrop-blur-md border border-white/30 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow flex items-center gap-1 transition">
+            <i class="fa-solid fa-moon text-amber-300"></i>
+            <span id="theme-toggle-text">星空</span>
+          </button>
+        </div>
       </div>
 
       <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
@@ -532,7 +541,7 @@
           </div>
           <div class="flex items-center gap-1 text-[11px] bg-slate-100 px-2 py-0.5 rounded-full">
             <span class="font-bold text-slate-500">匯率:</span>
-            <input type="number" id="quick-rate" value="0.215" step="0.001" oninput="syncRate(this.value)" class="w-12 bg-white border rounded px-1 text-center font-bold text-emerald-700">
+            <input type="number" id="quick-rate" value="0.215" step="0.001" onchange="syncRate(this.value)" class="w-12 bg-white border rounded px-1 text-center font-bold text-emerald-700">
           </div>
         </div>
 
@@ -699,7 +708,7 @@
         </div>
       </div>
 
-      <!-- ===== DAY 2 (內嵌永不破圖的海洋博公園＆水族館 SVG 高清園區地圖 + 許田休息站廁所導航) ===== -->
+      <!-- ===== DAY 2 ===== -->
       <div id="day-2" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
           <div class="relative h-48 bg-slate-200">
@@ -811,7 +820,7 @@
                   <div>🔺 <b>Okichan 海豚劇場秀：</b>13:00 / 15:00 / 17:00（位置：戶外海豚劇場，完全免費）</div>
                 </div>
 
-                <!-- 🗺️ 內嵌式高清 SVG 海洋博公園・美麗海水族館園區導覽地圖 (100% 永不破圖) -->
+                <!-- 🗺️ 內嵌式高清 SVG 海洋博公園・美麗海水族館園區導覽地圖 -->
                 <div class="mt-3 bg-gradient-to-br from-sky-900 via-cyan-900 to-slate-900 text-white rounded-2xl p-3 space-y-2.5 shadow-lg border border-cyan-400/40">
                   <div class="flex flex-wrap items-center justify-between gap-2">
                     <div>
@@ -828,20 +837,16 @@
                   <!-- 向量繪製園區全圖 (SVG) -->
                   <div id="churaumi-svg-wrapper" onclick="openSvgMapLightbox()" class="rounded-xl overflow-hidden border border-cyan-400/30 cursor-pointer bg-[#0c4a6e] relative group">
                     <svg viewBox="0 0 800 380" class="w-full h-auto block select-none">
-                      <!-- 海洋背景與海岸線 -->
                       <rect width="800" height="380" fill="#0369a1"/>
                       <path d="M0 40 Q200 10 400 35 T800 25 L800 0 L0 0 Z" fill="#0284c7"/>
                       <text x="50" y="32" fill="#7dd3fc" font-size="14" font-weight="bold">🌊 東中國海 (可遠眺伊江島)</text>
 
-                      <!-- 園區陸地與綠地 -->
                       <path d="M0 110 Q160 85 330 95 Q520 65 650 55 Q740 50 800 90 L800 380 L0 380 Z" fill="#ecfdf5"/>
                       <path d="M20 130 Q180 105 340 115 Q520 85 660 80 Q750 80 785 110 L785 360 L20 360 Z" fill="#bbf7d0"/>
 
-                      <!-- 園區步道虛線 -->
                       <path d="M675 265 L560 220 L535 165 L405 145 L330 140 L260 150" stroke="#047857" stroke-width="5" stroke-dasharray="9,6" fill="none"/>
                       <path d="M535 165 L645 95" stroke="#047857" stroke-width="4" stroke-dasharray="6,6" fill="none"/>
 
-                      <!-- P7 北門立體停車場 (自駕首選) -->
                       <g transform="translate(615, 250)">
                         <rect x="0" y="0" width="160" height="75" rx="14" fill="#1d4ed8" stroke="#93c5fd" stroke-width="3"/>
                         <rect x="8" y="-12" width="95" height="22" rx="8" fill="#facc15"/>
@@ -850,14 +855,12 @@
                         <text x="80" y="52" fill="#bfdbfe" font-size="11" font-weight="bold" text-anchor="middle">(立體多層・有電梯直達)</text>
                       </g>
 
-                      <!-- ④ 綜合諮詢處 (迎賓廣場) -->
                       <g transform="translate(470, 210)">
                         <rect x="0" y="0" width="120" height="52" rx="10" fill="#0f766e" stroke="#5eead4" stroke-width="2"/>
                         <text x="60" y="22" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">④ 迎賓廣場(北門)</text>
                         <text x="60" y="40" fill="#99f6e4" font-size="10" text-anchor="middle">鯨鯊紀念碑拍照點</text>
                       </g>
 
-                      <!-- 🐋 沖繩美麗海水族館本館 -->
                       <g transform="translate(445, 110)">
                         <rect x="0" y="0" width="165" height="78" rx="14" fill="#e11d48" stroke="#fecdd3" stroke-width="3"/>
                         <text x="82" y="26" fill="#ffffff" font-size="15" font-weight="900" text-anchor="middle">🐋 沖繩美麗海水族館</text>
@@ -865,7 +868,6 @@
                         <text x="82" y="64" fill="#fecdd3" font-size="10" text-anchor="middle">1F 深海之旅・3F 珊瑚礁</text>
                       </g>
 
-                      <!-- 🐬 Okichan 海豚劇場 & 海豚潟湖 -->
                       <g transform="translate(265, 105)">
                         <rect x="0" y="0" width="150" height="68" rx="12" fill="#0284c7" stroke="#bae6fd" stroke-width="2.5"/>
                         <text x="75" y="24" fill="#ffffff" font-size="13" font-weight="900" text-anchor="middle">🐬 Okichan 海豚劇場</text>
@@ -873,28 +875,24 @@
                         <text x="75" y="59" fill="#e0f2fe" font-size="10" text-anchor="middle">旁有海豚潟湖＆洗手間</text>
                       </g>
 
-                      <!-- 🐢 海龜館 & 海牛館 -->
                       <g transform="translate(430, 52)">
                         <rect x="0" y="0" width="145" height="44" rx="10" fill="#0d9488" stroke="#99f6e4" stroke-width="2"/>
                         <text x="72" y="20" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">🐢 海龜館 ＆ 🐄 海牛館</text>
                         <text x="72" y="36" fill="#ccfbf1" font-size="10" text-anchor="middle">(免費參觀・近距離看海龜)</text>
                       </g>
 
-                      <!-- 🏖️ 翡翠海灘 -->
                       <g transform="translate(610, 48)">
                         <rect x="0" y="0" width="155" height="52" rx="12" fill="#0891b2" stroke="#a5f3fc" stroke-width="2"/>
                         <text x="77" y="22" fill="#ffffff" font-size="13" font-weight="900" text-anchor="middle">🏖️ 翡翠海灘</text>
                         <text x="77" y="40" fill="#cffafe" font-size="10" text-anchor="middle">三面環海絕美漸層白沙灘</text>
                       </g>
 
-                      <!-- 🌺 沖繩鄉土村 & 熱帶夢幻中心 (左側園區) -->
                       <g transform="translate(45, 200)">
                         <rect x="0" y="0" width="185" height="65" rx="12" fill="#15803d" stroke="#86efac" stroke-width="2"/>
                         <text x="92" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">🌺 ③沖繩鄉土村 / ②熱帶夢幻</text>
                         <text x="92" y="45" fill="#dcfce7" font-size="10" text-anchor="middle">⑤ 海洋文化館 (天文館)</text>
                       </g>
 
-                      <!-- 園區遊園車提示 -->
                       <rect x="260" y="295" width="320" height="42" rx="10" fill="#0f172a" opacity="0.85"/>
                       <text x="420" y="320" fill="#fde047" font-size="12" font-weight="bold" text-anchor="middle">🚌 動線建議：停 P7 ➔ 迎賓廣場 ➔ 水族館 ➔ 海龜海牛館 ➔ 海豚劇場</text>
                     </svg>
@@ -1389,7 +1387,6 @@
 
     <!-- ==================== TAB 2: 航班・住宿・租車 (含 3D 翻轉登機證與 Alphard 裝載秘訣) ==================== -->
     <section id="tab-info" class="tab-content space-y-4">
-      <!-- ✈️ 星宇航空 3D 仿真登機證 (支援點擊 180 度翻轉) -->
       <div class="okinawa-card p-4 space-y-4">
         <div class="flex justify-between items-center">
           <div>
@@ -1404,7 +1401,6 @@
         <!-- 去程 3D 翻轉登機證 -->
         <div class="flip-container" onclick="this.classList.toggle('flipped')">
           <div class="flip-inner">
-            <!-- 正面 -->
             <div class="flip-front boarding-pass p-4">
               <div class="flex justify-between items-center border-b border-sky-100 pb-2">
                 <div class="flex items-center gap-2">
@@ -1444,7 +1440,6 @@
                 <div class="text-right text-sky-600 font-extrabold">點卡片看背面 ➔</div>
               </div>
             </div>
-            <!-- 背面 -->
             <div class="flip-back boarding-pass p-4 flex flex-col justify-between bg-sky-50">
               <div class="flex justify-between items-center border-b border-sky-200 pb-2">
                 <span class="font-extrabold text-xs text-sky-900">✈️ JX302 去程登機與行李須知（背面）</span>
@@ -1464,7 +1459,6 @@
         <!-- 回程 3D 翻轉登機證 -->
         <div class="flip-container" onclick="this.classList.toggle('flipped')">
           <div class="flip-inner">
-            <!-- 正面 -->
             <div class="flip-front boarding-pass p-4">
               <div class="flex justify-between items-center border-b border-sky-100 pb-2">
                 <div class="flex items-center gap-2">
@@ -1504,7 +1498,6 @@
                 <div class="text-right text-sky-600 font-extrabold">點卡片看背面 ➔</div>
               </div>
             </div>
-            <!-- 背面 -->
             <div class="flip-back boarding-pass p-4 flex flex-col justify-between bg-slate-50">
               <div class="flex justify-between items-center border-b border-slate-200 pb-2">
                 <span class="font-extrabold text-xs text-slate-900">✈️ JX313 回程退稅與報到須知（背面）</span>
@@ -1594,10 +1587,10 @@
       </div>
     </section>
 
-    <!-- ==================== TAB 3: 費用明細 & 互動記帳本 (含6位成員下拉選單與最終結算表) ==================== -->
+    <!-- ==================== TAB 3: 費用明細 & 雲端同步記帳本 ==================== -->
     <section id="tab-cost" class="tab-content space-y-4">
 
-      <!-- 固定行前分攤費用 (已移除租車欄位) -->
+      <!-- 固定行前分攤費用 -->
       <div class="okinawa-card p-4">
         <h2 class="font-extrabold text-lg text-sky-800 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-file-invoice-dollar text-sky-500"></i> 行前固定費用明細（6 人平分）
@@ -1629,18 +1622,18 @@
         </div>
       </div>
 
-      <!-- 互動式新增花費記帳本 -->
+      <!-- 雲端多人同步記帳本 -->
       <div class="okinawa-card p-4">
         <div class="flex justify-between items-center mb-2">
           <h2 class="font-extrabold text-lg text-rose-600 flex items-center gap-2">
-            <i class="fa-solid fa-calculator"></i> 旅途現場記帳本（自動分帳結算）
+            <i class="fa-solid fa-cloud-arrow-up"></i> 雲端同步記帳本（全體即時檢視）
           </h2>
           <div class="flex items-center gap-1 text-xs bg-slate-100 px-2.5 py-1 rounded-lg">
             <span>匯率:</span>
-            <input type="number" id="exchange-rate" value="0.215" step="0.001" oninput="syncRate(this.value)" class="w-14 bg-white border rounded px-1 text-center font-bold text-sky-700">
+            <input type="number" id="exchange-rate" value="0.215" step="0.001" onchange="syncRate(this.value)" class="w-14 bg-white border rounded px-1 text-center font-bold text-sky-700">
           </div>
         </div>
-        <p class="text-xs text-slate-500 mb-3">直接選擇成員（瑞、茹、瑞爸、瑞媽、茹爸、茹媽、公費）紀錄花費，系統自動算出每人退補差額！</p>
+        <p class="text-xs text-slate-500 mb-3">任何一人新增或修改帳目，全家人手機會立即同步更新並自動算出退補差額！</p>
 
         <!-- 新增表單 -->
         <form onsubmit="addExpense(event)" class="bg-rose-50/60 border border-rose-200 rounded-2xl p-3.5 space-y-3 text-sm">
@@ -1701,7 +1694,7 @@
           </div>
 
           <button type="submit" class="w-full bg-gradient-to-r from-rose-500 to-orange-500 text-white font-extrabold py-2.5 rounded-xl shadow hover:opacity-95 transition text-sm">
-            <i class="fa-solid fa-plus-circle mr-1"></i> 新增這筆花費明細
+            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> 新增並同步給全家人
           </button>
         </form>
 
@@ -1725,7 +1718,7 @@
         <div id="payer-summary-box" class="bg-indigo-50/80 border border-indigo-200 rounded-2xl p-3.5 my-3 hidden space-y-2.5">
           <div class="text-xs font-extrabold text-indigo-900 flex items-center justify-between">
             <span>💳 各成員先付統計 & 6人平分結算 (台幣)</span>
-            <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">自動精算</span>
+            <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">雲端自動精算</span>
           </div>
           <div id="payer-summary-list" class="flex flex-wrap gap-1.5 text-xs"></div>
           <div class="border-t border-indigo-200/70 pt-2">
@@ -1747,15 +1740,15 @@
       </div>
     </section>
 
-    <!-- ==================== TAB 4: 必買購物 (支援手機相簿選圖/隨時編輯價格/刪除移除/放大圖片) ==================== -->
+    <!-- ==================== TAB 4: 必買購物 (雲端同步相簿選圖/改價格/刪除) ==================== -->
     <section id="tab-shopping" class="tab-content space-y-4">
       <div class="okinawa-card p-4">
         <div class="flex justify-between items-center mb-2">
           <div>
             <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
-              <i class="fa-solid fa-bag-shopping text-rose-500"></i> 沖繩必買清單
+              <i class="fa-solid fa-bag-shopping text-rose-500"></i> 沖繩必買清單（全體即時同步）
             </h2>
-            <p class="text-[11px] text-slate-500">點小圖可放大，點「✏️」可改價格或換手機照片，點「🗑️」可刪除！</p>
+            <p class="text-[11px] text-slate-500">一人修改價格、上傳手機照片或打勾，所有人的手機都會同步更新！</p>
           </div>
           <button onclick="resetChecklist()" class="text-xs text-slate-400 underline">重置/恢復預設</button>
         </div>
@@ -1778,10 +1771,10 @@
           <button onclick="setShopFilter('bought')" id="filter-btn-bought" class="flex-1 py-1.5 rounded-xl font-bold text-xs bg-slate-100 text-slate-600">✅ 只看已買完</button>
         </div>
 
-        <!-- ➕ 使用者自行新增想要買的商品表單 (支援手機相簿直接選照片) -->
+        <!-- ➕ 使用者自行新增想要買的商品表單 -->
         <details class="bg-amber-50/70 border border-amber-200 rounded-2xl p-3 mb-4 text-xs group">
           <summary class="font-extrabold text-amber-900 text-sm flex items-center justify-between cursor-pointer list-none">
-            <span><i class="fa-solid fa-circle-plus text-amber-600 mr-1.5"></i>新增我想買的商品（支援手機相簿傳圖！）</span>
+            <span><i class="fa-solid fa-circle-plus text-amber-600 mr-1.5"></i>新增我想買的商品（支援手機相簿傳圖同步！）</span>
             <i class="fa-solid fa-chevron-down text-amber-600 group-open:rotate-180 transition-transform"></i>
           </summary>
           <form onsubmit="addCustomShoppingItem(event)" class="mt-3 space-y-2.5 pt-2 border-t border-amber-200/60">
@@ -1804,7 +1797,7 @@
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="font-bold text-slate-600 block mb-1">💰 參考價格 / 備註</label>
-                <input type="text" id="shop-price" placeholder="例如：¥1,000 或 買3盒" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
+                <input type="text" id="shop-price" placeholder="例如：¥1,000 或 茹要2盒" class="w-full p-2 rounded-xl border border-slate-200 bg-white">
               </div>
               <div>
                 <label class="font-bold text-slate-600 block mb-1">📍 哪裡買</label>
@@ -1812,7 +1805,7 @@
               </div>
             </div>
             <div>
-              <label class="font-bold text-slate-600 block mb-1">📷 商品照片（可從手機相簿選圖，或貼圖片網址）</label>
+              <label class="font-bold text-slate-600 block mb-1">📷 商品照片（可從手機相簿選圖，全體同步可見）</label>
               <div class="flex gap-2 items-center">
                 <label class="cursor-pointer bg-amber-200 hover:bg-amber-300 text-amber-950 font-extrabold px-3 py-2 rounded-xl whitespace-nowrap transition">
                   <i class="fa-solid fa-camera mr-1"></i>從手機選照片
@@ -1822,7 +1815,7 @@
               </div>
             </div>
             <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold py-2 rounded-xl shadow-sm hover:opacity-95 transition">
-              <i class="fa-solid fa-plus mr-1"></i> 加入必買清單
+              <i class="fa-solid fa-cloud-arrow-up mr-1"></i> 加入並同步至雲端清單
             </button>
           </form>
         </details>
@@ -1865,7 +1858,7 @@
         <div class="flex justify-between items-center mb-2">
           <div>
             <h2 class="font-extrabold text-lg text-sky-800 flex items-center gap-2">
-              <i class="fa-solid fa-clipboard-check text-emerald-500"></i> 行前行李 ＆ 證件檢查表
+              <i class="fa-solid fa-clipboard-check text-emerald-500"></i> 行前行李 ＆ 證件檢查表 (雲端同步)
             </h2>
             <p class="text-[11px] text-slate-500">出發去台中機場前逐一打勾確認，100% 完成會有驚喜彩帶！</p>
           </div>
@@ -1886,7 +1879,7 @@
         <!-- 自訂新增行李項目 -->
         <form onsubmit="addCustomPackItem(event)" class="flex gap-2 mb-4">
           <input type="text" id="pack-input" required placeholder="➕ 新增個人必帶物品（如：隱形眼鏡、保溫瓶...）" class="flex-1 p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50 focus:bg-white">
-          <button type="submit" class="bg-emerald-600 text-white font-extrabold px-4 rounded-xl text-xs shadow-sm whitespace-nowrap">新增</button>
+          <button type="submit" class="bg-emerald-600 text-white font-extrabold px-4 rounded-xl text-xs shadow-sm whitespace-nowrap">新增同步</button>
         </form>
 
         <!-- 行李檢查表容器 -->
@@ -1923,7 +1916,120 @@
   </nav>
 
   <script>
-    // 0. 輕量提示框 (Toast)、撒花特效 (Confetti) 與 星空模式切換
+    // ==================== ☁️ FIREBASE 即時雲端同步核心引擎 ====================
+    const FIREBASE_DB_URL = "https://okinawa-2026-63bea-default-rtdb.asia-southeast1.firebasedatabase.app/tripData.json";
+    let isRemoteUpdating = false;
+
+    function updateCloudBadge(status) {
+      const dot = document.getElementById('cloud-dot');
+      const txt = document.getElementById('cloud-text');
+      if (status === 'online') {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]';
+        txt.textContent = '雲端已同步';
+      } else if (status === 'syncing') {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-300 animate-ping';
+        txt.textContent = '同步中...';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-rose-400';
+        txt.textContent = '離線快取';
+      }
+    }
+
+    // 推送本地最新狀態至 Firebase 雲端
+    async function pushStateToCloud() {
+      if (isRemoteUpdating) return;
+      updateCloudBadge('syncing');
+      const payload = {
+        rate: getRate(),
+        expenses: getExpenses(),
+        checklist: JSON.parse(localStorage.getItem('okinawa_checklist') || '{}'),
+        shopOverrides: getShopOverrides(),
+        customShop: getCustomShopItems(),
+        deletedShop: getDeletedShopIds(),
+        packChecked: JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}'),
+        customPack: getCustomPackItems(),
+        updatedAt: Date.now()
+      };
+      try {
+        const res = await fetch(FIREBASE_DB_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) updateCloudBadge('online');
+        else updateCloudBadge('offline');
+      } catch (e) {
+        updateCloudBadge('offline');
+      }
+    }
+
+    // 套用從 Firebase 雲端收到的資料並刷新畫面
+    function applyCloudData(data) {
+      if (!data) return;
+      isRemoteUpdating = true;
+      try {
+        if (data.rate) localStorage.setItem('okinawa_rate', data.rate);
+        localStorage.setItem('okinawa_expenses_v3', JSON.stringify(data.expenses || []));
+        localStorage.setItem('okinawa_checklist', JSON.stringify(data.checklist || {}));
+        localStorage.setItem('okinawa_shop_overrides_v1', JSON.stringify(data.shopOverrides || {}));
+        localStorage.setItem('okinawa_custom_shop_v1', JSON.stringify(data.customShop || []));
+        localStorage.setItem('okinawa_deleted_shop_v1', JSON.stringify(data.deletedShop || []));
+        localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(data.packChecked || {}));
+        localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(data.customPack || []));
+
+        convertCurrency('JPY');
+        renderExpenses();
+        renderChecklist();
+        renderPackingList();
+        updateCloudBadge('online');
+      } finally {
+        isRemoteUpdating = false;
+      }
+    }
+
+    // 初次載入與手動強制同步
+    async function manualSyncCloud() {
+      updateCloudBadge('syncing');
+      try {
+        const res = await fetch(FIREBASE_DB_URL);
+        const data = await res.json();
+        if (data) {
+          applyCloudData(data);
+          showToast('☁️ 已與雲端同步最新資料！');
+        } else {
+          await pushStateToCloud();
+          showToast('☁️ 已將初始清單上傳至雲端資料庫！');
+        }
+      } catch (e) {
+        updateCloudBadge('offline');
+      }
+    }
+
+    // 啟動 Firebase EventSource (SSE) 0.5 秒即時監聽器
+    function initRealtimeCloudStream() {
+      manualSyncCloud();
+      try {
+        const sse = new EventSource(FIREBASE_DB_URL);
+        sse.addEventListener('put', (e) => {
+          try {
+            const packet = JSON.parse(e.data);
+            if (packet.path === '/' && packet.data) {
+              applyCloudData(packet.data);
+            } else {
+              fetch(FIREBASE_DB_URL).then(r => r.json()).then(d => { if (d) applyCloudData(d); });
+            }
+          } catch (err) {}
+        });
+        sse.onerror = () => updateCloudBadge('offline');
+      } catch (e) {
+        // 備援定時輪詢
+        setInterval(() => {
+          fetch(FIREBASE_DB_URL).then(r => r.json()).then(d => { if (d) applyCloudData(d); }).catch(()=>{});
+        }, 6000);
+      }
+    }
+
+    // ==================== 0. 輕量提示框、撒花特效與星空模式 ====================
     let toastTimer = null;
     function showToast(msg) {
       const el = document.getElementById('toast-msg');
@@ -1952,21 +2058,21 @@
       const text = document.getElementById('theme-toggle-text');
       if (isStarry) {
         wave.classList.replace('text-[#f0f9ff]', 'text-[#090d16]');
-        text.textContent = '陽光模式';
+        text.textContent = '陽光';
         showToast('🌙 已切換至琉球星空護眼模式');
       } else {
         wave.classList.replace('text-[#090d16]', 'text-[#f0f9ff]');
-        text.textContent = '星空模式';
+        text.textContent = '星空';
         showToast('☀️ 已切換至沖繩陽光海島模式');
       }
     }
     if (localStorage.getItem('okinawa_starry_mode') === '1') {
       document.body.classList.add('starry-mode');
       document.getElementById('header-wave-bottom').classList.replace('text-[#f0f9ff]', 'text-[#090d16]');
-      document.getElementById('theme-toggle-text').textContent = '陽光模式';
+      document.getElementById('theme-toggle-text').textContent = '陽光';
     }
 
-    // 0.5 手機相簿選照片自動壓縮轉 Base64
+    // 0.5 手機相簿選照片自動壓縮轉 Base64 (壓縮至極輕量以利雲端秒傳)
     function handleImageUpload(inputEl, targetInputId) {
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
@@ -1975,7 +2081,7 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const maxDim = 420;
+          const maxDim = 360;
           let w = img.width, h = img.height;
           if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
           else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
@@ -1983,9 +2089,9 @@
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
           document.getElementById(targetInputId).value = dataUrl;
-          showToast('📷 已載入並壓縮照片！請點擊儲存');
+          showToast('📷 照片已壓縮載入！儲存後全家人皆可看到');
         };
         img.src = e.target.result;
       };
@@ -2144,6 +2250,7 @@
         document.getElementById('exchange-rate').value = num;
         convertCurrency('JPY');
         renderExpenses();
+        pushStateToCloud();
       }
     }
 
@@ -2165,7 +2272,7 @@
       convertCurrency('JPY');
     }
 
-    // 4. 分頁與天數切換 (Day 2 & Day 3 自動隱藏那霸總整理)
+    // 4. 分頁與天數切換
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById('tab-' + tabName).classList.add('active');
@@ -2198,7 +2305,7 @@
       }
     }
 
-    // 5. 互動式費用記帳本邏輯 (含6位成員退補差額自動結算)
+    // 5. 互動式費用記帳本邏輯 (含雲端即時同步)
     const defaultExpenses = [];
     const familyMembers = ['瑞', '茹', '瑞爸', '瑞媽', '茹爸', '茹媽'];
 
@@ -2209,6 +2316,7 @@
 
     function saveExpenses(list) {
       localStorage.setItem('okinawa_expenses_v3', JSON.stringify(list));
+      pushStateToCloud();
     }
 
     function addExpense(e) {
@@ -2228,7 +2336,7 @@
       document.getElementById('exp-title').value = '';
       document.getElementById('exp-amount').value = '';
       renderExpenses();
-      showToast('💰 已新增一筆花費紀錄！');
+      showToast('☁️ 已新增花費並同步給全家人！');
     }
 
     function openEditExpModal(id) {
@@ -2265,19 +2373,20 @@
         list[idx].payer = document.getElementById('edit-exp-payer').value || '公費';
         saveExpenses(list);
         renderExpenses();
-        showToast('✏️ 已更新帳目明細！');
+        showToast('☁️ 已更新帳目並同步至雲端！');
       }
       closeEditExpModal();
     }
 
     function deleteExpense(id) {
+      if (!confirm('確定要刪除這筆花費紀錄嗎？（全體成員畫面將同步刪除）')) return;
       const list = getExpenses().filter(item => item.id !== id);
       saveExpenses(list);
       renderExpenses();
     }
 
     function clearAllExpenses() {
-      if (confirm('確定要清空所有自訂記帳紀錄嗎？')) {
+      if (confirm('確定要清空所有記帳紀錄嗎？（雲端紀錄也會一併清空）')) {
         saveExpenses([]);
         renderExpenses();
       }
@@ -2401,7 +2510,7 @@
       });
     }
 
-    // 6. 必買購物清單 (支援手機相簿上傳圖片 + 隨時編輯價格/名稱/地點 + 刪除移除 + 圖片放大 + 篩選)
+    // 6. 必買購物清單 (雲端即時同步相簿照片、價格編輯、刪除與勾選)
     const defaultShoppingData = [
       { category: "🍪 伴手禮・零食（唐吉訶德 / 機場）", items: [
         { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", price: "¥550", where: "那霸機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
@@ -2460,6 +2569,7 @@
 
     function saveShopOverrides(obj) {
       localStorage.setItem('okinawa_shop_overrides_v1', JSON.stringify(obj));
+      pushStateToCloud();
     }
 
     function getCustomShopItems() {
@@ -2468,6 +2578,7 @@
 
     function saveCustomShopItems(list) {
       localStorage.setItem('okinawa_custom_shop_v1', JSON.stringify(list));
+      pushStateToCloud();
     }
 
     function getDeletedShopIds() {
@@ -2476,6 +2587,7 @@
 
     function saveDeletedShopIds(list) {
       localStorage.setItem('okinawa_deleted_shop_v1', JSON.stringify(list));
+      pushStateToCloud();
     }
 
     function getAllMergedShopGroups() {
@@ -2503,7 +2615,6 @@
       return groups;
     }
 
-    // 放大檢視一般商品圖片
     function openLightbox(e, img, title, sub) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
       const svgBox = document.getElementById('lightbox-svg-container');
@@ -2518,7 +2629,6 @@
       modal.classList.add('flex');
     }
 
-    // 放大檢視海洋博公園 SVG 園區全圖
     function openSvgMapLightbox() {
       const svgBox = document.getElementById('lightbox-svg-container');
       const imgEl = document.getElementById('lightbox-img');
@@ -2585,7 +2695,7 @@
       saveShopOverrides(overrides);
       closeEditShopModal();
       renderChecklist();
-      showToast('✏️ 已儲存商品價格與照片！');
+      showToast('☁️ 已儲存商品價格與照片並同步給大家！');
     }
 
     function addCustomShoppingItem(e) {
@@ -2615,13 +2725,13 @@
       document.getElementById('shop-where').value = '';
       document.getElementById('shop-img').value = '';
       renderChecklist();
-      showToast('🛍️ 已加入必買清單！');
+      showToast('☁️ 已加入必買清單並同步給大家！');
     }
 
     function deleteAnyShopItem(e, id, name) {
       e.preventDefault();
       e.stopPropagation();
-      if (!confirm(`確定要從必買清單中移除「${name}」嗎？`)) return;
+      if (!confirm(`確定要從必買清單中移除「${name}」嗎？（全體成員畫面將同步移除）`)) return;
 
       if (String(id).startsWith('custom_')) {
         const customList = getCustomShopItems().filter(item => item.id !== id);
@@ -2634,7 +2744,7 @@
         }
       }
       renderChecklist();
-      showToast('🗑️ 已移除該項商品');
+      showToast('🗑️ 已移除該項商品並同步');
     }
 
     function renderChecklist() {
@@ -2713,7 +2823,7 @@
       const pct = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
       document.getElementById('checklist-progress-text').textContent = `${checkedCount} / ${totalCount} 項 (${pct}%)`;
       document.getElementById('checklist-progress-bar').style.width = `${pct}%`;
-      if (pct === 100 && totalCount > 0) fireConfetti();
+      if (pct === 100 && totalCount > 0 && !isRemoteUpdating) fireConfetti();
     }
 
     function toggleCheck(id) {
@@ -2721,13 +2831,15 @@
       saved[id] = !saved[id];
       localStorage.setItem('okinawa_checklist', JSON.stringify(saved));
       renderChecklist();
+      pushStateToCloud();
     }
 
     function resetChecklist() {
-      if (confirm('要重置勾選狀態並恢復所有被刪除的預設商品嗎？')) {
+      if (confirm('要重置勾選狀態並恢復所有被刪除的預設商品嗎？（將同步至雲端）')) {
         localStorage.removeItem('okinawa_checklist');
         localStorage.removeItem('okinawa_deleted_shop_v1');
         renderChecklist();
+        pushStateToCloud();
         showToast('🔄 已重置勾選並恢復預設必買清單！');
       }
     }
@@ -2778,7 +2890,7 @@
       }
     });
 
-    // 7. 行前行李 ＆ 證件檢查表
+    // 7. 行前行李 ＆ 證件檢查表 (支援雲端同步)
     const defaultPackingData = [
       { category: "🪪 絕對必備證件與金流（沒帶上不了飛機/租不了車！）", items: [
         { id: "p1", name: "中華民國護照正本（效期需滿 6 個月以上）", note: "最優先確認！" },
@@ -2812,6 +2924,7 @@
 
     function saveCustomPackItems(list) {
       localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(list));
+      pushStateToCloud();
     }
 
     function addCustomPackItem(e) {
@@ -2824,7 +2937,7 @@
       saveCustomPackItems(list);
       input.value = '';
       renderPackingList();
-      showToast('🧳 已加入行前檢查表！');
+      showToast('☁️ 已加入行前檢查表並同步！');
     }
 
     function deleteCustomPackItem(e, id) {
@@ -2839,12 +2952,14 @@
       saved[id] = !saved[id];
       localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(saved));
       renderPackingList();
+      pushStateToCloud();
     }
 
     function resetPackingList() {
       if (confirm('確定要重置所有行前檢查表的勾選狀態嗎？')) {
         localStorage.removeItem('okinawa_pack_checked_v1');
         renderPackingList();
+        pushStateToCloud();
       }
     }
 
@@ -2893,17 +3008,18 @@
       const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
       document.getElementById('packing-progress-text').textContent = `${checked} / ${total} 項 (${pct}%)`;
       document.getElementById('packing-progress-bar').style.width = `${pct}%`;
-      if (pct === 100 && total > 0) {
+      if (pct === 100 && total > 0 && !isRemoteUpdating) {
         fireConfetti();
         showToast('🎉 行李 100% 準備完成！準備出發沖繩囉！');
       }
     }
 
-    // 初始化所有渲染
+    // 初始化所有渲染並啟動 Firebase 即時雲端同步串流
     setQuickJpy(1000);
     renderExpenses();
     renderChecklist();
     renderPackingList();
+    initRealtimeCloudStream();
   </script>
 </body>
 </html>

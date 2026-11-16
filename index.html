@@ -977,7 +977,7 @@
           <div class="font-extrabold text-xs text-sky-900 flex items-center gap-1.5">
             <i class="fa-solid fa-cloud-sun text-amber-500 text-sm"></i> 沖繩即時天氣 (自動更新)
           </div>
-          <button onclick="fetchOkinawaWeather()" class="text-[11px] text-sky-600 font-bold hover:underline">
+          <button onclick="fetchOkinawaWeather(true)" class="text-[11px] text-sky-600 font-bold hover:underline">
             <i class="fa-solid fa-rotate-right"></i> 更新
           </button>
         </div>
@@ -2667,28 +2667,64 @@
       return '⛈️ 雷陣雨';
     }
 
-    async function fetchOkinawaWeather() {
-      try {
-        const [nahaRes, nagoRes] = await Promise.all([
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=26.2124&longitude=127.6809&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FTokyo'),
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=26.5915&longitude=127.9773&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FTokyo')
-        ]);
-        const nahaData = await nahaRes.json();
-        const nagoData = await nagoRes.json();
+    // 渲染天氣資料至畫面小幫手
+    function applyWeatherUI(nahaTemp, nahaDesc, nagoTemp, nagoDesc) {
+      document.getElementById('weather-naha-temp').textContent = nahaTemp;
+      document.getElementById('weather-naha-desc').textContent = nahaDesc;
+      document.getElementById('weather-nago-temp').textContent = nagoTemp;
+      document.getElementById('weather-nago-desc').textContent = nagoDesc;
+    }
 
-        if (nahaData.current) {
-          document.getElementById('weather-naha-temp').textContent = `${Math.round(nahaData.current.temperature_2m)}°C`;
-          document.getElementById('weather-naha-desc').textContent = `${weatherCodeToText(nahaData.current.weather_code)}・風 ${Math.round(nahaData.current.wind_speed_10m)}km/h`;
-        }
-        if (nagoData.current) {
-          document.getElementById('weather-nago-temp').textContent = `${Math.round(nagoData.current.temperature_2m)}°C`;
-          document.getElementById('weather-nago-desc').textContent = `${weatherCodeToText(nagoData.current.weather_code)}・風 ${Math.round(nagoData.current.wind_speed_10m)}km/h`;
+    async function fetchOkinawaWeather(isManual = false) {
+      const CACHE_KEY = 'okinawa_weather_cache_v1';
+
+      // 1. 先讀取本地快取，讓手機一打開 0 秒瞬間顯示，不卡「載入中...」
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          const c = JSON.parse(cached);
+          applyWeatherUI(c.nahaTemp, c.nahaDesc, c.nagoTemp, c.nagoDesc);
+        } catch (err) {}
+      }
+
+      if (isManual) showToast('🌤️ 正在更新沖繩最新天氣...');
+
+      // 2. 設定 5 秒強制逾時保護 (AbortController)，防止手機網路不穩無限卡住
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      try {
+        // 3. 將那霸與名護合併為單一 API 請求，減少手機連線負擔
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=26.2124,26.5915&longitude=127.6809,127.9773&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FTokyo';
+        const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) throw new Error('Weather API Error');
+        const data = await res.json();
+
+        // data[0] 為那霸，data[1] 為名護
+        const naha = Array.isArray(data) ? data[0]?.current : data?.current;
+        const nago = Array.isArray(data) ? data[1]?.current : data?.current;
+
+        if (naha && nago) {
+          const result = {
+            nahaTemp: `${Math.round(naha.temperature_2m)}°C`,
+            nahaDesc: `${weatherCodeToText(naha.weather_code)}・風 ${Math.round(naha.wind_speed_10m)}km/h`,
+            nagoTemp: `${Math.round(nago.temperature_2m)}°C`,
+            nagoDesc: `${weatherCodeToText(nago.weather_code)}・風 ${Math.round(nago.wind_speed_10m)}km/h`,
+            updatedAt: Date.now()
+          };
+          applyWeatherUI(result.nahaTemp, result.nahaDesc, result.nagoTemp, result.nagoDesc);
+          localStorage.setItem(CACHE_KEY, JSON.stringify(result));
+          if (isManual) showToast('✅ 沖繩即時天氣已更新！');
         }
       } catch (e) {
-        document.getElementById('weather-naha-temp').textContent = '19°C ~ 22°C';
-        document.getElementById('weather-naha-desc').textContent = '⛅ 舒適海島氣候';
-        document.getElementById('weather-nago-temp').textContent = '18°C ~ 21°C';
-        document.getElementById('weather-nago-desc').textContent = '⛅ 舒適海島氣候';
+        clearTimeout(timeoutId);
+        // 若無快取且連線逾時/失敗，立即顯示沖繩跨年平均氣溫作為安心備援
+        if (!localStorage.getItem(CACHE_KEY)) {
+          applyWeatherUI('19°C ~ 22°C', '⛅ 舒適海島氣候', '18°C ~ 21°C', '⛅ 舒適海島氣候');
+        }
+        if (isManual) showToast('ℹ️ 目前網路較慢，已顯示最新快取天氣');
       }
     }
     fetchOkinawaWeather();

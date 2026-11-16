@@ -332,14 +332,9 @@
       </button>
       <div id="lightbox-svg-container" class="w-full hidden bg-sky-950 p-2 overflow-auto max-h-[75vh]"></div>
       <img id="lightbox-img" src="" alt="放大圖" class="w-full max-h-[72vh] object-contain bg-slate-900">
-      <div class="p-4 text-center bg-white space-y-2">
+      <div class="p-4 text-center bg-white">
         <div id="lightbox-title" class="font-extrabold text-base text-slate-800"></div>
         <div id="lightbox-sub" class="text-xs text-rose-600 font-bold mt-1"></div>
-        <div id="lightbox-action-bar" class="pt-1 hidden justify-center">
-          <button type="button" id="lightbox-edit-btn" onclick="triggerEditFromLightbox()" class="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-extrabold text-xs px-4 py-2 rounded-full shadow-md inline-flex items-center gap-1.5 transition">
-            <i class="fa-solid fa-camera"></i> 更換這張照片 (手機上傳/貼網址)
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -347,13 +342,10 @@
   <!-- 🎟️ 景點 3D 紀念票卡深度介紹視窗 (Spot Ticket Modal) -->
   <div id="spot-ticket-modal" onclick="closeSpotTicket()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="boarding-pass max-w-md w-full bg-white shadow-2xl animate-[springIn_0.3s_ease-out]" onclick="event.stopPropagation()">
-      <div class="relative h-52 bg-slate-800 group">
-        <img id="ticket-img" src="" onclick="openCurrentTicketLightbox()" class="w-full h-full object-cover cursor-pointer" alt="景點圖">
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/20 to-transparent pointer-events-none"></div>
-        <button type="button" onclick="editCurrentSpotTicketPhoto(event)" class="absolute top-3 left-3 bg-black/60 hover:bg-sky-600 text-white text-[11px] font-extrabold px-3 py-1.5 rounded-full border border-white/30 shadow-lg flex items-center gap-1.5 transition z-10">
-          <i class="fa-solid fa-camera text-amber-300"></i> 更換景點照
-        </button>
-        <button onclick="closeSpotTicket()" class="absolute top-3 right-3 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center z-10">
+      <div class="relative h-48 bg-slate-800">
+        <img id="ticket-img" src="" class="w-full h-full object-cover" alt="景點圖">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/20 to-transparent"></div>
+        <button onclick="closeSpotTicket()" class="absolute top-3 right-3 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
         </button>
         <div class="absolute bottom-3 left-4 right-4 text-white">
@@ -475,19 +467,13 @@
           </div>
         </div>
         <div>
-          <div class="flex items-center justify-between mb-1">
-            <label class="font-bold text-slate-600">📷 更換商品照片（支援手機高清原圖壓縮同步）</label>
-            <span id="edit-shop-img-meta" class="text-[10px] text-emerald-600 font-extrabold">✨ HD 高解析模式</span>
-          </div>
+          <label class="font-bold text-slate-600 block mb-1">📷 更換商品照片（可直接從手機相簿選圖或貼網址）</label>
           <div class="flex gap-2 items-center">
-            <label class="cursor-pointer bg-sky-100 hover:bg-sky-200 text-sky-800 font-extrabold px-3 py-2 rounded-xl whitespace-nowrap transition shadow-sm">
+            <label class="cursor-pointer bg-sky-100 hover:bg-sky-200 text-sky-800 font-extrabold px-3 py-2 rounded-xl whitespace-nowrap transition">
               <i class="fa-solid fa-camera mr-1"></i>手機相簿選圖
-              <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'edit-shop-img', 'edit-shop-preview', 'edit-shop-img-meta')">
+              <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'edit-shop-img')">
             </label>
-            <input type="text" id="edit-shop-img" oninput="updateModalPreview('edit-shop-img', 'edit-shop-preview')" placeholder="或貼上圖片網址..." class="flex-1 p-2 rounded-xl border border-slate-200 text-slate-600">
-          </div>
-          <div class="mt-2 relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 h-36 flex items-center justify-center">
-            <img id="edit-shop-preview" src="" alt="商品預覽圖" class="w-full h-full object-contain">
+            <input type="text" id="edit-shop-img" placeholder="或貼上圖片網址..." class="flex-1 p-2 rounded-xl border border-slate-200 text-slate-600">
           </div>
         </div>
       </div>
@@ -560,16 +546,6 @@
             </select>
           </div>
         </div>
-        <div>
-          <label class="font-bold text-slate-600 block mb-1">📷 附加收據或美食照片（選填，支援手機上傳）</label>
-          <div class="flex gap-2 items-center">
-            <label class="cursor-pointer bg-rose-100 hover:bg-rose-200 text-rose-800 font-extrabold px-3 py-2 rounded-xl whitespace-nowrap transition">
-              <i class="fa-solid fa-camera mr-1"></i>手機選照片
-              <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'edit-exp-img')">
-            </label>
-            <input type="text" id="edit-exp-img" placeholder="或貼上圖片網址..." class="flex-1 p-2 rounded-xl border border-slate-200 text-slate-600">
-          </div>
-        </div>
       </div>
       <div class="flex gap-2 pt-2">
         <button onclick="closeEditExpModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">取消</button>
@@ -578,112 +554,11 @@
     </div>
   </div>
 
-  <!-- 🖼️ 全站通用「高清照片自訂與手機上傳」彈出視窗 (支援行程底圖、橫幅、景點票卡、飯店、租車、各行程細項) -->
-  <div id="universal-photo-modal" onclick="closeUniversalPhotoModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-3 sm:p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3.5 border-2 border-sky-200" onclick="event.stopPropagation()">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
-        <div>
-          <span class="bg-sky-100 text-sky-700 text-[10px] font-black px-2.5 py-0.5 rounded-full">📸 HD 高解析雲端同步相簿</span>
-          <h3 id="uni-photo-title" class="font-extrabold text-base text-slate-800 mt-1">更換照片</h3>
-        </div>
-        <button type="button" onclick="closeUniversalPhotoModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center bg-slate-100">
-          <i class="fa-solid fa-xmark text-base"></i>
-        </button>
-      </div>
-
-      <input type="hidden" id="uni-photo-key">
-
-      <!-- 即時高清預覽區 -->
-      <div class="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 h-48 flex items-center justify-center shadow-inner">
-        <img id="uni-photo-preview" src="" alt="預覽圖" class="w-full h-full object-cover">
-        <div id="uni-photo-badge" class="absolute bottom-2 right-2 bg-slate-950/80 backdrop-blur-md text-amber-300 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-white/20">
-          ✨ 支援 1600px 超清畫質
-        </div>
-      </div>
-
-      <div class="space-y-2.5 text-xs">
-        <!-- 解析度畫質選擇器 -->
-        <div class="bg-sky-50/80 border border-sky-100 rounded-xl p-2.5 flex items-center justify-between gap-2">
-          <span class="font-extrabold text-sky-900"><i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1"></i>上傳畫質設定：</span>
-          <select id="upload-quality-select" onchange="setUploadQualityPreset(this.value)" class="bg-white border border-sky-200 rounded-lg px-2 py-1 font-extrabold text-sky-800 text-xs">
-            <option value="1600">✨ 超清原畫 HD (1600px・底圖首選)</option>
-            <option value="1280">📸 高畫質清晰 (1280px・推薦)</option>
-            <option value="960">⚡ 標準輕量同步 (960px)</option>
-          </select>
-        </div>
-
-        <!-- 手機相簿上傳按鈕與網址欄 -->
-        <div>
-          <label class="font-bold text-slate-600 block mb-1.5">📱 從手機相簿選圖 / 拍照，或直接貼上圖片網址：</label>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <label class="cursor-pointer bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-extrabold px-4 py-2.5 rounded-xl text-center shadow-md flex items-center justify-center gap-1.5 transition">
-              <i class="fa-solid fa-camera-retro text-sm"></i> 從手機相簿選高清照片
-              <input type="file" id="uni-photo-file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'uni-photo-url', 'uni-photo-preview', 'uni-photo-badge')">
-            </label>
-            <input type="text" id="uni-photo-url" oninput="updateModalPreview('uni-photo-url', 'uni-photo-preview')" placeholder="或貼上圖片網址 (https://...)" class="flex-1 p-2.5 rounded-xl border border-slate-200 text-slate-700 font-medium">
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-        <button type="button" onclick="resetSinglePhotoToDefault()" class="px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 font-extrabold text-xs transition">
-          <i class="fa-solid fa-rotate-left mr-1"></i>恢復預設圖
-        </button>
-        <button type="button" onclick="closeUniversalPhotoModal()" class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">
-          取消
-        </button>
-        <button type="button" onclick="saveUniversalPhoto()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-extrabold text-xs shadow-md transition">
-          ☁️ 儲存並同步給全家人
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 🖼️ 全站照片總覽＆一鍵換圖管理中心 (Photo Gallery Manager Modal) -->
-  <div id="photo-gallery-modal" onclick="closePhotoGalleryModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[86vh] flex flex-col shadow-2xl border-2 border-sky-200 overflow-hidden" onclick="event.stopPropagation()">
-      <div class="bg-gradient-to-r from-sky-900 via-cyan-800 to-slate-900 text-white p-4 flex justify-between items-center flex-shrink-0">
-        <div>
-          <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full">📸 ALL-IN-ONE PHOTO CENTER</span>
-          <h3 class="font-black text-base sm:text-lg mt-1">🖼️ 全站照片＆每日底圖管理中心</h3>
-          <p class="text-[11px] text-sky-200">頂部橫幅、Day 1~5 每日底圖、景點票卡、住宿與租車照片皆可在此一鍵更換！</p>
-        </div>
-        <button type="button" onclick="closePhotoGalleryModal()" class="bg-white/15 hover:bg-white/30 text-white w-8 h-8 rounded-full flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <div id="photo-gallery-list" class="p-4 overflow-y-auto space-y-4 text-xs flex-1"></div>
-      <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center flex-shrink-0">
-        <button type="button" onclick="resetAllCustomPhotos()" class="text-xs text-rose-600 font-bold hover:underline">
-          <i class="fa-solid fa-trash-can mr-1"></i>重置所有自訂照片回預設值
-        </button>
-        <button type="button" onclick="closePhotoGalleryModal()" class="bg-sky-600 text-white font-extrabold text-xs px-5 py-2 rounded-xl shadow">
-          完成關閉
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 🛡️ 頁內安全確認彈窗 (取代瀏覽器預設 confirm 以支援全環境順暢運作) -->
-  <div id="custom-confirm-modal" onclick="closeConfirmModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3.5 border-2 border-rose-100 text-center" onclick="event.stopPropagation()">
-      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-xl">
-        <i class="fa-solid fa-circle-question"></i>
-      </div>
-      <h4 id="confirm-modal-title" class="font-extrabold text-base text-slate-800">確認執行此操作？</h4>
-      <p id="confirm-modal-msg" class="text-xs text-slate-600 leading-relaxed"></p>
-      <div class="flex gap-2 pt-1">
-        <button type="button" onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">取消</button>
-        <button type="button" id="confirm-modal-ok-btn" onclick="executeConfirmAction()" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow">確定執行</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ==================== 頂部「古宇利藍空拍海景＋星宇航線＋花火金粉＋呼吸霓虹倒數」混搭旗艦橫幅 ==================== -->
   <header class="relative text-white pt-5 pb-14 px-4 shadow-2xl overflow-hidden bg-slate-900">
     <!-- 1. 樣式一：古宇利藍空拍海景底圖 + 電影慢速推進動畫 -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <img id="photo-slot-hero_bg" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85" alt="沖繩古宇利藍海景" class="w-full h-full object-cover hero-bg-anim opacity-80">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85" alt="沖繩古宇利藍海景" class="w-full h-full object-cover hero-bg-anim opacity-80">
       <div class="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-sky-900/45 to-cyan-600/75"></div>
       <!-- 陽光折射光斑 -->
       <div class="absolute -top-16 -left-16 w-64 h-64 bg-amber-300/25 rounded-full blur-3xl"></div>
@@ -745,15 +620,6 @@
             <span id="cloud-text">雲端連線中...</span>
           </button>
 
-          <!-- 📷 更換頂部封面與全站照片管理鈕 -->
-          <button type="button" onclick="openUniversalPhotoModal(event, 'hero_bg', '頂部旗艦橫幅底圖 (古宇利藍海景)')" class="bg-slate-950/55 hover:bg-sky-600/85 backdrop-blur-md border border-white/30 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow flex items-center gap-1 transition" title="更換頂部橫幅底圖">
-            <i class="fa-solid fa-camera text-amber-300"></i>
-            <span>換橫幅</span>
-          </button>
-          <button type="button" onclick="openPhotoGalleryModal()" class="bg-slate-950/55 hover:bg-sky-600/85 backdrop-blur-md border border-white/30 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow flex items-center gap-1 transition" title="管理全站所有照片與每日底圖">
-            <i class="fa-solid fa-images text-cyan-300"></i>
-            <span>全站相簿</span>
-          </button>
           <!-- ☀️/🌙 日夜星空模式切換鈕 -->
           <button onclick="toggleStarryMode()" id="theme-toggle-btn" class="bg-slate-950/55 hover:bg-slate-950/75 backdrop-blur-md border border-white/30 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow flex items-center gap-1 transition">
             <i class="fa-solid fa-moon text-amber-300"></i>
@@ -911,13 +777,10 @@
       <!-- ===== DAY 1 ===== -->
       <div id="day-1" class="day-content active space-y-4">
         <div class="okinawa-card overflow-hidden">
-          <div class="relative h-52 bg-slate-200 group">
-            <img id="photo-slot-day1_bg" src="https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1400&q=85" alt="那霸波上宮與國際通" onclick="openSlotLightbox(event, 'day1_bg', 'Day 1 (12/31) 每日行程封面底圖', '點擊下方按鈕可從手機相簿更換此底圖')" class="w-full h-full object-cover cursor-pointer">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent pointer-events-none"></div>
-            <button type="button" onclick="openUniversalPhotoModal(event, 'day1_bg', 'Day 1 (12/31) 每日行程封面底圖')" class="absolute top-3 left-3 bg-black/60 hover:bg-sky-600/95 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/30 shadow-lg flex items-center gap-1.5 transition z-10">
-              <i class="fa-solid fa-camera text-amber-300"></i> 更換底圖
-            </button>
-            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20 pointer-events-none">
+          <div class="relative h-48 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=900&q=80" alt="那霸波上宮與國際通" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent"></div>
+            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20">
               🎟️ 點擊景點名稱可看票卡介紹
             </div>
             <div class="absolute bottom-3 left-4 right-4 text-white">
@@ -1031,13 +894,10 @@
       <!-- ===== DAY 2 ===== -->
       <div id="day-2" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
-          <div class="relative h-52 bg-slate-200 group">
-            <img id="photo-slot-day2_bg" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85" alt="美麗海水族館黑潮之海" onclick="openSlotLightbox(event, 'day2_bg', 'Day 2 (1/1) 每日行程封面底圖', '點擊下方按鈕可從手機相簿更換此底圖')" class="w-full h-full object-cover cursor-pointer">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent pointer-events-none"></div>
-            <button type="button" onclick="openUniversalPhotoModal(event, 'day2_bg', 'Day 2 (1/1) 每日行程封面底圖')" class="absolute top-3 left-3 bg-black/60 hover:bg-sky-600/95 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/30 shadow-lg flex items-center gap-1.5 transition z-10">
-              <i class="fa-solid fa-camera text-amber-300"></i> 更換底圖
-            </button>
-            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20 pointer-events-none">
+          <div class="relative h-48 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80" alt="美麗海水族館黑潮之海" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent"></div>
+            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20">
               🎟️ 點擊景點名稱可看票卡介紹
             </div>
             <div class="absolute bottom-3 left-4 right-4 text-white">
@@ -1275,13 +1135,10 @@
       <!-- ===== DAY 3 ===== -->
       <div id="day-3" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
-          <div class="relative h-52 bg-slate-200 group">
-            <img id="photo-slot-day3_bg" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85" alt="萬座毛與美國村海景" onclick="openSlotLightbox(event, 'day3_bg', 'Day 3 (1/2) 每日行程封面底圖', '點擊下方按鈕可從手機相簿更換此底圖')" class="w-full h-full object-cover cursor-pointer">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent pointer-events-none"></div>
-            <button type="button" onclick="openUniversalPhotoModal(event, 'day3_bg', 'Day 3 (1/2) 每日行程封面底圖')" class="absolute top-3 left-3 bg-black/60 hover:bg-sky-600/95 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/30 shadow-lg flex items-center gap-1.5 transition z-10">
-              <i class="fa-solid fa-camera text-amber-300"></i> 更換底圖
-            </button>
-            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20 pointer-events-none">
+          <div class="relative h-48 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80" alt="萬座毛與美國村海景" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent"></div>
+            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20">
               🎟️ 點擊景點名稱可看票卡介紹
             </div>
             <div class="absolute bottom-3 left-4 right-4 text-white">
@@ -1448,13 +1305,10 @@
       <!-- ===== DAY 4 ===== -->
       <div id="day-4" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
-          <div class="relative h-52 bg-slate-200 group">
-            <img id="photo-slot-day4_bg" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85" alt="沖繩玉泉洞與南部海景" onclick="openSlotLightbox(event, 'day4_bg', 'Day 4 (1/3) 每日行程封面底圖', '點擊下方按鈕可從手機相簿更換此底圖')" class="w-full h-full object-cover cursor-pointer">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent pointer-events-none"></div>
-            <button type="button" onclick="openUniversalPhotoModal(event, 'day4_bg', 'Day 4 (1/3) 每日行程封面底圖')" class="absolute top-3 left-3 bg-black/60 hover:bg-sky-600/95 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/30 shadow-lg flex items-center gap-1.5 transition z-10">
-              <i class="fa-solid fa-camera text-amber-300"></i> 更換底圖
-            </button>
-            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20 pointer-events-none">
+          <div class="relative h-48 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=900&q=80" alt="沖繩玉泉洞與南部海景" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent"></div>
+            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20">
               🎟️ 點擊景點名稱可看票卡介紹
             </div>
             <div class="absolute bottom-3 left-4 right-4 text-white">
@@ -1576,13 +1430,10 @@
       <!-- ===== DAY 5 ===== -->
       <div id="day-5" class="day-content space-y-4">
         <div class="okinawa-card overflow-hidden">
-          <div class="relative h-52 bg-slate-200 group">
-            <img id="photo-slot-day5_bg" src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1400&q=85" alt="瀨長島純白海景" onclick="openSlotLightbox(event, 'day5_bg', 'Day 5 (1/4) 每日行程封面底圖', '點擊下方按鈕可從手機相簿更換此底圖')" class="w-full h-full object-cover cursor-pointer">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent pointer-events-none"></div>
-            <button type="button" onclick="openUniversalPhotoModal(event, 'day5_bg', 'Day 5 (1/4) 每日行程封面底圖')" class="absolute top-3 left-3 bg-black/60 hover:bg-sky-600/95 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/30 shadow-lg flex items-center gap-1.5 transition z-10">
-              <i class="fa-solid fa-camera text-amber-300"></i> 更換底圖
-            </button>
-            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20 pointer-events-none">
+          <div class="relative h-48 bg-slate-200">
+            <img src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=900&q=80" alt="瀨長島純白海景" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent"></div>
+            <div class="absolute top-3 right-3 bg-black/45 backdrop-blur-md text-amber-300 text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/20">
               🎟️ 點擊景點名稱可看票卡介紹
             </div>
             <div class="absolute bottom-3 left-4 right-4 text-white">
@@ -1837,13 +1688,7 @@
           <i class="fa-solid fa-hotel text-sky-500"></i> 住宿資訊（Booking.com 皆訂 3 間房）
         </h2>
         <div class="space-y-3 text-sm">
-          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2.5">
-            <div class="relative h-36 rounded-xl overflow-hidden bg-slate-200">
-              <img id="photo-slot-hotel_1" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=85" alt="Hotel Lantana Naha" onclick="openSlotLightbox(event, 'hotel_1', 'Day 1 住宿｜Hotel Lantana Naha Kokusai-Dori', '國際通正中央・下樓即逛街')" class="w-full h-full object-cover cursor-pointer">
-              <button type="button" onclick="openUniversalPhotoModal(event, 'hotel_1', 'Day 1 飯店照片｜Hotel Lantana Naha')" class="absolute top-2 right-2 bg-black/60 hover:bg-sky-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-white/30 shadow flex items-center gap-1">
-                <i class="fa-solid fa-camera text-amber-300"></i> 更換飯店照
-              </button>
-            </div>
+          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
             <div class="flex justify-between items-start">
               <div>
                 <span class="text-xs font-extrabold text-rose-500">Day 1｜12/31 (四) 那霸南部</span>
@@ -1851,17 +1696,11 @@
               </div>
               <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Lantana+Naha+Kokusai-Dori" target="_blank" class="map-btn">📍 導航</a>
             </div>
-            <p class="text-xs text-slate-500">地址：沖繩, 那霸, Matsuo 2-8-1｜入住 15:00~23:30 / 退房 11:00 前</p>
-            <p class="text-xs font-bold text-emerald-700">💰 NT$ 8,866 / 1晚 / 3間雙床房 (12/23 收費)</p>
+            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuo 2-8-1｜入住 15:00~23:30 / 退房 11:00 前</p>
+            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 8,866 / 1晚 / 3間雙床房 (12/23 收費)</p>
           </div>
 
-          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2.5">
-            <div class="relative h-36 rounded-xl overflow-hidden bg-slate-200">
-              <img id="photo-slot-hotel_2" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=85" alt="New Normal Hotel in NAGO" onclick="openSlotLightbox(event, 'hotel_2', 'Day 2 & 3 住宿｜New Normal Hotel in NAGO', '名護公寓式寬敞房型・連住兩晚')" class="w-full h-full object-cover cursor-pointer">
-              <button type="button" onclick="openUniversalPhotoModal(event, 'hotel_2', 'Day 2 & 3 飯店照片｜New Normal Hotel in NAGO')" class="absolute top-2 right-2 bg-black/60 hover:bg-sky-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-white/30 shadow flex items-center gap-1">
-                <i class="fa-solid fa-camera text-amber-300"></i> 更換飯店照
-              </button>
-            </div>
+          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
             <div class="flex justify-between items-start">
               <div>
                 <span class="text-xs font-extrabold text-sky-600">Day 2 & 3｜1/1 (五) - 1/3 (日) 北部名護</span>
@@ -1869,17 +1708,11 @@
               </div>
               <a href="https://www.google.com/maps/search/?api=1&query=New+Normal+Hotel+in+NAGO" target="_blank" class="map-btn">📍 導航</a>
             </div>
-            <p class="text-xs text-slate-500">地址：沖繩, 名護, Miyazato 949｜入住 15:00~00:00 / 退房 10:00 前</p>
-            <p class="text-xs font-bold text-emerald-700">💰 NT$ 19,676 / 2晚 / 3間雙人房 (12/27 收費)</p>
+            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 名護, Miyazato 949｜入住 15:00~00:00 / 退房 10:00 前</p>
+            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 19,676 / 2晚 / 3間雙人房 (12/27 收費)</p>
           </div>
 
-          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2.5">
-            <div class="relative h-36 rounded-xl overflow-hidden bg-slate-200">
-              <img id="photo-slot-hotel_3" src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=85" alt="Hotel Cocktail Stay Naha" onclick="openSlotLightbox(event, 'hotel_3', 'Day 4 住宿｜Hotel Cocktail Stay Naha', '那霸市區質感住宿・特大雙人床房')" class="w-full h-full object-cover cursor-pointer">
-              <button type="button" onclick="openUniversalPhotoModal(event, 'hotel_3', 'Day 4 飯店照片｜Hotel Cocktail Stay Naha')" class="absolute top-2 right-2 bg-black/60 hover:bg-sky-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-white/30 shadow flex items-center gap-1">
-                <i class="fa-solid fa-camera text-amber-300"></i> 更換飯店照
-              </button>
-            </div>
+          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
             <div class="flex justify-between items-start">
               <div>
                 <span class="text-xs font-extrabold text-purple-600">Day 4｜1/3 (日) 那霸南部</span>
@@ -1887,8 +1720,8 @@
               </div>
               <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Cocktail+Stay+Naha" target="_blank" class="map-btn">📍 導航</a>
             </div>
-            <p class="text-xs text-slate-500">地址：沖繩, 那霸, Matsuyama 1-29-7｜入住 15:00~23:00 / 退房 11:00 前</p>
-            <p class="text-xs font-bold text-emerald-700">💰 NT$ 6,493 / 1晚 / 3間特大雙人床房 (12/28 收費)</p>
+            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuyama 1-29-7｜入住 15:00~23:00 / 退房 11:00 前</p>
+            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 6,493 / 1晚 / 3間特大雙人床房 (12/28 收費)</p>
           </div>
         </div>
       </div>
@@ -1899,13 +1732,7 @@
           <i class="fa-solid fa-van-shuttle text-sky-500"></i> 沖繩行腳租車（預約編號：W100109）
         </h2>
         <div class="text-sm space-y-2.5">
-          <div class="p-3.5 bg-sky-50 rounded-2xl border border-sky-100 space-y-2.5">
-            <div class="relative h-36 rounded-xl overflow-hidden bg-slate-200">
-              <img id="photo-slot-car_alphard" src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1200&q=85" alt="ALPHARD 30系 8人座" onclick="openSlotLightbox(event, 'car_alphard', '🚐 沖繩行腳租車｜ALPHARD 30系 (預約編號 W100109)', '可於取車時拍下車牌號碼與車況上傳同步給全家人！')" class="w-full h-full object-cover cursor-pointer">
-              <button type="button" onclick="openUniversalPhotoModal(event, 'car_alphard', '租車實拍與車牌紀錄｜ALPHARD 30系')" class="absolute top-2 right-2 bg-black/60 hover:bg-sky-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-white/30 shadow flex items-center gap-1">
-                <i class="fa-solid fa-camera text-amber-300"></i> 上傳實車/車牌照
-              </button>
-            </div>
+          <div class="p-3.5 bg-sky-50 rounded-2xl border border-sky-100">
             <div class="font-extrabold text-base text-sky-900">🚐 ALPHARD 30系（7-8人座）</div>
             <div class="text-xs text-slate-600 mt-1 space-y-0.5">
               <div>• <b>取車：</b>2026/12/31 (四) 18:30 那霸機場</div>
@@ -2034,17 +1861,6 @@
             </div>
           </div>
 
-          <div>
-            <label class="text-xs font-bold text-slate-600 block mb-1">📷 附加收據 / 美食照片（選填，支援手機高清上傳）</label>
-            <div class="flex gap-2 items-center">
-              <label class="cursor-pointer bg-white hover:bg-rose-100 text-rose-700 border border-rose-200 font-extrabold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition shadow-sm">
-                <i class="fa-solid fa-camera mr-1"></i>拍收據/選照片
-                <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'exp-img')">
-              </label>
-              <input type="text" id="exp-img" placeholder="可選照片或貼上圖片網址..." class="flex-1 p-1.5 rounded-xl border border-slate-200 bg-white text-xs">
-            </div>
-          </div>
-
           <button type="submit" class="w-full bg-gradient-to-r from-rose-500 to-orange-500 text-white font-extrabold py-2.5 rounded-xl shadow hover:opacity-95 transition text-sm">
             <i class="fa-solid fa-cloud-arrow-up mr-1"></i> 新增並同步給全家人
           </button>
@@ -2157,19 +1973,13 @@
               </div>
             </div>
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="font-bold text-slate-600">📷 商品照片（支援手機相簿高清上傳，全體同步可見）</label>
-                <span id="add-shop-img-meta" class="text-[10px] text-emerald-700 font-extrabold">✨ HD 高解析</span>
-              </div>
+              <label class="font-bold text-slate-600 block mb-1">📷 商品照片（可從手機相簿選圖，全體同步可見）</label>
               <div class="flex gap-2 items-center">
-                <label class="cursor-pointer bg-amber-200 hover:bg-amber-300 text-amber-950 font-extrabold px-3 py-2 rounded-xl whitespace-nowrap transition shadow-sm">
+                <label class="cursor-pointer bg-amber-200 hover:bg-amber-300 text-amber-950 font-extrabold px-3 py-2 rounded-xl whitespace-nowrap transition">
                   <i class="fa-solid fa-camera mr-1"></i>從手機選照片
-                  <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'shop-img', 'add-shop-preview', 'add-shop-img-meta')">
+                  <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'shop-img')">
                 </label>
-                <input type="text" id="shop-img" oninput="updateModalPreview('shop-img', 'add-shop-preview')" placeholder="不選圖也會自動配圖..." class="flex-1 p-2 rounded-xl border border-slate-200 bg-white">
-              </div>
-              <div id="add-shop-preview-wrap" class="mt-2 hidden rounded-xl overflow-hidden border border-amber-200 bg-slate-900 h-32 items-center justify-center">
-                <img id="add-shop-preview" src="" alt="新增商品預覽" class="w-full h-full object-contain">
+                <input type="text" id="shop-img" placeholder="不選圖也會自動配圖..." class="flex-1 p-2 rounded-xl border border-slate-200 bg-white">
               </div>
             </div>
             <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold py-2 rounded-xl shadow-sm hover:opacity-95 transition">
@@ -2293,110 +2103,6 @@
       }
     }
 
-    // ==================== 🛡️ 突破容量限制：安全快取 (Memory + IndexedDB + LocalStorage) ====================
-    const memoryStore = {};
-
-    function safeGetStorage(key, fallbackStr) {
-      if (memoryStore[key] !== undefined) return memoryStore[key];
-      try {
-        const val = localStorage.getItem(key);
-        if (val !== null) {
-          memoryStore[key] = val;
-          return val;
-        }
-      } catch (e) {}
-      return fallbackStr;
-    }
-
-    function safeSetStorage(key, valStr) {
-      memoryStore[key] = String(valStr);
-      try {
-        localStorage.setItem(key, String(valStr));
-      } catch (e) {
-        // 當上傳多張高清照片超過瀏覽器 localStorage 5MB 上限時，自動轉存至 IndexedDB 與雲端，確保絕不崩潰
-      }
-      saveToIndexedDB(key, String(valStr));
-    }
-
-    function safeRemoveStorage(key) {
-      delete memoryStore[key];
-      try {
-        localStorage.removeItem(key);
-      } catch (e) {}
-      saveToIndexedDB(key, null);
-    }
-
-    function openOkinawaIDB() {
-      return new Promise((resolve) => {
-        try {
-          if (!window.indexedDB) return resolve(null);
-          const req = indexedDB.open('okinawa_hd_trip_db', 1);
-          req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
-          };
-          req.onsuccess = (e) => resolve(e.target.result);
-          req.onerror = () => resolve(null);
-        } catch (err) {
-          resolve(null);
-        }
-      });
-    }
-
-    async function saveToIndexedDB(key, valStr) {
-      const db = await openOkinawaIDB();
-      if (!db) return;
-      try {
-        const tx = db.transaction('kv', 'readwrite');
-        const store = tx.objectStore('kv');
-        if (valStr === null) store.delete(key);
-        else store.put(valStr, key);
-      } catch (e) {}
-    }
-
-    async function restoreFromIndexedDB() {
-      const db = await openOkinawaIDB();
-      if (!db) return;
-      const keys = [
-        'okinawa_rate',
-        'okinawa_expenses_v3',
-        'okinawa_checklist',
-        'okinawa_shop_overrides_v1',
-        'okinawa_custom_shop_v1',
-        'okinawa_deleted_shop_v1',
-        'okinawa_pack_checked_v1',
-        'okinawa_custom_pack_v1',
-        'okinawa_custom_photos_v1'
-      ];
-      await Promise.all(keys.map(k => new Promise((resolve) => {
-        try {
-          const tx = db.transaction('kv', 'readonly');
-          const req = tx.objectStore('kv').get(k);
-          req.onsuccess = () => {
-            if (req.result !== undefined && req.result !== null) {
-              memoryStore[k] = req.result;
-            }
-            resolve();
-          };
-          req.onerror = () => resolve();
-        } catch (e) { resolve(); }
-      })));
-    }
-
-    function getCustomPhotos() {
-      try {
-        return JSON.parse(safeGetStorage('okinawa_custom_photos_v1', '{}'));
-      } catch (e) {
-        return {};
-      }
-    }
-
-    function saveCustomPhotos(obj) {
-      safeSetStorage('okinawa_custom_photos_v1', JSON.stringify(obj));
-      applyAllCustomPhotosToDOM();
-      pushStateToCloud();
-    }
-
     // 推送本地最新狀態至 Firebase 雲端
     async function pushStateToCloud() {
       if (isRemoteUpdating) return;
@@ -2404,13 +2110,12 @@
       const payload = {
         rate: getRate(),
         expenses: getExpenses(),
-        checklist: JSON.parse(safeGetStorage('okinawa_checklist', '{}')),
+        checklist: JSON.parse(localStorage.getItem('okinawa_checklist') || '{}'),
         shopOverrides: getShopOverrides(),
         customShop: getCustomShopItems(),
         deletedShop: getDeletedShopIds(),
-        packChecked: JSON.parse(safeGetStorage('okinawa_pack_checked_v1', '{}')),
+        packChecked: JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}'),
         customPack: getCustomPackItems(),
-        customPhotos: getCustomPhotos(),
         updatedAt: Date.now()
       };
       try {
@@ -2431,21 +2136,19 @@
       if (!data) return;
       isRemoteUpdating = true;
       try {
-        if (data.rate) safeSetStorage('okinawa_rate', data.rate);
-        safeSetStorage('okinawa_expenses_v3', JSON.stringify(data.expenses || []));
-        safeSetStorage('okinawa_checklist', JSON.stringify(data.checklist || {}));
-        safeSetStorage('okinawa_shop_overrides_v1', JSON.stringify(data.shopOverrides || {}));
-        safeSetStorage('okinawa_custom_shop_v1', JSON.stringify(data.customShop || []));
-        safeSetStorage('okinawa_deleted_shop_v1', JSON.stringify(data.deletedShop || []));
-        safeSetStorage('okinawa_pack_checked_v1', JSON.stringify(data.packChecked || {}));
-        safeSetStorage('okinawa_custom_pack_v1', JSON.stringify(data.customPack || []));
-        safeSetStorage('okinawa_custom_photos_v1', JSON.stringify(data.customPhotos || {}));
+        if (data.rate) localStorage.setItem('okinawa_rate', data.rate);
+        localStorage.setItem('okinawa_expenses_v3', JSON.stringify(data.expenses || []));
+        localStorage.setItem('okinawa_checklist', JSON.stringify(data.checklist || {}));
+        localStorage.setItem('okinawa_shop_overrides_v1', JSON.stringify(data.shopOverrides || {}));
+        localStorage.setItem('okinawa_custom_shop_v1', JSON.stringify(data.customShop || []));
+        localStorage.setItem('okinawa_deleted_shop_v1', JSON.stringify(data.deletedShop || []));
+        localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(data.packChecked || {}));
+        localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(data.customPack || []));
 
         convertCurrency('JPY');
         renderExpenses();
         renderChecklist();
         renderPackingList();
-        applyAllCustomPhotosToDOM();
         updateCloudBadge('online');
       } finally {
         isRemoteUpdating = false;
@@ -2516,31 +2219,9 @@
       });
     }
 
-    // 🛡️ 頁內確認視窗控制邏輯
-    let pendingConfirmCallback = null;
-    function openConfirmModal(title, msg, onConfirm) {
-      pendingConfirmCallback = onConfirm;
-      document.getElementById('confirm-modal-title').textContent = title || '確認執行？';
-      document.getElementById('confirm-modal-msg').textContent = msg || '';
-      const modal = document.getElementById('custom-confirm-modal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-    function closeConfirmModal() {
-      pendingConfirmCallback = null;
-      const modal = document.getElementById('custom-confirm-modal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-    function executeConfirmAction() {
-      const cb = pendingConfirmCallback;
-      closeConfirmModal();
-      if (typeof cb === 'function') cb();
-    }
-
     function toggleStarryMode() {
       const isStarry = document.body.classList.toggle('starry-mode');
-      safeSetStorage('okinawa_starry_mode', isStarry ? '1' : '0');
+      localStorage.setItem('okinawa_starry_mode', isStarry ? '1' : '0');
       const wave = document.getElementById('header-wave-bottom');
       const text = document.getElementById('theme-toggle-text');
       if (isStarry) {
@@ -2553,115 +2234,32 @@
         showToast('☀️ 已切換至沖繩陽光海島模式');
       }
     }
-    if (safeGetStorage('okinawa_starry_mode', '0') === '1') {
+    if (localStorage.getItem('okinawa_starry_mode') === '1') {
       document.body.classList.add('starry-mode');
       document.getElementById('header-wave-bottom').classList.replace('text-[#f0f9ff]', 'text-[#090d16]');
       document.getElementById('theme-toggle-text').textContent = '陽光';
     }
 
-    // 0.5 手機相簿選照片「HD 多段式超清銳利縮放」引擎（徹底解決 360px 模糊問題，提升至 1280px~1600px 高清畫質！）
-    let preferredUploadMaxDim = 1600;
-
-    function setUploadQualityPreset(val) {
-      const num = parseInt(val, 10);
-      if (!isNaN(num) && num >= 600) {
-        preferredUploadMaxDim = num;
-        showToast(`✨ 已切換上傳畫質為：長邊 ${num}px 高清模式`);
-      }
-    }
-
-    function updateModalPreview(inputId, previewId) {
-      const val = document.getElementById(inputId)?.value?.trim();
-      const previewEl = document.getElementById(previewId);
-      if (previewEl && val) {
-        previewEl.src = val;
-        if (previewId === 'add-shop-preview') {
-          const wrap = document.getElementById('add-shop-preview-wrap');
-          if (wrap) { wrap.classList.remove('hidden'); wrap.classList.add('flex'); }
-        }
-      }
-    }
-
-    function handleImageUpload(inputEl, targetInputId, previewImgId, metaBadgeId) {
+    // 0.5 手機相簿選照片自動壓縮轉 Base64 (壓縮至極輕量以利雲端秒傳)
+    function handleImageUpload(inputEl, targetInputId) {
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
-      showToast('⏳ 正在以 HD 高解析度處理照片...');
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          // 依據照片用途與使用者設定，採用 1440px ~ 1600px 超清解析度（原為 360px 導致嚴重模糊）
-          const isBannerOrUniversal = targetInputId === 'uni-photo-url';
-          const maxDim = isBannerOrUniversal ? preferredUploadMaxDim : Math.max(1280, preferredUploadMaxDim);
-          let targetW = img.width;
-          let targetH = img.height;
-          if (targetW > targetH && targetW > maxDim) {
-            targetH = Math.round(targetH * maxDim / targetW);
-            targetW = maxDim;
-          } else if (targetH > maxDim) {
-            targetW = Math.round(targetW * maxDim / targetH);
-            targetH = maxDim;
-          }
-
-          // 多段式階梯平滑縮放 (Step-down Lanczos-like resampling)，避免手機 4000px 原圖一次縮小產生鋸齒與文字模糊
-          let curCanvas = document.createElement('canvas');
-          let curW = img.width;
-          let curH = img.height;
-          curCanvas.width = curW;
-          curCanvas.height = curH;
-          let curCtx = curCanvas.getContext('2d');
-          curCtx.imageSmoothingEnabled = true;
-          curCtx.imageSmoothingQuality = 'high';
-          curCtx.drawImage(img, 0, 0, curW, curH);
-
-          while (curW * 0.5 > targetW && curH * 0.5 > targetH) {
-            const nextW = Math.max(targetW, Math.round(curW * 0.5));
-            const nextH = Math.max(targetH, Math.round(curH * 0.5));
-            const stepCanvas = document.createElement('canvas');
-            stepCanvas.width = nextW;
-            stepCanvas.height = nextH;
-            const stepCtx = stepCanvas.getContext('2d');
-            stepCtx.imageSmoothingEnabled = true;
-            stepCtx.imageSmoothingQuality = 'high';
-            stepCtx.drawImage(curCanvas, 0, 0, curW, curH, 0, 0, nextW, nextH);
-            curCanvas = stepCanvas;
-            curW = nextW;
-            curH = nextH;
-          }
-
-          const finalCanvas = document.createElement('canvas');
-          finalCanvas.width = targetW;
-          finalCanvas.height = targetH;
-          const finalCtx = finalCanvas.getContext('2d');
-          finalCtx.imageSmoothingEnabled = true;
-          finalCtx.imageSmoothingQuality = 'high';
-          finalCtx.drawImage(curCanvas, 0, 0, curW, curH, 0, 0, targetW, targetH);
-
-          // 智慧動態畫質控制：預設 0.88 高畫質，若單張大於 650KB 則微調至 0.82 兼顧銳利度與雲端同步速度
-          let quality = 0.88;
-          let dataUrl = finalCanvas.toDataURL('image/jpeg', quality);
-          if (dataUrl.length > 880000) {
-            quality = 0.80;
-            dataUrl = finalCanvas.toDataURL('image/jpeg', quality);
-          }
-
-          const kb = Math.round((dataUrl.length * 3) / 4 / 1024);
-          const targetInput = document.getElementById(targetInputId);
-          if (targetInput) targetInput.value = dataUrl;
-
-          if (previewImgId) {
-            const prevEl = document.getElementById(previewImgId);
-            if (prevEl) prevEl.src = dataUrl;
-            if (previewImgId === 'add-shop-preview') {
-              const wrap = document.getElementById('add-shop-preview-wrap');
-              if (wrap) { wrap.classList.remove('hidden'); wrap.classList.add('flex'); }
-            }
-          }
-          if (metaBadgeId) {
-            const badgeEl = document.getElementById(metaBadgeId);
-            if (badgeEl) badgeEl.textContent = `✅ HD ${targetW}×${targetH} (${kb} KB)`;
-          }
-          showToast(`📷 高清照片已載入 (${targetW}×${targetH}px)！點擊儲存即可同步`);
+          const canvas = document.createElement('canvas');
+          const maxDim = 360;
+          let w = img.width, h = img.height;
+          if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+          document.getElementById(targetInputId).value = dataUrl;
+          showToast('📷 照片已壓縮載入！儲存後全家人皆可看到');
         };
         img.src = e.target.result;
       };
@@ -2809,13 +2407,13 @@
 
     // 3. 隨身換匯計算機邏輯
     function getRate() {
-      return parseFloat(safeGetStorage('okinawa_rate', '0.215'));
+      return parseFloat(localStorage.getItem('okinawa_rate') || '0.215');
     }
 
     function syncRate(val) {
       const num = parseFloat(val);
       if (!isNaN(num) && num > 0) {
-        safeSetStorage('okinawa_rate', num);
+        localStorage.setItem('okinawa_rate', num);
         document.getElementById('quick-rate').value = num;
         document.getElementById('exchange-rate').value = num;
         convertCurrency('JPY');
@@ -2880,12 +2478,12 @@
     const familyMembers = ['瑞', '茹', '瑞爸', '瑞媽', '茹爸', '茹媽'];
 
     function getExpenses() {
-      const saved = safeGetStorage('okinawa_expenses_v3', '');
+      const saved = localStorage.getItem('okinawa_expenses_v3');
       return saved ? JSON.parse(saved) : defaultExpenses;
     }
 
     function saveExpenses(list) {
-      safeSetStorage('okinawa_expenses_v3', JSON.stringify(list));
+      localStorage.setItem('okinawa_expenses_v3', JSON.stringify(list));
       pushStateToCloud();
     }
 
@@ -2897,16 +2495,14 @@
       const currency = document.getElementById('exp-currency').value;
       const amount = parseFloat(document.getElementById('exp-amount').value);
       const payer = document.getElementById('exp-payer').value || '公費';
-      const img = (document.getElementById('exp-img')?.value || '').trim();
 
       if (!title || isNaN(amount)) return;
 
       const list = getExpenses();
-      list.unshift({ id: Date.now(), day, cat, title, currency, amount, payer, img });
+      list.unshift({ id: Date.now(), day, cat, title, currency, amount, payer });
       saveExpenses(list);
       document.getElementById('exp-title').value = '';
       document.getElementById('exp-amount').value = '';
-      if (document.getElementById('exp-img')) document.getElementById('exp-img').value = '';
       renderExpenses();
       showToast('☁️ 已新增花費並同步給全家人！');
     }
@@ -2921,7 +2517,6 @@
       document.getElementById('edit-exp-currency').value = item.currency;
       document.getElementById('edit-exp-amount').value = item.amount;
       document.getElementById('edit-exp-payer').value = item.payer;
-      if (document.getElementById('edit-exp-img')) document.getElementById('edit-exp-img').value = item.img || '';
       const modal = document.getElementById('edit-exp-modal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -2944,31 +2539,25 @@
         list[idx].currency = document.getElementById('edit-exp-currency').value;
         list[idx].amount = parseFloat(document.getElementById('edit-exp-amount').value) || list[idx].amount;
         list[idx].payer = document.getElementById('edit-exp-payer').value || '公費';
-        if (document.getElementById('edit-exp-img')) {
-          list[idx].img = document.getElementById('edit-exp-img').value.trim();
-        }
         saveExpenses(list);
         renderExpenses();
-        showToast('☁️ 已更新帳目與照片並同步至雲端！');
+        showToast('☁️ 已更新帳目並同步至雲端！');
       }
       closeEditExpModal();
     }
 
     function deleteExpense(id) {
-      openConfirmModal('刪除花費紀錄', '確定要刪除這筆花費紀錄嗎？（全體成員畫面將同步刪除）', () => {
-        const list = getExpenses().filter(item => item.id !== id);
-        saveExpenses(list);
-        renderExpenses();
-        showToast('🗑️ 已刪除該筆帳目');
-      });
+      if (!confirm('確定要刪除這筆花費紀錄嗎？（全體成員畫面將同步刪除）')) return;
+      const list = getExpenses().filter(item => item.id !== id);
+      saveExpenses(list);
+      renderExpenses();
     }
 
     function clearAllExpenses() {
-      openConfirmModal('清空所有記帳紀錄', '確定要清空所有記帳紀錄嗎？（雲端紀錄也會一併清空）', () => {
+      if (confirm('確定要清空所有記帳紀錄嗎？（雲端紀錄也會一併清空）')) {
         saveExpenses([]);
         renderExpenses();
-        showToast('🗑️ 已清空所有記帳紀錄');
-      });
+      }
     }
 
     function renderExpenses() {
@@ -3000,25 +2589,17 @@
           payerMap[item.payer] = (payerMap[item.payer] || 0) + twdEquivalent;
           if (item.payer !== '公費') personalPaidTotalTWD += twdEquivalent;
 
-          const safeTitle = (item.title || '').replace(/'/g, "\'");
-          const safeExpSub = `${item.day} ・ ${item.payer}先付`.replace(/'/g, "\'");
           return `
-            <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 shadow-sm gap-2">
-              ${item.img ? `
-                <div class="relative flex-shrink-0 cursor-pointer" onclick="openLightbox(event, '${item.img}', '${safeTitle}', '${safeExpSub}')">
-                  <img src="${item.img}" alt="${safeTitle}" class="w-12 h-12 rounded-lg object-cover border border-rose-100">
-                  <span class="absolute bottom-0 right-0 bg-slate-900/60 text-white text-[8px] px-1 rounded-tl"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
-                </div>
-              ` : ''}
-              <div class="flex-1 pr-1 min-w-0">
-                <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-400 font-bold">
+            <div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+              <div class="flex-1 pr-2">
+                <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-bold">
                   <span class="bg-sky-50 text-sky-700 px-2 py-0.5 rounded">${item.day}</span>
                   <span>${item.cat}</span>
                   <span>• 付款: <b class="text-indigo-600">${item.payer}</b></span>
                 </div>
-                <div class="font-extrabold text-sm text-slate-800 mt-1 truncate">${item.title}</div>
+                <div class="font-extrabold text-sm text-slate-800 mt-1">${item.title}</div>
               </div>
-              <div class="text-right flex items-center gap-1.5 flex-shrink-0">
+              <div class="text-right flex items-center gap-1.5">
                 <div class="mr-1">
                   <div class="font-black text-sm ${isJPY ? 'text-sky-700' : 'text-emerald-700'}">
                     ${isJPY ? '¥ ' + item.amount.toLocaleString() : 'NT$ ' + item.amount.toLocaleString()}
@@ -3068,7 +2649,7 @@
       const rate = getRate();
       const list = getExpenses();
       if (list.length === 0) {
-        showToast('⚠️ 目前沒有記帳紀錄可複製喔！');
+        alert('目前沒有記帳紀錄可複製喔！');
         return;
       }
       let totalTWD = 0;
@@ -3100,38 +2681,38 @@
     // 6. 必買購物清單 (雲端即時同步相簿照片、價格編輯、刪除與勾選)
     const defaultShoppingData = [
       { category: "🍪 伴手禮・零食（唐吉訶德 / 機場）", items: [
-        { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", price: "¥550", where: "那霸機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s2", name: "Orion 島唐辛子蝦餅", price: "¥500", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", price: "¥398 / ¥298", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1621996346565-e3d5d6281298?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", price: "¥552", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s5", name: "山本海苔店 雪鹽味付海苔 & 海帶芽", price: "沖繩限定", where: "伴手禮店", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s6", name: "宮古島 島唐辛子煎餅 (ぱりぱり煎餅)", price: "人氣必買", where: "伴手禮店", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s7", name: "【徐要的】沖繩島辣椒蝦餅 & 雪塩夾心餅(さんど)", price: "指定代購", where: "國際通/機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅", price: "8入禮盒", where: "機場/商場", img: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1000&q=85" },
-        { id: "s9", name: "喜島商店 沖繩香檬萬用香料粉 (ほりにし)", price: "¥1,300", where: "國際通/喜島", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1000&q=85" }
+        { id: "s1", name: "AOIUMI 沖繩海鹽貓舌餅乾", price: "¥550", where: "那霸機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
+        { id: "s2", name: "Orion 島唐辛子蝦餅", price: "¥500", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=300&q=80" },
+        { id: "s3", name: "丸吉鹽仙貝 天使的翅膀 (鹽味/梅味)", price: "¥398 / ¥298", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1621996346565-e3d5d6281298?auto=format&fit=crop&w=300&q=80" },
+        { id: "s4", name: "雷神巧克力 沖繩黑糖海鹽風味", price: "¥552", where: "唐吉訶德", img: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=300&q=80" },
+        { id: "s5", name: "山本海苔店 雪鹽味付海苔 & 海帶芽", price: "沖繩限定", where: "伴手禮店", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=300&q=80" },
+        { id: "s6", name: "宮古島 島唐辛子煎餅 (ぱりぱり煎餅)", price: "人氣必買", where: "伴手禮店", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
+        { id: "s7", name: "【徐要的】沖繩島辣椒蝦餅 & 雪塩夾心餅(さんど)", price: "指定代購", where: "國際通/機場", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" },
+        { id: "s8", name: "THE BUTTER SCOTCH BURGER 奶油夾心餅", price: "8入禮盒", where: "機場/商場", img: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=300&q=80" },
+        { id: "s9", name: "喜島商店 沖繩香檬萬用香料粉 (ほりにし)", price: "¥1,300", where: "國際通/喜島", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=300&q=80" }
       ]},
       { category: "🏪 超商必吃甜點飲品（Lawson / 全家 / 7-11）", items: [
-        { id: "c1", name: "焙茶拿鐵 (ほうじ茶ラテ)", price: "¥238 (約NT$49)", where: "Lawson", img: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=1000&q=85" },
-        { id: "c2", name: "奶油起司生火腿捲", price: "¥570 (約NT$115)", where: "Lawson", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=1000&q=85" },
-        { id: "c3", name: "美食家布丁 & 奶茶的束縛", price: "¥162 & ¥254", where: "FamilyMart 全家", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=1000&q=85" },
-        { id: "c4", name: "Blue Seal 薄荷巧克力棉花糖", price: "¥238", where: "沖繩全家限定", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=1000&q=85" },
-        { id: "c5", name: "砂糖奶油樹 濃苺巧克力夾心餅 (3入)", price: "¥300 (約NT$60)", where: "7-11", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=1000&q=85" }
+        { id: "c1", name: "焙茶拿鐵 (ほうじ茶ラテ)", price: "¥238 (約NT$49)", where: "Lawson", img: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=300&q=80" },
+        { id: "c2", name: "奶油起司生火腿捲", price: "¥570 (約NT$115)", where: "Lawson", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=300&q=80" },
+        { id: "c3", name: "美食家布丁 & 奶茶的束縛", price: "¥162 & ¥254", where: "FamilyMart 全家", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80" },
+        { id: "c4", name: "Blue Seal 薄荷巧克力棉花糖", price: "¥238", where: "沖繩全家限定", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=300&q=80" },
+        { id: "c5", name: "砂糖奶油樹 濃苺巧克力夾心餅 (3入)", price: "¥300 (約NT$60)", where: "7-11", img: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" }
       ]},
       { category: "🛒 3COINS 必買好物（PARCO CITY 1F GREEN ZONE）", items: [
-        { id: "t1", name: "迷你相片印表機 & 5種專用相紙", price: "主機¥14,300", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=85" },
-        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", price: "¥3,850", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=1000&q=85" },
-        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 拉桿飲料架", price: "各 ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=1000&q=85" },
-        { id: "t4", name: "USB 迷你自動壓縮機 & 旅行分類收納袋", price: "¥1,100 (約$203)", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1000&q=85" },
-        { id: "t5", name: "可變高度密封罐(M) & 易清潔可拆美髮梳", price: "¥330 & ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=85" },
-        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", price: "¥1,980", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1000&q=85" }
+        { id: "t1", name: "迷你相片印表機 & 5種專用相紙", price: "主機¥14,300", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=300&q=80" },
+        { id: "t2", name: "貼紙標籤機 (LABEL PRINTER)", price: "¥3,850", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=300&q=80" },
+        { id: "t3", name: "TABI SURUHI 行李箱固定帶 & 拉桿飲料架", price: "各 ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=300&q=80" },
+        { id: "t4", name: "USB 迷你自動壓縮機 & 旅行分類收納袋", price: "¥1,100 (約$203)", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=300&q=80" },
+        { id: "t5", name: "可變高度密封罐(M) & 易清潔可拆美髮梳", price: "¥330 & ¥550", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=300&q=80" },
+        { id: "t6", name: "磁吸手機補光燈 (MAGNETIC RING LIGHT)", price: "¥1,980", where: "3COINS+plus", img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80" }
       ]},
       { category: "💄 藥妝・服飾・雜貨（GU / UNIQLO / 大創）", items: [
-        { id: "d1", name: "OKUCHI 隨身漱口水 (水蜜桃/檸檬 5入)", price: "¥250", where: "各大藥妝店", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1000&q=85" },
-        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", price: "約NT$141", where: "唐吉訶德/藥妝", img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1000&q=85" },
-        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", price: "約NT$401", where: "藥妝店數量限定", img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1000&q=85" },
-        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (淨露/凝脂/精華)", price: "比價台灣$2,200", where: "美妝/藥妝店", img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=1000&q=85" },
-        { id: "d5", name: "高領羅紋打底衫(#360579) & 蝴蝶結針織外套", price: "人氣穿搭", where: "GU (PARCO 2F)", img: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=1000&q=85" },
-        { id: "d6", name: "麻花編織開襟外套 & 三麗鷗 Kitty 拖鞋", price: "必買單品", where: "UNIQLO / 大創 3F", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=1000&q=85" }
+        { id: "d1", name: "OKUCHI 隨身漱口水 (水蜜桃/檸檬 5入)", price: "¥250", where: "各大藥妝店", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=300&q=80" },
+        { id: "d2", name: "花王 美舒律 醫療機器蒸氣溫熱貼", price: "約NT$141", where: "唐吉訶德/藥妝", img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=300&q=80" },
+        { id: "d3", name: "Rosy Rosa 5入迷你刷具組 (附收納袋)", price: "約NT$401", where: "藥妝店數量限定", img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80" },
+        { id: "d4", name: "TOKIO 京喚羽 洗護系列 (淨露/凝脂/精華)", price: "比價台灣$2,200", where: "美妝/藥妝店", img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=300&q=80" },
+        { id: "d5", name: "高領羅紋打底衫(#360579) & 蝴蝶結針織外套", price: "人氣穿搭", where: "GU (PARCO 2F)", img: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=300&q=80" },
+        { id: "d6", name: "麻花編織開襟外套 & 三麗鷗 Kitty 拖鞋", price: "必買單品", where: "UNIQLO / 大創 3F", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=300&q=80" }
       ]}
     ];
 
@@ -3151,29 +2732,29 @@
     }
 
     function getShopOverrides() {
-      return JSON.parse(safeGetStorage('okinawa_shop_overrides_v1', '{}'));
+      return JSON.parse(localStorage.getItem('okinawa_shop_overrides_v1') || '{}');
     }
 
     function saveShopOverrides(obj) {
-      safeSetStorage('okinawa_shop_overrides_v1', JSON.stringify(obj));
+      localStorage.setItem('okinawa_shop_overrides_v1', JSON.stringify(obj));
       pushStateToCloud();
     }
 
     function getCustomShopItems() {
-      return JSON.parse(safeGetStorage('okinawa_custom_shop_v1', '[]'));
+      return JSON.parse(localStorage.getItem('okinawa_custom_shop_v1') || '[]');
     }
 
     function saveCustomShopItems(list) {
-      safeSetStorage('okinawa_custom_shop_v1', JSON.stringify(list));
+      localStorage.setItem('okinawa_custom_shop_v1', JSON.stringify(list));
       pushStateToCloud();
     }
 
     function getDeletedShopIds() {
-      return JSON.parse(safeGetStorage('okinawa_deleted_shop_v1', '[]'));
+      return JSON.parse(localStorage.getItem('okinawa_deleted_shop_v1') || '[]');
     }
 
     function saveDeletedShopIds(list) {
-      safeSetStorage('okinawa_deleted_shop_v1', JSON.stringify(list));
+      localStorage.setItem('okinawa_deleted_shop_v1', JSON.stringify(list));
       pushStateToCloud();
     }
 
@@ -3202,55 +2783,23 @@
       return groups;
     }
 
-    let currentLightboxEditContext = null;
-
-    function openLightbox(e, img, title, sub, editContext) {
+    function openLightbox(e, img, title, sub) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
-      currentLightboxEditContext = editContext || null;
       const svgBox = document.getElementById('lightbox-svg-container');
       const imgEl = document.getElementById('lightbox-img');
-      const actionBar = document.getElementById('lightbox-action-bar');
       svgBox.classList.add('hidden');
       imgEl.classList.remove('hidden');
       imgEl.src = img;
       document.getElementById('lightbox-title').textContent = title;
       document.getElementById('lightbox-sub').textContent = sub;
-      if (actionBar) {
-        if (currentLightboxEditContext) {
-          actionBar.classList.remove('hidden');
-          actionBar.classList.add('flex');
-        } else {
-          actionBar.classList.add('hidden');
-          actionBar.classList.remove('flex');
-        }
-      }
       const modal = document.getElementById('lightbox-modal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
     }
 
-    function openSlotLightbox(e, slotKey, title, sub) {
-      const src = getEffectivePhotoUrl(slotKey);
-      openLightbox(e, src, title, sub, { type: 'slot', key: slotKey, label: title });
-    }
-
-    function triggerEditFromLightbox() {
-      const ctx = currentLightboxEditContext;
-      closeLightbox();
-      if (!ctx) return;
-      if (ctx.type === 'slot') {
-        openUniversalPhotoModal(null, ctx.key, ctx.label);
-      } else if (ctx.type === 'shop') {
-        openEditShopModal(null, ctx.id);
-      }
-    }
-
     function openSvgMapLightbox() {
-      currentLightboxEditContext = null;
       const svgBox = document.getElementById('lightbox-svg-container');
       const imgEl = document.getElementById('lightbox-img');
-      const actionBar = document.getElementById('lightbox-action-bar');
-      if (actionBar) { actionBar.classList.add('hidden'); actionBar.classList.remove('flex'); }
       imgEl.classList.add('hidden');
       svgBox.classList.remove('hidden');
       svgBox.innerHTML = document.getElementById('churaumi-svg-wrapper').innerHTML;
@@ -3268,7 +2817,8 @@
     }
 
     function openEditShopModal(e, id) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
+      e.preventDefault();
+      e.stopPropagation();
       const groups = getAllMergedShopGroups();
       let found = null;
       for (const g of groups) {
@@ -3282,10 +2832,6 @@
       document.getElementById('edit-shop-price').value = found.price;
       document.getElementById('edit-shop-where').value = found.where;
       document.getElementById('edit-shop-img').value = found.img;
-      const prevEl = document.getElementById('edit-shop-preview');
-      if (prevEl) prevEl.src = found.img;
-      const metaEl = document.getElementById('edit-shop-img-meta');
-      if (metaEl) metaEl.textContent = '✨ HD 高解析模式';
 
       const modal = document.getElementById('edit-shop-modal');
       modal.classList.remove('hidden');
@@ -3312,7 +2858,7 @@
         name,
         price: price || '現場確認',
         where: where || '沖繩當地',
-        img: img || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=1000&q=85'
+        img: img || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80'
       };
       saveShopOverrides(overrides);
       closeEditShopModal();
@@ -3326,7 +2872,7 @@
       const cat = document.getElementById('shop-cat').value;
       const price = document.getElementById('shop-price').value.trim() || '自訂必買';
       const where = document.getElementById('shop-where').value.trim() || '沖繩當地';
-      const img = document.getElementById('shop-img').value.trim() || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=1000&q=85';
+      const img = document.getElementById('shop-img').value.trim() || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80';
 
       if (!name) return;
 
@@ -3346,32 +2892,31 @@
       document.getElementById('shop-price').value = '';
       document.getElementById('shop-where').value = '';
       document.getElementById('shop-img').value = '';
-      const addWrap = document.getElementById('add-shop-preview-wrap');
-      if (addWrap) { addWrap.classList.add('hidden'); addWrap.classList.remove('flex'); }
       renderChecklist();
       showToast('☁️ 已加入必買清單並同步給大家！');
     }
 
     function deleteAnyShopItem(e, id, name) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      openConfirmModal('移除必買商品', `確定要從必買清單中移除「${name}」嗎？（全體成員畫面將同步移除）`, () => {
-        if (String(id).startsWith('custom_')) {
-          const customList = getCustomShopItems().filter(item => item.id !== id);
-          saveCustomShopItems(customList);
-        } else {
-          const deletedIds = getDeletedShopIds();
-          if (!deletedIds.includes(id)) {
-            deletedIds.push(id);
-            saveDeletedShopIds(deletedIds);
-          }
+      e.preventDefault();
+      e.stopPropagation();
+      if (!confirm(`確定要從必買清單中移除「${name}」嗎？（全體成員畫面將同步移除）`)) return;
+
+      if (String(id).startsWith('custom_')) {
+        const customList = getCustomShopItems().filter(item => item.id !== id);
+        saveCustomShopItems(customList);
+      } else {
+        const deletedIds = getDeletedShopIds();
+        if (!deletedIds.includes(id)) {
+          deletedIds.push(id);
+          saveDeletedShopIds(deletedIds);
         }
-        renderChecklist();
-        showToast('🗑️ 已移除該項商品並同步');
-      });
+      }
+      renderChecklist();
+      showToast('🗑️ 已移除該項商品並同步');
     }
 
     function renderChecklist() {
-      const saved = JSON.parse(safeGetStorage('okinawa_checklist', '{}'));
+      const saved = JSON.parse(localStorage.getItem('okinawa_checklist') || '{}');
       const container = document.getElementById('checklist-container');
       const groups = getAllMergedShopGroups();
 
@@ -3415,8 +2960,8 @@
                   <label class="flex items-center justify-between p-2.5 rounded-xl border ${cardStyle} cursor-pointer transition select-none gap-2">
                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
                       <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="h-4 w-4 rounded text-sky-600 focus:ring-sky-500 flex-shrink-0">
-                      <div class="relative flex-shrink-0" onclick="openLightbox(event, '${item.img}', '${safeName}', '${safeSub}', { type: 'shop', id: '${item.id}' })">
-                        <img src="${item.img}" alt="${safeName}" onerror="this.src='https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=1000&q=85'" class="w-12 h-12 rounded-lg object-cover border border-slate-100">
+                      <div class="relative flex-shrink-0" onclick="openLightbox(event, '${item.img}', '${safeName}', '${safeSub}')">
+                        <img src="${item.img}" alt="${safeName}" onerror="this.src='https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80'" class="w-12 h-12 rounded-lg object-cover border border-slate-100">
                         <span class="absolute bottom-0 right-0 bg-slate-900/60 text-white text-[8px] px-1 rounded-tl"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
                       </div>
                       <div class="min-w-0 flex-1">
@@ -3450,76 +2995,42 @@
     }
 
     function toggleCheck(id) {
-      const saved = JSON.parse(safeGetStorage('okinawa_checklist', '{}'));
+      const saved = JSON.parse(localStorage.getItem('okinawa_checklist') || '{}');
       saved[id] = !saved[id];
-      safeSetStorage('okinawa_checklist', JSON.stringify(saved));
+      localStorage.setItem('okinawa_checklist', JSON.stringify(saved));
       renderChecklist();
       pushStateToCloud();
     }
 
     function resetChecklist() {
-      openConfirmModal('重置必買清單', '要重置勾選狀態並恢復所有被刪除的預設商品嗎？（將同步至雲端）', () => {
-        safeRemoveStorage('okinawa_checklist');
-        safeRemoveStorage('okinawa_deleted_shop_v1');
+      if (confirm('要重置勾選狀態並恢復所有被刪除的預設商品嗎？（將同步至雲端）')) {
+        localStorage.removeItem('okinawa_checklist');
+        localStorage.removeItem('okinawa_deleted_shop_v1');
         renderChecklist();
         pushStateToCloud();
         showToast('🔄 已重置勾選並恢復預設必買清單！');
-      });
+      }
     }
 
     // 🎟️ 景點 3D 紀念票卡資料庫與自動綁定點擊特效
     const spotTicketsDB = {
-      "國際通": { title: "🛍️ 那霸國際通商店街", img: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1200&q=85", desc: "全長 1.6 公里的沖繩最繁華大街，聚集唐吉訶德、大國藥妝、御菓子御殿紅芋塔與熱鬧的屋台村。", highlight: "✨ 必逛亮點：Calbee+ 現炸紫薯條、塩屋雪鹽霜淇淋、24小時唐吉訶德免手續費退稅！", map: "那霸國際通" },
-      "波上宮": { title: "⛩️ 波上宮 & 波之上海灘", img: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1200&q=85", desc: "琉球八社之首，矗立在珊瑚礁斷崖上的朱紅色神社。跨年夜有熱鬧屋台與初詣參拜，白天可去海灘踏浪。", highlight: "✨ 必買亮點：沖繩限定的「紅型小書包御守」與健康交通安全御守！", map: "波上宮+那霸" },
-      "古宇利": { title: "🌉 古宇利大橋 & 蝦蝦飯", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85", desc: "長達 1,960 公尺的絕美跨海大橋，兩側是被稱為「古宇利藍」的清澈漸層海域，過橋即達沙灘與蝦蝦飯。", highlight: "✨ 必吃亮點：Kouri Shrimp 濃郁奶油蒜香蝦蝦飯 ＋ 頂樓海景露台拍照！", map: "古宇利大橋" },
-      "churaumi": { title: "🐋 沖繩美麗海水族館", img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=85", desc: "擁有世界級巨大水槽「黑潮之海」，可近距離觀賞巨型鯨鯊與鬼蝠魟群游，戶外還有免費海豚秀。", highlight: "✨ 停車與表演：導航停「P7 北門立體停車場」最近！15:00 / 17:00 鯨鯊餵食秀必看！", map: "沖繩美麗海水族館" },
-      "部瀨名": { title: "🐠 部瀨名海中公園", img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=85", desc: "沖繩唯一的海中展望塔，深入海底 5 公尺 360 度觀賞珊瑚礁與熱帶魚，還可搭乘鯨魚玻璃底船。", highlight: "✨ 必玩亮點：不用下水弄濕衣服，長輩與小孩都能輕鬆體驗海底世界！", map: "部瀨名海中公園" },
-      "萬座毛": { title: "🐘 萬座毛象鼻斷崖", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85", desc: "20 公尺高的珊瑚礁斷崖神似象鼻，搭配一望無際的海岸草原與嶄新的觀景購物大樓。", highlight: "✨ 必拍亮點：沿著海景步道散步 20 分鐘，買顆三矢本舗琉球開口笑甜點！", map: "萬座毛" },
-      "美國村": { title: "🎡 北谷美濱美國村", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85", desc: "美式西海岸異國風情小鎮，擁有彩色建築群、日落海灘與海濱步道，週六晚上 20:00 施放浪漫海景煙火！", highlight: "✨ 必看亮點：20:00 日落海灘階梯看煙火、吃 Kijimuna 歐姆塔可飯、逛扭蛋城！", map: "American+Village+Okinawa" },
-      "玉泉洞": { title: "🦇 玉泉洞・沖繩世界", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=85", desc: "歷時 30 萬年形成的日本第二大鐘乳石洞，百萬株石筍與藍光青泉極為壯觀，園區還有琉球古民家與太鼓舞。", highlight: "✨ 貼心提醒：洞內恆溫 21°C 地面微濕，請穿好走的運動鞋！", map: "沖繩世界+玉泉洞" },
-      "奧武島": { title: "🍤 奧武島（貓島）天婦羅", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=85", desc: "過橋即達的寧靜小漁村，島上隨處可見慵懶貓咪，現炸沖繩式厚皮天婦羅香氣四溢。", highlight: "✨ 必點亮點：大城或中本天婦羅的海蘊（水雲）、魚肉、紅芋天婦羅！", map: "大城天婦羅店+奧武島" },
-      "PARCO": { title: "🛍️ PARCO CITY 浦添西海岸", img: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=85", desc: "集結 250 間品牌的沖繩最大海景購物中心！3COINS+plus、GU、UNIQLO、無印良品、大創、POP MART 應有盡有。", highlight: "✨ 退稅攻略：多數專櫃滿額可直接免手續費退稅，美食街坐擁無敵夕陽海景！", map: "SAN-A+Urasoe+West+Coast+PARCO+CITY" },
-      "瀨長島": { title: "🥞 瀨長島 Umikaji Terrace", img: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=85", desc: "被譽為「沖繩小希臘」的純白山丘露台商場，面向蔚藍大海並能超近距離觀賞那霸機場飛機起降。", highlight: "✨ 必吃亮點：幸福鬆餅、吹著海風的吊床咖啡廳，17:00 準時離開去加油還車！", map: "瀨長島+Umikaji+Terrace" }
+      "國際通": { title: "🛍️ 那霸國際通商店街", img: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=800&q=80", desc: "全長 1.6 公里的沖繩最繁華大街，聚集唐吉訶德、大國藥妝、御菓子御殿紅芋塔與熱鬧的屋台村。", highlight: "✨ 必逛亮點：Calbee+ 現炸紫薯條、塩屋雪鹽霜淇淋、24小時唐吉訶德免手續費退稅！", map: "那霸國際通" },
+      "波上宮": { title: "⛩️ 波上宮 & 波之上海灘", img: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=800&q=80", desc: "琉球八社之首，矗立在珊瑚礁斷崖上的朱紅色神社。跨年夜有熱鬧屋台與初詣參拜，白天可去海灘踏浪。", highlight: "✨ 必買亮點：沖繩限定的「紅型小書包御守」與健康交通安全御守！", map: "波上宮+那霸" },
+      "古宇利": { title: "🌉 古宇利大橋 & 蝦蝦飯", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80", desc: "長達 1,960 公尺的絕美跨海大橋，兩側是被稱為「古宇利藍」的清澈漸層海域，過橋即達沙灘與蝦蝦飯。", highlight: "✨ 必吃亮點：Kouri Shrimp 濃郁奶油蒜香蝦蝦飯 ＋ 頂樓海景露台拍照！", map: "古宇利大橋" },
+      "churaumi": { title: "🐋 沖繩美麗海水族館", img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80", desc: "擁有世界級巨大水槽「黑潮之海」，可近距離觀賞巨型鯨鯊與鬼蝠魟群游，戶外還有免費海豚秀。", highlight: "✨ 停車與表演：導航停「P7 北門立體停車場」最近！15:00 / 17:00 鯨鯊餵食秀必看！", map: "沖繩美麗海水族館" },
+      "部瀨名": { title: "🐠 部瀨名海中公園", img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80", desc: "沖繩唯一的海中展望塔，深入海底 5 公尺 360 度觀賞珊瑚礁與熱帶魚，還可搭乘鯨魚玻璃底船。", highlight: "✨ 必玩亮點：不用下水弄濕衣服，長輩與小孩都能輕鬆體驗海底世界！", map: "部瀨名海中公園" },
+      "萬座毛": { title: "🐘 萬座毛象鼻斷崖", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80", desc: "20 公尺高的珊瑚礁斷崖神似象鼻，搭配一望無際的海岸草原與嶄新的觀景購物大樓。", highlight: "✨ 必拍亮點：沿著海景步道散步 20 分鐘，買顆三矢本舗琉球開口笑甜點！", map: "萬座毛" },
+      "美國村": { title: "🎡 北谷美濱美國村", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80", desc: "美式西海岸異國風情小鎮，擁有彩色建築群、日落海灘與海濱步道，週六晚上 20:00 施放浪漫海景煙火！", highlight: "✨ 必看亮點：20:00 日落海灘階梯看煙火、吃 Kijimuna 歐姆塔可飯、逛扭蛋城！", map: "American+Village+Okinawa" },
+      "玉泉洞": { title: "🦇 玉泉洞・沖繩世界", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80", desc: "歷時 30 萬年形成的日本第二大鐘乳石洞，百萬株石筍與藍光青泉極為壯觀，園區還有琉球古民家與太鼓舞。", highlight: "✨ 貼心提醒：洞內恆溫 21°C 地面微濕，請穿好走的運動鞋！", map: "沖繩世界+玉泉洞" },
+      "奧武島": { title: "🍤 奧武島（貓島）天婦羅", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80", desc: "過橋即達的寧靜小漁村，島上隨處可見慵懶貓咪，現炸沖繩式厚皮天婦羅香氣四溢。", highlight: "✨ 必點亮點：大城或中本天婦羅的海蘊（水雲）、魚肉、紅芋天婦羅！", map: "大城天婦羅店+奧武島" },
+      "PARCO": { title: "🛍️ PARCO CITY 浦添西海岸", img: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=800&q=80", desc: "集結 250 間品牌的沖繩最大海景購物中心！3COINS+plus、GU、UNIQLO、無印良品、大創、POP MART 應有盡有。", highlight: "✨ 退稅攻略：多數專櫃滿額可直接免手續費退稅，美食街坐擁無敵夕陽海景！", map: "SAN-A+Urasoe+West+Coast+PARCO+CITY" },
+      "瀨長島": { title: "🥞 瀨長島 Umikaji Terrace", img: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=800&q=80", desc: "被譽為「沖繩小希臘」的純白山丘露台商場，面向蔚藍大海並能超近距離觀賞那霸機場飛機起降。", highlight: "✨ 必吃亮點：幸福鬆餅、吹著海風的吊床咖啡廳，17:00 準時離開去加油還車！", map: "瀨長島+Umikaji+Terrace" }
     };
-
-    // ==================== 📸 全站照片插槽定義與自訂圖片同步引擎 ====================
-    const defaultPhotoSlots = {
-      "hero_bg": { label: "🌺 頂部旗艦橫幅底圖 (古宇利藍海景)", group: "🏞️ 橫幅與每日行程封面底圖", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85" },
-      "day1_bg": { label: "📅 Day 1 (12/31) 封面底圖｜那霸波上宮與國際通", group: "🏞️ 橫幅與每日行程封面底圖", url: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1400&q=85" },
-      "day2_bg": { label: "📅 Day 2 (1/1) 封面底圖｜美麗海水族館黑潮之海", group: "🏞️ 橫幅與每日行程封面底圖", url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85" },
-      "day3_bg": { label: "📅 Day 3 (1/2) 封面底圖｜萬座毛與美國村海景", group: "🏞️ 橫幅與每日行程封面底圖", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85" },
-      "day4_bg": { label: "📅 Day 4 (1/3) 封面底圖｜沖繩玉泉洞與南部海景", group: "🏞️ 橫幅與每日行程封面底圖", url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85" },
-      "day5_bg": { label: "📅 Day 5 (1/4) 封面底圖｜瀨長島純白海景", group: "🏞️ 橫幅與每日行程封面底圖", url: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1400&q=85" },
-      "hotel_1": { label: "🏨 Day 1 飯店｜Hotel Lantana Naha 國際通", group: "🏨 住宿飯店與 ALPHARD 租車", url: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=85" },
-      "hotel_2": { label: "🏨 Day 2&3 飯店｜New Normal Hotel in NAGO", group: "🏨 住宿飯店與 ALPHARD 租車", url: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=85" },
-      "hotel_3": { label: "🏨 Day 4 飯店｜Hotel Cocktail Stay Naha", group: "🏨 住宿飯店與 ALPHARD 租車", url: "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=85" },
-      "car_alphard": { label: "🚐 沖繩行腳租車｜ALPHARD 30系 8人座", group: "🏨 住宿飯店與 ALPHARD 租車", url: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1200&q=85" }
-    };
-
-    // 將 11 個 3D 景點紀念票卡也納入可編輯照片插槽
-    Object.keys(spotTicketsDB).forEach(k => {
-      defaultPhotoSlots['spot_' + k] = {
-        label: `🎟️ 景點票卡｜${spotTicketsDB[k].title}`,
-        group: "🎟️ 景點 3D 紀念票卡與行程照片",
-        url: spotTicketsDB[k].img
-      };
-    });
-
-    function getEffectivePhotoUrl(slotKey) {
-      const custom = getCustomPhotos();
-      if (custom[slotKey]) return custom[slotKey];
-      if (defaultPhotoSlots[slotKey]) return defaultPhotoSlots[slotKey].url;
-      return 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85';
-    }
-
-    let currentOpenSpotKey = null;
 
     function openSpotTicket(key) {
       const data = spotTicketsDB[key];
       if (!data) return;
-      currentOpenSpotKey = key;
-      const slotKey = 'spot_' + key;
-      document.getElementById('ticket-img').src = getEffectivePhotoUrl(slotKey);
+      document.getElementById('ticket-img').src = data.img;
       document.getElementById('ticket-title').textContent = data.title;
       document.getElementById('ticket-desc').textContent = data.desc;
       document.getElementById('ticket-highlight').textContent = data.highlight;
@@ -3529,232 +3040,23 @@
       modal.classList.add('flex');
     }
 
-    function openCurrentTicketLightbox() {
-      if (!currentOpenSpotKey) return;
-      const data = spotTicketsDB[currentOpenSpotKey];
-      const slotKey = 'spot_' + currentOpenSpotKey;
-      openSlotLightbox(null, slotKey, data.title, data.highlight);
-    }
-
-    function editCurrentSpotTicketPhoto(e) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      if (!currentOpenSpotKey) return;
-      const data = spotTicketsDB[currentOpenSpotKey];
-      openUniversalPhotoModal(null, 'spot_' + currentOpenSpotKey, `景點票卡照片｜${data.title}`);
-    }
-
     function closeSpotTicket() {
       const modal = document.getElementById('spot-ticket-modal');
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
 
-    // 為每日行程 (Day 1 ~ Day 5) 每個行程項目綁定「🎟️ 票卡」與「📷 景點照/換圖」功能
-    let itinStopCounter = 0;
-    document.querySelectorAll('#tab-itinerary .day-content .flex.gap-3.items-start').forEach((rowEl) => {
-      const titleEl = rowEl.querySelector('.font-bold.text-slate-800, .font-extrabold.text-slate-800');
-      const contentCol = rowEl.querySelector('.flex-1');
-      if (!titleEl || !contentCol) return;
-
-      const txt = titleEl.textContent.trim();
-      let matchedSpotKey = null;
+    document.querySelectorAll('#tab-itinerary .font-bold.text-slate-800').forEach(el => {
+      const txt = el.textContent;
       for (const key of Object.keys(spotTicketsDB)) {
         if (key !== 'churaumi' && txt.includes(key)) {
-          matchedSpotKey = key;
-          if (!titleEl.classList.contains('spot-trigger')) {
-            titleEl.classList.add('spot-trigger');
-            titleEl.innerHTML += ` <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-extrabold">🎟️ 票卡</span>`;
-            titleEl.onclick = () => openSpotTicket(key);
-          }
+          el.classList.add('spot-trigger');
+          el.innerHTML += ` <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-extrabold">🎟️ 票卡</span>`;
+          el.onclick = () => openSpotTicket(key);
           break;
         }
       }
-      if (txt.includes('美麗海水族館')) matchedSpotKey = 'churaumi';
-
-      itinStopCounter++;
-      const slotKey = matchedSpotKey ? ('spot_' + matchedSpotKey) : ('itin_stop_' + itinStopCounter);
-      const cleanLabel = txt.replace('🎟️ 票卡', '').trim();
-
-      if (!defaultPhotoSlots[slotKey]) {
-        defaultPhotoSlots[slotKey] = {
-          label: `📍 行程節點｜${cleanLabel}`,
-          group: "📍 每日行程各節點專屬照片",
-          url: ""
-        };
-      }
-
-      // 在每個行程細項底部按鈕列加入「📷 換照片/傳照」按鈕，並建立可摺疊/顯示的高清照片預覽框
-      let btnRow = contentCol.querySelector('.mt-2');
-      if (!btnRow) {
-        btnRow = document.createElement('div');
-        btnRow.className = 'mt-2 flex flex-wrap gap-1.5';
-        contentCol.appendChild(btnRow);
-      } else {
-        btnRow.classList.add('flex', 'flex-wrap', 'gap-1.5');
-      }
-
-      const photoBtn = document.createElement('button');
-      photoBtn.type = 'button';
-      photoBtn.className = 'map-btn !bg-amber-50 !text-amber-800 !border-amber-300 hover:!bg-amber-500 hover:!text-white';
-      photoBtn.innerHTML = `<i class="fa-solid fa-camera"></i> 照片/換圖`;
-      photoBtn.onclick = (ev) => openUniversalPhotoModal(ev, slotKey, cleanLabel);
-      btnRow.appendChild(photoBtn);
-
-      const photoWrap = document.createElement('div');
-      photoWrap.id = 'itin-photo-wrap-' + slotKey;
-      photoWrap.className = 'mt-2.5 hidden relative rounded-2xl overflow-hidden border border-sky-200 bg-slate-900 h-40 shadow-sm group';
-      photoWrap.innerHTML = `
-        <img id="photo-slot-${slotKey}" src="" alt="${cleanLabel}" onclick="openSlotLightbox(event, '${slotKey}', '${cleanLabel.replace(/'/g, "\'")}', '點擊下方按鈕可隨時更換此行程照片')" class="w-full h-full object-cover cursor-pointer">
-        <button type="button" onclick="openUniversalPhotoModal(event, '${slotKey}', '${cleanLabel.replace(/'/g, "\'")}')" class="absolute top-2 right-2 bg-black/60 hover:bg-sky-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-white/30 shadow flex items-center gap-1">
-          <i class="fa-solid fa-pen"></i> 更換照片
-        </button>
-      `;
-      contentCol.appendChild(photoWrap);
     });
-
-    // 將所有自訂照片套用至畫面上的對應元素
-    function applyAllCustomPhotosToDOM() {
-      const custom = getCustomPhotos();
-      Object.keys(defaultPhotoSlots).forEach(slotKey => {
-        const effectiveUrl = custom[slotKey] || defaultPhotoSlots[slotKey].url;
-        const imgEl = document.getElementById('photo-slot-' + slotKey);
-        const wrapEl = document.getElementById('itin-photo-wrap-' + slotKey);
-
-        if (wrapEl) {
-          // 行程細項若使用者有上傳自訂照片，則自動展開顯示高清圖片卡
-          if (custom[slotKey]) {
-            wrapEl.classList.remove('hidden');
-            if (imgEl) imgEl.src = custom[slotKey];
-          } else {
-            wrapEl.classList.add('hidden');
-          }
-        } else if (imgEl && effectiveUrl) {
-          imgEl.src = effectiveUrl;
-        }
-      });
-
-      // 若景點票卡視窗正開啟中，同步刷新票卡圖片
-      if (currentOpenSpotKey) {
-        const ticketImg = document.getElementById('ticket-img');
-        if (ticketImg) ticketImg.src = getEffectivePhotoUrl('spot_' + currentOpenSpotKey);
-      }
-    }
-
-    // 開啟通用照片編輯彈窗
-    function openUniversalPhotoModal(e, slotKey, titleLabel) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      document.getElementById('uni-photo-key').value = slotKey;
-      document.getElementById('uni-photo-title').textContent = titleLabel || defaultPhotoSlots[slotKey]?.label || '更換照片';
-      const currentUrl = getEffectivePhotoUrl(slotKey);
-      document.getElementById('uni-photo-url').value = getCustomPhotos()[slotKey] || currentUrl || '';
-      document.getElementById('uni-photo-preview').src = currentUrl || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85';
-      document.getElementById('uni-photo-badge').textContent = getCustomPhotos()[slotKey] ? '✅ 目前使用自訂高清照片' : '✨ 目前使用系統預設美圖';
-      const fileInput = document.getElementById('uni-photo-file');
-      if (fileInput) fileInput.value = '';
-
-      const modal = document.getElementById('universal-photo-modal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-
-    function closeUniversalPhotoModal() {
-      const modal = document.getElementById('universal-photo-modal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function saveUniversalPhoto() {
-      const slotKey = document.getElementById('uni-photo-key').value;
-      const urlVal = document.getElementById('uni-photo-url').value.trim();
-      if (!slotKey) return;
-
-      const custom = getCustomPhotos();
-      if (urlVal) {
-        custom[slotKey] = urlVal;
-      } else {
-        delete custom[slotKey];
-      }
-      saveCustomPhotos(custom);
-      closeUniversalPhotoModal();
-      if (!document.getElementById('photo-gallery-modal').classList.contains('hidden')) {
-        renderPhotoGalleryModal();
-      }
-      showToast('☁️ 照片已更新並以 HD 高解析度同步給全家人！');
-    }
-
-    function resetSinglePhotoToDefault() {
-      const slotKey = document.getElementById('uni-photo-key').value;
-      if (!slotKey) return;
-      const custom = getCustomPhotos();
-      delete custom[slotKey];
-      saveCustomPhotos(custom);
-      closeUniversalPhotoModal();
-      if (!document.getElementById('photo-gallery-modal').classList.contains('hidden')) {
-        renderPhotoGalleryModal();
-      }
-      showToast('🔄 已恢復為預設照片並同步！');
-    }
-
-    // 🖼️ 全站照片總覽管理中心
-    function openPhotoGalleryModal() {
-      renderPhotoGalleryModal();
-      const modal = document.getElementById('photo-gallery-modal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-
-    function closePhotoGalleryModal() {
-      const modal = document.getElementById('photo-gallery-modal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function renderPhotoGalleryModal() {
-      const custom = getCustomPhotos();
-      const groups = {};
-      Object.entries(defaultPhotoSlots).forEach(([key, info]) => {
-        if (!groups[info.group]) groups[info.group] = [];
-        groups[info.group].push({ key, ...info, customUrl: custom[key] });
-      });
-
-      const container = document.getElementById('photo-gallery-list');
-      container.innerHTML = Object.entries(groups).map(([gName, items]) => `
-        <div class="space-y-2">
-          <div class="font-extrabold text-sky-900 bg-sky-100/90 px-3 py-1.5 rounded-xl text-xs">${gName}</div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            ${items.map(item => {
-              const displayUrl = item.customUrl || item.url || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80';
-              const isCustomized = !!item.customUrl;
-              const safeLabel = item.label.replace(/'/g, "\'");
-              return `
-                <div class="flex items-center justify-between p-2 rounded-xl border ${isCustomized ? 'border-emerald-300 bg-emerald-50/40' : 'border-slate-200 bg-white'} gap-2 shadow-sm">
-                  <div class="flex items-center gap-2 min-w-0 flex-1">
-                    <img src="${displayUrl}" alt="${safeLabel}" onclick="openSlotLightbox(event, '${item.key}', '${safeLabel}', '點擊可更換照片')" class="w-12 h-12 rounded-lg object-cover border border-slate-200 flex-shrink-0 cursor-pointer">
-                    <div class="min-w-0 flex-1">
-                      <div class="font-bold text-slate-800 truncate text-[11px]">${item.label}</div>
-                      <div class="text-[10px] ${isCustomized ? 'text-emerald-600 font-extrabold' : 'text-slate-400'} mt-0.5">
-                        ${isCustomized ? '✅ 已自訂高清照片' : '系統預設圖'}
-                      </div>
-                    </div>
-                  </div>
-                  <button type="button" onclick="openUniversalPhotoModal(event, '${item.key}', '${safeLabel}')" class="bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-[11px] px-2.5 py-1.5 rounded-lg flex-shrink-0 shadow-sm">
-                    <i class="fa-solid fa-camera mr-0.5"></i>換圖
-                  </button>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function resetAllCustomPhotos() {
-      openConfirmModal('重置所有自訂照片', '確定要將全站所有橫幅、每日底圖與景點照片恢復為預設圖片嗎？', () => {
-        saveCustomPhotos({});
-        renderPhotoGalleryModal();
-        showToast('🔄 已將所有照片恢復為預設值！');
-      });
-    }
 
     // 7. 行前行李 ＆ 證件檢查表 (支援雲端同步)
     const defaultPackingData = [
@@ -3785,11 +3087,11 @@
     ];
 
     function getCustomPackItems() {
-      return JSON.parse(safeGetStorage('okinawa_custom_pack_v1', '[]'));
+      return JSON.parse(localStorage.getItem('okinawa_custom_pack_v1') || '[]');
     }
 
     function saveCustomPackItems(list) {
-      safeSetStorage('okinawa_custom_pack_v1', JSON.stringify(list));
+      localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(list));
       pushStateToCloud();
     }
 
@@ -3807,30 +3109,30 @@
     }
 
     function deleteCustomPackItem(e, id) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
+      e.preventDefault();
+      e.stopPropagation();
       saveCustomPackItems(getCustomPackItems().filter(i => i.id !== id));
       renderPackingList();
     }
 
     function togglePackCheck(id) {
-      const saved = JSON.parse(safeGetStorage('okinawa_pack_checked_v1', '{}'));
+      const saved = JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}');
       saved[id] = !saved[id];
-      safeSetStorage('okinawa_pack_checked_v1', JSON.stringify(saved));
+      localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(saved));
       renderPackingList();
       pushStateToCloud();
     }
 
     function resetPackingList() {
-      openConfirmModal('重置行前檢查表', '確定要重置所有行前檢查表的勾選狀態嗎？', () => {
-        safeRemoveStorage('okinawa_pack_checked_v1');
+      if (confirm('確定要重置所有行前檢查表的勾選狀態嗎？')) {
+        localStorage.removeItem('okinawa_pack_checked_v1');
         renderPackingList();
         pushStateToCloud();
-        showToast('🔄 已重置行前檢查表勾選狀態');
-      });
+      }
     }
 
     function renderPackingList() {
-      const saved = JSON.parse(safeGetStorage('okinawa_pack_checked_v1', '{}'));
+      const saved = JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}');
       const customList = getCustomPackItems();
       const groups = JSON.parse(JSON.stringify(defaultPackingData));
       if (customList.length > 0) {
@@ -3893,19 +3195,12 @@
       modal.classList.remove('flex');
     }
 
-    // 初始化所有渲染並啟動 IndexedDB 高容量快取與 Firebase 即時雲端同步串流
+    // 初始化所有渲染並啟動 Firebase 即時雲端同步串流
     setQuickJpy(1000);
     renderExpenses();
     renderChecklist();
     renderPackingList();
-    applyAllCustomPhotosToDOM();
-    restoreFromIndexedDB().then(() => {
-      renderExpenses();
-      renderChecklist();
-      renderPackingList();
-      applyAllCustomPhotosToDOM();
-      initRealtimeCloudStream();
-    });
+    initRealtimeCloudStream();
   </script>
 </body>
 </html>

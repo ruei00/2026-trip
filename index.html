@@ -317,6 +317,99 @@
       margin-top: 6px;
       line-height: 1.55;
     }
+
+    /* ✨ 新增 1：底圖高質感毛玻璃與多層次漸層遮罩 (Glassmorphism Overlay) */
+    .glass-img-overlay {
+      background: linear-gradient(
+        180deg,
+        rgba(15, 23, 42, 0.28) 0%,
+        rgba(15, 23, 42, 0.05) 38%,
+        rgba(15, 23, 42, 0.65) 75%,
+        rgba(15, 23, 42, 0.92) 100%
+      );
+      backdrop-filter: blur(1.5px);
+      -webkit-backdrop-filter: blur(1.5px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -12px 24px rgba(2, 6, 23, 0.45);
+    }
+
+    /* ✨ 新增 2：毛玻璃懸浮「更換照片」按鈕 */
+    .cam-edit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      padding: 5px 11px;
+      border-radius: 9999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 25;
+    }
+    .cam-edit-btn:hover, .cam-edit-btn:active {
+      background: rgba(2, 132, 199, 0.9);
+      border-color: #bae6fd;
+      transform: scale(0.94);
+    }
+
+    /* ✨ 新增 3：底部導覽列 (Bottom Navigation) 懸浮膠囊與微互動 */
+    .nav-dock {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1.5px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 16px 36px -6px rgba(2, 132, 199, 0.22), 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+    body.starry-mode .nav-dock {
+      background: rgba(15, 23, 42, 0.85) !important;
+      border-color: rgba(56, 189, 248, 0.3) !important;
+    }
+    .nav-btn {
+      position: relative;
+      transition: all 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-btn:active {
+      transform: scale(0.86);
+    }
+    .nav-btn.nav-active {
+      color: #0284c7;
+      background: linear-gradient(135deg, rgba(224, 242, 254, 0.95) 0%, rgba(186, 230, 253, 0.65) 100%);
+      font-weight: 900;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 4px 10px rgba(2, 132, 199, 0.12);
+    }
+    body.starry-mode .nav-btn.nav-active {
+      color: #38bdf8;
+      background: rgba(30, 41, 59, 0.95);
+    }
+    .nav-btn.nav-active i {
+      transform: translateY(-2px) scale(1.12);
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-btn.nav-active::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #0284c7, #06b6d4);
+    }
+
+    /* ✨ 新增 4：燈箱放大檢視 (Lightbox) 彈出動畫 */
+    @keyframes lightboxZoom {
+      from { opacity: 0; transform: scale(0.92) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .lightbox-card-anim {
+      animation: lightboxZoom 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
   </style>
 </head>
 <body class="pb-32">
@@ -324,14 +417,31 @@
   <!-- 頂部輕量提示框 (Toast) -->
   <div id="toast-msg" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md text-white text-xs font-extrabold px-4 py-2.5 rounded-full shadow-2xl z-50 hidden transition-all border border-white/20"></div>
 
-  <!-- 圖片與 SVG 地圖全螢幕放大檢視器 (Lightbox) -->
-  <div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-3 sm:p-6">
-    <div class="relative max-w-xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/20" onclick="event.stopPropagation()">
-      <button onclick="closeLightbox()" class="absolute top-3 right-3 bg-slate-900/75 text-white w-9 h-9 rounded-full flex items-center justify-center text-base shadow-lg z-20">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+  <!-- 隱藏的全站通用高畫質圖片上傳 Input -->
+  <input type="file" id="global-img-uploader" accept="image/*" class="hidden" onchange="onGlobalFileSelected(this)">
+
+  <!-- 圖片與 SVG 地圖全螢幕放大檢視器 (Lightbox 升級版) -->
+  <div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-xl z-50 hidden flex-col items-center justify-center p-3 sm:p-6">
+    <div class="lightbox-card-anim relative max-w-xl w-full bg-white/95 backdrop-blur-md rounded-3xl overflow-hidden shadow-2xl border border-white/30" onclick="event.stopPropagation()">
+      <!-- 頂部控制列 -->
+      <div class="absolute top-3 left-3 right-3 flex justify-between items-center z-20 pointer-events-none">
+        <div id="lightbox-action-btns" class="flex gap-1.5 pointer-events-auto hidden">
+          <button type="button" id="lightbox-change-btn" class="cam-edit-btn !bg-sky-600/90">
+            <i class="fa-solid fa-camera"></i> 更換此照片
+          </button>
+          <button type="button" id="lightbox-reset-btn" class="cam-edit-btn !bg-slate-900/75">
+            <i class="fa-solid fa-rotate-left"></i> 恢復預設
+          </button>
+        </div>
+        <button onclick="closeLightbox()" class="pointer-events-auto ml-auto bg-slate-900/75 hover:bg-rose-600 text-white w-9 h-9 rounded-full flex items-center justify-center text-base shadow-lg border border-white/25 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
       <div id="lightbox-svg-container" class="w-full hidden bg-sky-950 p-2 overflow-auto max-h-[75vh]"></div>
-      <img id="lightbox-img" src="" alt="放大圖" class="w-full max-h-[72vh] object-contain bg-slate-900">
+      <div class="bg-slate-950 flex items-center justify-center overflow-hidden">
+        <img id="lightbox-img" src="" alt="放大圖" class="w-full max-h-[74vh] object-contain transition-transform duration-300">
+      </div>
       <div class="p-4 text-center bg-white">
         <div id="lightbox-title" class="font-extrabold text-base text-slate-800"></div>
         <div id="lightbox-sub" class="text-xs text-rose-600 font-bold mt-1"></div>
@@ -339,16 +449,27 @@
     </div>
   </div>
 
-  <!-- 🎟️ 景點 3D 紀念票卡深度介紹視窗 (Spot Ticket Modal) -->
-  <div id="spot-ticket-modal" onclick="closeSpotTicket()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <!-- 🎟️ 景點 3D 紀念票卡深度介紹視窗 (Spot Ticket Modal 支援換圖與點擊放大) -->
+  <div id="spot-ticket-modal" onclick="closeSpotTicket()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-50 hidden items-center justify-center p-4">
     <div class="boarding-pass max-w-md w-full bg-white shadow-2xl animate-[springIn_0.3s_ease-out]" onclick="event.stopPropagation()">
-      <div class="relative h-48 bg-slate-800">
-        <img id="ticket-img" src="" class="w-full h-full object-cover" alt="景點圖">
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/20 to-transparent"></div>
-        <button onclick="closeSpotTicket()" class="absolute top-3 right-3 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center">
+      <div class="relative h-52 bg-slate-800 group">
+        <img id="ticket-img" src="" class="w-full h-full object-cover cursor-zoom-in" alt="景點圖">
+        <div class="absolute inset-0 glass-img-overlay pointer-events-none"></div>
+
+        <!-- 左上角：更換景點票卡照片＆放大檢視按鈕 -->
+        <div class="absolute top-3 left-3 flex gap-1.5 z-20">
+          <button type="button" id="ticket-edit-img-btn" class="cam-edit-btn">
+            <i class="fa-solid fa-camera"></i> 更換景點照
+          </button>
+          <button type="button" id="ticket-zoom-img-btn" class="cam-edit-btn" title="放大檢視">
+            <i class="fa-solid fa-magnifying-glass-plus"></i> 放大
+          </button>
+        </div>
+
+        <button onclick="closeSpotTicket()" class="absolute top-3 right-3 bg-black/50 hover:bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center z-20 transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
-        <div class="absolute bottom-3 left-4 right-4 text-white">
+        <div class="absolute bottom-3 left-4 right-4 text-white pointer-events-none">
           <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow">🎟️ OKINAWA VIP PASS</span>
           <h3 id="ticket-title" class="text-xl font-black mt-1 drop-shadow"></h3>
         </div>
@@ -558,8 +679,8 @@
   <header class="relative text-white pt-5 pb-14 px-4 shadow-2xl overflow-hidden bg-slate-900">
     <!-- 1. 樣式一：古宇利藍空拍海景底圖 + 電影慢速推進動畫 -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85" alt="沖繩古宇利藍海景" class="w-full h-full object-cover hero-bg-anim opacity-80">
-      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-sky-900/45 to-cyan-600/75"></div>
+      <img id="hero-bg-img" data-img-key="hero_bg" data-img-title="🌺 沖繩之旅頂部主視覺橫幅" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85" alt="沖繩古宇利藍海景" class="w-full h-full object-cover hero-bg-anim opacity-85">
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-sky-900/45 to-cyan-600/75 backdrop-blur-[1px]"></div>
       <!-- 陽光折射光斑 -->
       <div class="absolute -top-16 -left-16 w-64 h-64 bg-amber-300/25 rounded-full blur-3xl"></div>
       <div class="absolute top-1/3 right-4 w-48 h-48 bg-cyan-300/20 rounded-full blur-2xl"></div>
@@ -1682,46 +1803,70 @@
       </div>
 
       
-      <!-- 住宿資訊 -->
+      <!-- 住宿資訊 (升級：支援飯店封面圖、點擊燈箱放大與手機上傳換圖) -->
       <div class="okinawa-card p-4">
         <h2 class="font-extrabold text-lg text-sky-800 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-hotel text-sky-500"></i> 住宿資訊（Booking.com 皆訂 3 間房）
         </h2>
-        <div class="space-y-3 text-sm">
-          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-xs font-extrabold text-rose-500">Day 1｜12/31 (四) 那霸南部</span>
+        <div class="space-y-3.5 text-sm">
+          <!-- 飯店 1 -->
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="relative h-36 bg-slate-200">
+              <img data-img-key="hotel_1" data-img-title="Hotel Lantana Naha Kokusai-Dori" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=80" alt="蘭塔納飯店" class="w-full h-full object-cover cursor-zoom-in" onclick="openCustomImgLightbox('hotel_1', 'Hotel Lantana Naha Kokusai-Dori', 'Day 1 (12/31) 那霸國際通')">
+              <div class="absolute inset-0 glass-img-overlay pointer-events-none"></div>
+              <button type="button" onclick="triggerCustomImgUpload('hotel_1', '蘭塔納飯店照片')" class="cam-edit-btn absolute top-2.5 left-2.5">
+                <i class="fa-solid fa-camera"></i> 更換飯店照
+              </button>
+              <span class="absolute bottom-2.5 left-3 text-xs font-extrabold text-amber-300 drop-shadow">Day 1｜12/31 (四) 那霸南部</span>
+            </div>
+            <div class="p-3.5">
+              <div class="flex justify-between items-start gap-2">
                 <h3 class="font-extrabold text-base text-slate-800">Hotel Lantana Naha Kokusai-Dori ⭐⭐⭐</h3>
+                <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Lantana+Naha+Kokusai-Dori" target="_blank" class="map-btn">📍 導航</a>
               </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Lantana+Naha+Kokusai-Dori" target="_blank" class="map-btn">📍 導航</a>
+              <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuo 2-8-1｜入住 15:00~23:30 / 退房 11:00 前</p>
+              <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 8,866 / 1晚 / 3間雙床房 (12/23 收費)</p>
             </div>
-            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuo 2-8-1｜入住 15:00~23:30 / 退房 11:00 前</p>
-            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 8,866 / 1晚 / 3間雙床房 (12/23 收費)</p>
           </div>
 
-          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-xs font-extrabold text-sky-600">Day 2 & 3｜1/1 (五) - 1/3 (日) 北部名護</span>
+          <!-- 飯店 2 -->
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="relative h-36 bg-slate-200">
+              <img data-img-key="hotel_2" data-img-title="New Normal Hotel in NAGO" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80" alt="名護飯店" class="w-full h-full object-cover cursor-zoom-in" onclick="openCustomImgLightbox('hotel_2', 'New Normal Hotel in NAGO', 'Day 2 & 3 (1/1-1/3) 北部名護連住兩晚')">
+              <div class="absolute inset-0 glass-img-overlay pointer-events-none"></div>
+              <button type="button" onclick="triggerCustomImgUpload('hotel_2', '名護飯店照片')" class="cam-edit-btn absolute top-2.5 left-2.5">
+                <i class="fa-solid fa-camera"></i> 更換飯店照
+              </button>
+              <span class="absolute bottom-2.5 left-3 text-xs font-extrabold text-sky-300 drop-shadow">Day 2 & 3｜1/1 (五) - 1/3 (日) 北部名護</span>
+            </div>
+            <div class="p-3.5">
+              <div class="flex justify-between items-start gap-2">
                 <h3 class="font-extrabold text-base text-slate-800">New Normal Hotel in NAGO ⭐⭐⭐⭐</h3>
+                <a href="https://www.google.com/maps/search/?api=1&query=New+Normal+Hotel+in+NAGO" target="_blank" class="map-btn">📍 導航</a>
               </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=New+Normal+Hotel+in+NAGO" target="_blank" class="map-btn">📍 導航</a>
+              <p class="text-xs text-slate-500 mt-1">地址：沖繩, 名護, Miyazato 949｜入住 15:00~00:00 / 退房 10:00 前</p>
+              <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 19,676 / 2晚 / 3間雙人房 (12/27 收費)</p>
             </div>
-            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 名護, Miyazato 949｜入住 15:00~00:00 / 退房 10:00 前</p>
-            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 19,676 / 2晚 / 3間雙人房 (12/27 收費)</p>
           </div>
 
-          <div class="p-3.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-xs font-extrabold text-purple-600">Day 4｜1/3 (日) 那霸南部</span>
-                <h3 class="font-extrabold text-base text-slate-800">Hotel Cocktail Stay Naha ⭐⭐⭐⭐</h3>
-              </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Cocktail+Stay+Naha" target="_blank" class="map-btn">📍 導航</a>
+          <!-- 飯店 3 -->
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="relative h-36 bg-slate-200">
+              <img data-img-key="hotel_3" data-img-title="Hotel Cocktail Stay Naha" src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80" alt="那霸雞尾酒飯店" class="w-full h-full object-cover cursor-zoom-in" onclick="openCustomImgLightbox('hotel_3', 'Hotel Cocktail Stay Naha', 'Day 4 (1/3) 那霸市區')">
+              <div class="absolute inset-0 glass-img-overlay pointer-events-none"></div>
+              <button type="button" onclick="triggerCustomImgUpload('hotel_3', 'Cocktail Stay 飯店照片')" class="cam-edit-btn absolute top-2.5 left-2.5">
+                <i class="fa-solid fa-camera"></i> 更換飯店照
+              </button>
+              <span class="absolute bottom-2.5 left-3 text-xs font-extrabold text-purple-300 drop-shadow">Day 4｜1/3 (日) 那霸南部</span>
             </div>
-            <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuyama 1-29-7｜入住 15:00~23:00 / 退房 11:00 前</p>
-            <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 6,493 / 1晚 / 3間特大雙人床房 (12/28 收費)</p>
+            <div class="p-3.5">
+              <div class="flex justify-between items-start gap-2">
+                <h3 class="font-extrabold text-base text-slate-800">Hotel Cocktail Stay Naha ⭐⭐⭐⭐</h3>
+                <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Cocktail+Stay+Naha" target="_blank" class="map-btn">📍 導航</a>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">地址：沖繩, 那霸, Matsuyama 1-29-7｜入住 15:00~23:00 / 退房 11:00 前</p>
+              <p class="text-xs font-bold text-emerald-700 mt-1">💰 NT$ 6,493 / 1晚 / 2間特大雙人床房+1間雙床房 (12/28 收費)</p>
+            </div>
           </div>
         </div>
       </div>
@@ -2057,28 +2202,28 @@
 
   </main>
 
-  <!-- 底部懸浮毛玻璃膠囊導覽列 (Floating Dock UI) -->
-  <nav class="fixed bottom-3 left-3 right-3 max-w-xl mx-auto bg-white/90 backdrop-blur-xl border border-sky-200/80 rounded-3xl shadow-2xl z-40 px-2 py-1">
-    <div class="grid grid-cols-5 text-center">
-      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn py-2 rounded-2xl text-sky-600 bg-sky-50 font-extrabold transition-all">
-        <i class="fa-solid fa-map-location-dot text-base block"></i>
-        <span class="text-[10px]">每日行程</span>
+  <!-- 底部懸浮毛玻璃膠囊導覽列 (Floating Dock UI 升級版) -->
+  <nav class="nav-dock fixed bottom-3 left-3 right-3 max-w-xl mx-auto rounded-3xl z-40 px-2 py-1.5">
+    <div class="grid grid-cols-5 gap-1 text-center">
+      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn nav-active py-2 rounded-2xl">
+        <i class="fa-solid fa-map-location-dot text-base block mb-0.5"></i>
+        <span class="text-[10px] block leading-none">每日行程</span>
       </button>
-      <button onclick="switchTab('info')" id="nav-info" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium transition-all">
-        <i class="fa-solid fa-plane-up text-base block"></i>
-        <span class="text-[10px]">航班/住宿</span>
+      <button onclick="switchTab('info')" id="nav-info" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium">
+        <i class="fa-solid fa-plane-up text-base block mb-0.5"></i>
+        <span class="text-[10px] block leading-none">航班/住宿</span>
       </button>
-      <button onclick="switchTab('cost')" id="nav-cost" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium transition-all">
-        <i class="fa-solid fa-coins text-base block"></i>
-        <span class="text-[10px]">記帳/分帳</span>
+      <button onclick="switchTab('cost')" id="nav-cost" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium">
+        <i class="fa-solid fa-coins text-base block mb-0.5"></i>
+        <span class="text-[10px] block leading-none">記帳/分帳</span>
       </button>
-      <button onclick="switchTab('shopping')" id="nav-shopping" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium transition-all">
-        <i class="fa-solid fa-gift text-base block"></i>
-        <span class="text-[10px]">必買清單</span>
+      <button onclick="switchTab('shopping')" id="nav-shopping" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium">
+        <i class="fa-solid fa-gift text-base block mb-0.5"></i>
+        <span class="text-[10px] block leading-none">必買清單</span>
       </button>
-      <button onclick="switchTab('packing')" id="nav-packing" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium transition-all">
-        <i class="fa-solid fa-suitcase-rolling text-base block"></i>
-        <span class="text-[10px]">行前檢查</span>
+      <button onclick="switchTab('packing')" id="nav-packing" class="nav-btn py-2 rounded-2xl text-slate-400 font-medium">
+        <i class="fa-solid fa-suitcase-rolling text-base block mb-0.5"></i>
+        <span class="text-[10px] block leading-none">行前檢查</span>
       </button>
     </div>
   </nav>
@@ -2103,7 +2248,22 @@
       }
     }
 
-    // 推送本地最新狀態至 Firebase 雲端
+    // ==================== 📷 CLOUDINARY 高畫質圖床設定 ====================
+    const CLOUDINARY_CLOUD_NAME = "djexkc3s";
+    const CLOUDINARY_UPLOAD_PRESET = "trip_2026_upload";
+    const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+    function getCustomImages() {
+      return JSON.parse(localStorage.getItem('okinawa_custom_images_v1') || '{}');
+    }
+
+    function saveCustomImages(obj) {
+      localStorage.setItem('okinawa_custom_images_v1', JSON.stringify(obj));
+      applyAllCustomImagesToDOM();
+      pushStateToCloud();
+    }
+
+    // 推送本地最新狀態至 Firebase 雲端 (新增 customImages 欄位)
     async function pushStateToCloud() {
       if (isRemoteUpdating) return;
       updateCloudBadge('syncing');
@@ -2116,6 +2276,7 @@
         deletedShop: getDeletedShopIds(),
         packChecked: JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}'),
         customPack: getCustomPackItems(),
+        customImages: getCustomImages(),
         updatedAt: Date.now()
       };
       try {
@@ -2144,11 +2305,13 @@
         localStorage.setItem('okinawa_deleted_shop_v1', JSON.stringify(data.deletedShop || []));
         localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(data.packChecked || {}));
         localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(data.customPack || []));
+        localStorage.setItem('okinawa_custom_images_v1', JSON.stringify(data.customImages || {}));
 
         convertCurrency('JPY');
         renderExpenses();
         renderChecklist();
         renderPackingList();
+        applyAllCustomImagesToDOM();
         updateCloudBadge('online');
       } finally {
         isRemoteUpdating = false;
@@ -2190,7 +2353,6 @@
         });
         sse.onerror = () => updateCloudBadge('offline');
       } catch (e) {
-        // 備援定時輪詢
         setInterval(() => {
           fetch(FIREBASE_DB_URL).then(r => r.json()).then(d => { if (d) applyCloudData(d); }).catch(()=>{});
         }, 6000);
@@ -2204,7 +2366,7 @@
       el.textContent = msg;
       el.classList.remove('hidden');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.add('hidden'), 2600);
+      toastTimer = setTimeout(() => el.classList.add('hidden'), 2800);
     }
 
     function fireConfetti() {
@@ -2240,30 +2402,70 @@
       document.getElementById('theme-toggle-text').textContent = '陽光';
     }
 
-    // 0.5 手機相簿選照片自動壓縮轉 Base64 (壓縮至極輕量以利雲端秒傳)
-    function handleImageUpload(inputEl, targetInputId) {
+    // ==================== 0.5 手機照片高畫質 (1600px) 壓縮並上傳至 Cloudinary 圖床 ====================
+    async function uploadImageToCloudinary(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const maxDim = 1600; // 提升至 1600px 高解析度
+            let w = img.width, h = img.height;
+            if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+            else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+
+            canvas.toBlob(async (blob) => {
+              if (!blob) return reject(new Error('圖片轉換失敗'));
+              const formData = new FormData();
+              formData.append('file', blob, 'okinawa_photo.webp');
+              formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+              try {
+                const res = await fetch(CLOUDINARY_API_URL, {
+                  method: 'POST',
+                  body: formData
+                });
+                const data = await res.json();
+                if (data.secure_url) {
+                  // 自動加上 Cloudinary f_auto,q_auto 最佳化參數
+                  const optimizedUrl = data.secure_url.replace('/upload/', '/upload/f_auto,q_auto/');
+                  resolve(optimizedUrl);
+                } else {
+                  reject(new Error(data.error?.message || '上傳失敗'));
+                }
+              } catch (err) {
+                reject(err);
+              }
+            }, 'image/webp', 0.88);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 供「必買購物清單」表單使用的上傳函式
+    async function handleImageUpload(inputEl, targetInputId) {
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const maxDim = 360;
-          let w = img.width, h = img.height;
-          if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
-          else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
-          document.getElementById(targetInputId).value = dataUrl;
-          showToast('📷 照片已壓縮載入！儲存後全家人皆可看到');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      showToast('⏳ 正在上傳高畫質照片至雲端圖床...');
+      try {
+        const url = await uploadImageToCloudinary(file);
+        document.getElementById(targetInputId).value = url;
+        showToast('✅ 高畫質照片上傳成功！請點擊儲存同步');
+      } catch (err) {
+        console.error(err);
+        showToast('❌ 照片上傳失敗，請確認網路或 Cloudinary 設定');
+      } finally {
+        inputEl.value = '';
+      }
     }
 
     // 1. 精確到秒的出發倒數計時器
@@ -2440,17 +2642,17 @@
       convertCurrency('JPY');
     }
 
-    // 4. 分頁與天數切換
+    // 4. 分頁與天數切換 (支援微互動 Q 彈膠囊高亮)
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById('tab-' + tabName).classList.add('active');
       document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-sky-600', 'bg-sky-50', 'font-extrabold');
+        btn.classList.remove('nav-active', 'text-sky-600', 'bg-sky-50', 'font-extrabold');
         btn.classList.add('text-slate-400', 'font-medium');
       });
       const activeBtn = document.getElementById('nav-' + tabName);
       activeBtn.classList.remove('text-slate-400', 'font-medium');
-      activeBtn.classList.add('text-sky-600', 'bg-sky-50', 'font-extrabold');
+      activeBtn.classList.add('nav-active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -2783,15 +2985,25 @@
       return groups;
     }
 
-    function openLightbox(e, img, title, sub) {
+    function openLightbox(e, img, title, sub, customKey = null) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
       const svgBox = document.getElementById('lightbox-svg-container');
       const imgEl = document.getElementById('lightbox-img');
+      const actionBtns = document.getElementById('lightbox-action-btns');
       svgBox.classList.add('hidden');
       imgEl.classList.remove('hidden');
       imgEl.src = img;
       document.getElementById('lightbox-title').textContent = title;
       document.getElementById('lightbox-sub').textContent = sub;
+
+      if (customKey) {
+        actionBtns.classList.remove('hidden');
+        document.getElementById('lightbox-change-btn').onclick = () => triggerCustomImgUpload(customKey, title);
+        document.getElementById('lightbox-reset-btn').onclick = () => resetCustomImg(customKey, title);
+      } else {
+        actionBtns.classList.add('hidden');
+      }
+
       const modal = document.getElementById('lightbox-modal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -3027,14 +3239,154 @@
       "瀨長島": { title: "🥞 瀨長島 Umikaji Terrace", img: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=800&q=80", desc: "被譽為「沖繩小希臘」的純白山丘露台商場，面向蔚藍大海並能超近距離觀賞那霸機場飛機起降。", highlight: "✨ 必吃亮點：幸福鬆餅、吹著海風的吊床咖啡廳，17:00 準時離開去加油還車！", map: "瀨長島+Umikaji+Terrace" }
     };
 
+    // ==================== 🖼️ 全站照片自訂上傳、套用與燈箱整合引擎 ====================
+    const defaultImagesBackup = {};
+    let pendingUploadTarget = null; // { key, title, onSuccess }
+
+    function triggerCustomImgUpload(key, title, onSuccess = null) {
+      pendingUploadTarget = { key, title, onSuccess };
+      document.getElementById('global-img-uploader').click();
+    }
+
+    async function onGlobalFileSelected(inputEl) {
+      const file = inputEl.files && inputEl.files[0];
+      if (!file || !pendingUploadTarget) return;
+      const { key, title, onSuccess } = pendingUploadTarget;
+      showToast(`⏳ 正在上傳「${title}」高畫質照片...`);
+      try {
+        const url = await uploadImageToCloudinary(file);
+        const map = getCustomImages();
+        map[key] = url;
+        saveCustomImages(map);
+        if (typeof onSuccess === 'function') onSuccess(url);
+        // 若燈箱正開著，同步更新燈箱預覽圖
+        const lbModal = document.getElementById('lightbox-modal');
+        if (!lbModal.classList.contains('hidden')) {
+          document.getElementById('lightbox-img').src = url;
+        }
+        showToast(`✅ 「${title}」已換成最新高畫質照片並同步！`);
+      } catch (err) {
+        console.error(err);
+        showToast('❌ 照片上傳失敗，請檢查網路或 Cloudinary 設定');
+      } finally {
+        inputEl.value = '';
+        pendingUploadTarget = null;
+      }
+    }
+
+    function resetCustomImg(key, title) {
+      const map = getCustomImages();
+      if (!map[key]) {
+        showToast('ℹ️ 目前已經是預設照片囉！');
+        return;
+      }
+      if (!confirm(`確定要將「${title}」恢復為預設照片嗎？`)) return;
+      delete map[key];
+      saveCustomImages(map);
+      const defaultSrc = defaultImagesBackup[key];
+      if (defaultSrc) {
+        document.getElementById('lightbox-img').src = defaultSrc;
+      }
+      showToast(`🔄 已恢復「${title}」預設照片！`);
+    }
+
+    function openCustomImgLightbox(key, title, sub) {
+      const map = getCustomImages();
+      const src = map[key] || defaultImagesBackup[key] || '';
+      openLightbox(null, src, title, sub, key);
+    }
+
+    function applyAllCustomImagesToDOM() {
+      const map = getCustomImages();
+      document.querySelectorAll('img[data-img-key]').forEach(img => {
+        const key = img.getAttribute('data-img-key');
+        if (!defaultImagesBackup[key]) {
+          defaultImagesBackup[key] = img.getAttribute('src');
+        }
+        img.src = map[key] || defaultImagesBackup[key];
+      });
+    }
+
+    // 自動為「頂部橫幅」與「Day 1 ~ Day 5 每日行程封面」注入毛玻璃遮罩、換圖按鈕與點擊燈箱放大
+    function initEditableBannersAndCovers() {
+      // 1. 頂部橫幅備份預設底圖
+      const heroImg = document.getElementById('hero-bg-img');
+      if (heroImg) {
+        defaultImagesBackup['hero_bg'] = heroImg.getAttribute('src');
+      }
+
+      // 2. Day 1 ~ Day 5 每日行程底圖自動升級
+      for (let d = 1; d <= 5; d++) {
+        const daySection = document.getElementById(`day-${d}`);
+        if (!daySection) continue;
+        const coverWrapper = daySection.querySelector('.okinawa-card > .relative.h-48');
+        if (!coverWrapper) continue;
+        const img = coverWrapper.querySelector('img');
+        const overlay = coverWrapper.querySelector('.bg-gradient-to-t');
+        const dayTitle = coverWrapper.querySelector('h2')?.textContent || `Day ${d} 行程封面`;
+        const key = `day_${d}_cover`;
+
+        if (img) {
+          img.setAttribute('data-img-key', key);
+          defaultImagesBackup[key] = img.getAttribute('src');
+          img.classList.add('cursor-zoom-in');
+        }
+        if (overlay) {
+          overlay.className = 'absolute inset-0 glass-img-overlay pointer-events-none';
+        }
+
+        // 左上角加入「📷 更換底圖」與「🔍 放大」按鈕
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'absolute top-3 left-3 flex gap-1.5 z-20';
+        btnGroup.innerHTML = `
+          <button type="button" onclick="triggerCustomImgUpload('${key}', 'Day ${d} 行程底圖')" class="cam-edit-btn">
+            <i class="fa-solid fa-camera"></i> 更換底圖
+          </button>
+          <button type="button" onclick="openCustomImgLightbox('${key}', '${dayTitle.replace(/'/g, "\\'")}', '點擊左上角可更換或恢復預設底圖')" class="cam-edit-btn">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
+          </button>
+        `;
+        coverWrapper.appendChild(btnGroup);
+      }
+
+      // 3. 備份住宿卡片與景點票卡預設圖片
+      document.querySelectorAll('img[data-img-key]').forEach(img => {
+        const k = img.getAttribute('data-img-key');
+        if (!defaultImagesBackup[k]) defaultImagesBackup[k] = img.getAttribute('src');
+      });
+      Object.keys(spotTicketsDB).forEach(k => {
+        defaultImagesBackup[`ticket_${k}`] = spotTicketsDB[k].img;
+      });
+
+      applyAllCustomImagesToDOM();
+    }
+
     function openSpotTicket(key) {
       const data = spotTicketsDB[key];
       if (!data) return;
-      document.getElementById('ticket-img').src = data.img;
+      const customKey = `ticket_${key}`;
+      const customMap = getCustomImages();
+      const currentImg = customMap[customKey] || data.img;
+
+      const ticketImgEl = document.getElementById('ticket-img');
+      ticketImgEl.src = currentImg;
+      ticketImgEl.onclick = () => openLightbox(null, ticketImgEl.src, data.title, data.highlight, customKey);
+
       document.getElementById('ticket-title').textContent = data.title;
       document.getElementById('ticket-desc').textContent = data.desc;
       document.getElementById('ticket-highlight').textContent = data.highlight;
       document.getElementById('ticket-map-link').href = `https://www.google.com/maps/search/?api=1&query=${data.map}`;
+
+      // 綁定票卡左上角「📷 更換景點照」與「🔍 放大」按鈕
+      document.getElementById('ticket-edit-img-btn').onclick = () => {
+        triggerCustomImgUpload(customKey, data.title, (newUrl) => {
+          ticketImgEl.src = newUrl;
+        });
+      };
+      document.getElementById('ticket-zoom-img-btn').onclick = () => {
+        openLightbox(null, ticketImgEl.src, data.title, data.highlight, customKey);
+      };
+
       const modal = document.getElementById('spot-ticket-modal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -3196,6 +3548,7 @@
     }
 
     // 初始化所有渲染並啟動 Firebase 即時雲端同步串流
+    initEditableBannersAndCovers();
     setQuickJpy(1000);
     renderExpenses();
     renderChecklist();

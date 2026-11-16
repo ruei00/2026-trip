@@ -408,9 +408,245 @@
     .lightbox-card-anim {
       animation: lightboxZoom 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
+    /* ==================== ✨ 特效 5A：拍立得搖晃顯影 (Polaroid Shake & Develop) ==================== */
+    .polaroid-modal-card {
+      background: #fffdf9;
+      padding: 14px 14px 18px 14px;
+      border-radius: 1.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.6);
+      position: relative;
+    }
+    body.starry-mode .polaroid-modal-card {
+      background: #1e293b;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(56, 189, 248, 0.3);
+    }
+    .polaroid-photo-frame {
+      background: #ffffff;
+      padding: 10px 10px 34px 10px;
+      border-radius: 1rem;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12), inset 0 0 0 1px #e2e8f0;
+      position: relative;
+    }
+    body.starry-mode .polaroid-photo-frame {
+      background: #0f172a;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 0 0 1px #334155;
+    }
+    @keyframes polaroidShakeDevelop {
+      0% {
+        opacity: 0;
+        transform: scale(0.85) rotate(-6deg) translateY(20px);
+      }
+      35% {
+        opacity: 1;
+        transform: scale(1.03) rotate(3deg) translateY(-4px);
+      }
+      65% {
+        transform: scale(0.99) rotate(-1.5deg) translateY(0);
+      }
+      85% {
+        transform: scale(1.01) rotate(0.8deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(-0.8deg);
+      }
+    }
+    @keyframes photoDevelopFilter {
+      0% { filter: brightness(2.4) contrast(0.35) saturate(0.1) sepia(0.3); }
+      45% { filter: brightness(1.45) contrast(0.75) saturate(0.5); }
+      100% { filter: brightness(1) contrast(1) saturate(1) sepia(0); }
+    }
+    .polaroid-Entering {
+      animation: polaroidShakeDevelop 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .polaroid-Entering #ticket-img {
+      animation: photoDevelopFilter 1.25s ease-out forwards;
+    }
+    /* 拍立得頂部可愛和紙膠帶裝飾 */
+    .washi-tape {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      width: 110px;
+      height: 24px;
+      background: repeating-linear-gradient(45deg, rgba(251, 113, 133, 0.75), rgba(251, 113, 133, 0.75) 8px, rgba(253, 224, 71, 0.75) 8px, rgba(253, 224, 71, 0.75) 16px);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      z-index: 30;
+      border-radius: 3px;
+    }
+    /* 拍立得右下角紀念郵戳 */
+    .okinawa-stamp {
+      position: absolute;
+      bottom: 4px;
+      right: 12px;
+      border: 2px dashed #f43f5e;
+      color: #e11d48;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 7px;
+      border-radius: 999px;
+      transform: rotate(-8deg);
+      background: rgba(255, 241, 242, 0.9);
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 4px rgba(244, 63, 94, 0.15);
+    }
+
+    /* ==================== ✨ 特效 5B：手風琴折疊行程卡片 (Accordion Stack) ==================== */
+    .timeline-row {
+      position: relative;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border-radius: 1.1rem;
+      padding: 8px 10px 8px 6px;
+      margin-left: -4px;
+      margin-right: -4px;
+    }
+    .timeline-row:hover {
+      background: rgba(240, 249, 255, 0.65);
+    }
+    body.starry-mode .timeline-row:hover {
+      background: rgba(30, 41, 59, 0.65);
+    }
+    .accordion-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .accordion-toggle-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #64748b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, color 0.2s;
+    }
+    .timeline-row.is-collapsed .accordion-toggle-icon {
+      transform: rotate(-90deg);
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+    .accordion-body {
+      overflow: hidden;
+      max-height: 1200px;
+      opacity: 1;
+      transform-origin: top;
+      transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease, margin-top 0.28s ease;
+    }
+    .timeline-row.is-collapsed .accordion-body {
+      max-height: 0px !important;
+      opacity: 0;
+      margin-top: 0 !important;
+      pointer-events: none;
+    }
+
+    /* ==================== ✨ 側邊時間表：虛線軌跡 ＋ 呼吸霓虹亮點 ＋ 燈箱小圓鈕 ==================== */
+    .timeline-left-col {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    /* 垂直漸層虛線連接線 */
+    .timeline-row:not(:last-child) .timeline-left-col::after {
+      content: '';
+      position: absolute;
+      top: 30px;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0px;
+      border-left: 2.5px dashed #7dd3fc;
+      opacity: 0.85;
+      z-index: 1;
+    }
+    body.starry-mode .timeline-row:not(:last-child) .timeline-left-col::after {
+      border-left-color: #0284c7;
+    }
+    /* 時間膠囊右側的呼吸發光亮點 */
+    .timeline-glow-dot {
+      position: absolute;
+      top: 9px;
+      right: -6px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #0ea5e9;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 8px #38bdf8, 0 0 14px #0284c7;
+      z-index: 10;
+      animation: dotPulse 2.2s infinite ease-in-out;
+    }
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 6px #38bdf8; }
+      50% { transform: scale(1.35); box-shadow: 0 0 12px #f43f5e, 0 0 20px #38bdf8; background: #f43f5e; }
+    }
+    /* 時間軸上的迷你燈箱預覽連接鈕 */
+    .timeline-lightbox-pin {
+      position: relative;
+      z-index: 5;
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+      color: #e11d48;
+      border: 1px solid #fecdd3;
+      box-shadow: 0 2px 5px rgba(225, 29, 72, 0.12);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .timeline-lightbox-pin:hover, .timeline-lightbox-pin:active {
+      background: #e11d48;
+      color: #ffffff;
+      transform: scale(1.08);
+    }
+
+    /* ==================== ✨ 特效 6：情境氛圍飄浮粒子特效 (Contextual Particles) ==================== */
+    #ambient-particles-box {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 35;
+      overflow: hidden;
+    }
+    .ambient-item {
+      position: absolute;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    @keyframes particleFallDown {
+      0% { transform: translate3d(0, -10vh, 0) rotate(0deg) scale(0.8); opacity: 0; }
+      15% { opacity: 0.75; }
+      85% { opacity: 0.75; }
+      100% { transform: translate3d(var(--drift-x, 35px), 105vh, 0) rotate(360deg) scale(1.1); opacity: 0; }
+    }
+    @keyframes particleFloatUp {
+      0% { transform: translate3d(0, 105vh, 0) scale(0.7); opacity: 0; }
+      20% { opacity: 0.7; }
+      80% { opacity: 0.7; }
+      100% { transform: translate3d(var(--drift-x, -30px), -10vh, 0) scale(1.15); opacity: 0; }
+    }
   </style>
 </head>
 <body class="pb-32">
+
+  <!-- ✨ 特效 6：每日情境氛圍飄浮粒子容器 -->
+  <div id="ambient-particles-box"></div>
 
   <!-- 頂部輕量提示框 (Toast) -->
   <div id="toast-msg" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md text-white text-xs font-extrabold px-4 py-2.5 rounded-full shadow-2xl z-50 hidden transition-all border border-white/20"></div>
@@ -447,36 +683,49 @@
     </div>
   </div>
 
-  <!-- 🎟️ 景點 3D 紀念票卡深度介紹視窗 (Spot Ticket Modal 支援換圖與點擊放大) -->
+  <!-- 📸 特效 5：拍立得搖晃顯影視窗 (Polaroid Develop Modal) -->
   <div id="spot-ticket-modal" onclick="closeSpotTicket()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-50 hidden items-center justify-center p-4">
-    <div class="boarding-pass max-w-md w-full bg-white shadow-2xl animate-[springIn_0.3s_ease-out]" onclick="event.stopPropagation()">
-      <div class="relative h-52 bg-slate-800 group">
-        <img id="ticket-img" src="" class="w-full h-full object-cover cursor-zoom-in" alt="景點圖">
-        <div class="absolute inset-0 glass-img-overlay pointer-events-none"></div>
+    <div id="polaroid-card-inner" class="polaroid-modal-card max-w-md w-full" onclick="event.stopPropagation()">
+      <!-- 頂部可愛和紙膠帶 -->
+      <div class="washi-tape"></div>
 
-        <!-- 左上角：更換景點票卡照片按鈕 -->
-        <div class="absolute top-3 left-3 flex gap-1.5 z-20">
-          <button type="button" id="ticket-edit-img-btn" class="cam-edit-btn">
-            <i class="fa-solid fa-camera"></i> 更換景點照
+      <!-- 拍立得白色相紙外框 -->
+      <div class="polaroid-photo-frame">
+        <div class="relative h-56 bg-slate-900 rounded-lg overflow-hidden group">
+          <img id="ticket-img" src="" class="w-full h-full object-cover cursor-zoom-in" alt="景點圖">
+          <div class="absolute inset-0 glass-img-overlay pointer-events-none"></div>
+
+          <!-- 左上角：更換景點照片按鈕 -->
+          <div class="absolute top-3 left-3 flex gap-1.5 z-20">
+            <button type="button" id="ticket-edit-img-btn" class="cam-edit-btn">
+              <i class="fa-solid fa-camera"></i> 更換拍立得照
+            </button>
+          </div>
+
+          <button onclick="closeSpotTicket()" class="absolute top-3 right-3 bg-black/55 hover:bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center z-20 transition">
+            <i class="fa-solid fa-xmark"></i>
           </button>
-        </div>
 
-        <button onclick="closeSpotTicket()" class="absolute top-3 right-3 bg-black/50 hover:bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center z-20 transition">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-        <div class="absolute bottom-3 left-4 right-4 text-white pointer-events-none">
-          <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow">🎟️ OKINAWA VIP PASS</span>
-          <h3 id="ticket-title" class="text-xl font-black mt-1 drop-shadow"></h3>
+          <div class="absolute bottom-2.5 left-3.5 right-3.5 text-white pointer-events-none">
+            <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow">📸 OKINAWA POLAROID</span>
+            <h3 id="ticket-title" class="text-xl font-black mt-1 drop-shadow"></h3>
+          </div>
+        </div>
+        <!-- 拍立得相紙下緣手寫感簽名與紀念章 -->
+        <div class="pt-2 px-1 flex items-center justify-between">
+          <span class="text-[11px] font-extrabold text-slate-400 tracking-wider font-mono">🌺 2026-2027 FAMILY MEMORY</span>
+          <span class="okinawa-stamp">💮 沖繩必遊認證</span>
         </div>
       </div>
-      <div class="p-4 space-y-3">
+
+      <!-- 拍立得下方景點深度介紹 -->
+      <div class="px-2 pt-3.5 space-y-3">
         <p id="ticket-desc" class="text-xs text-slate-600 leading-relaxed"></p>
         <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 text-xs text-sky-900 font-bold" id="ticket-highlight"></div>
-        <div class="border-t-2 border-dashed border-sky-200 pt-3 mt-3 flex justify-between items-center text-xs">
-          <div class="flex items-center gap-1.5 text-slate-400 font-mono text-[11px]">
-            <i class="fa-solid fa-barcode text-lg text-slate-600"></i>
-            <span>OKINAWA-2026-2027</span>
-          </div>
+        <div class="border-t border-dashed border-slate-200 pt-3 flex justify-between items-center text-xs">
+          <button type="button" id="ticket-View-lightbox-btn" class="text-sky-600 hover:underline font-extrabold flex items-center gap-1">
+            <i class="fa-solid fa-expand"></i> 全螢幕檢視大圖
+          </button>
           <a id="ticket-map-link" href="#" target="_blank" class="map-btn !bg-sky-600 !text-white !px-4 !py-1.5"><i class="fa-solid fa-location-arrow"></i> 立即導航前往</a>
         </div>
       </div>
@@ -2668,6 +2917,9 @@
       } else {
         nahaBox.style.display = 'none';
       }
+      if (typeof spawnAmbientParticles === 'function') {
+        spawnAmbientParticles(dayNum);
+      }
     }
 
     // 5. 互動式費用記帳本邏輯 (含雲端即時同步)
@@ -3370,12 +3622,24 @@
       document.getElementById('ticket-highlight').textContent = data.highlight;
       document.getElementById('ticket-map-link').href = `https://www.google.com/maps/search/?api=1&query=${data.map}`;
 
-      // 綁定票卡左上角「📷 更換景點照」按鈕
+      // 綁定左上角「📷 更換拍立得照」與下方「全螢幕檢視大圖」按鈕
       document.getElementById('ticket-edit-img-btn').onclick = () => {
         triggerCustomImgUpload(customKey, data.title, (newUrl) => {
           ticketImgEl.src = newUrl;
         });
       };
+      const viewLbBtn = document.getElementById('ticket-View-lightbox-btn');
+      if (viewLbBtn) {
+        viewLbBtn.onclick = () => openLightbox(null, ticketImgEl.src, data.title, data.highlight, customKey);
+      }
+
+      // 重新觸發「拍立得搖晃顯影」動畫
+      const polaroidCard = document.getElementById('polaroid-card-inner');
+      if (polaroidCard) {
+        polaroidCard.classList.remove('polaroid-Entering');
+        void polaroidCard.offsetWidth; // 強制重繪以重新播放動畫
+        polaroidCard.classList.add('polaroid-Entering');
+      }
 
       const modal = document.getElementById('spot-ticket-modal');
       modal.classList.remove('hidden');
@@ -3388,17 +3652,162 @@
       modal.classList.remove('flex');
     }
 
-    document.querySelectorAll('#tab-itinerary .font-bold.text-slate-800').forEach(el => {
-      const txt = el.textContent;
-      for (const key of Object.keys(spotTicketsDB)) {
-        if (key !== 'churaumi' && txt.includes(key)) {
-          el.classList.add('spot-trigger');
-          el.innerHTML += ` <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-extrabold">🎟️ 票卡</span>`;
-          el.onclick = () => openSpotTicket(key);
-          break;
-        }
+    // ==================== ✨ 自動化升級：側邊時間軸虛線亮點 ＋ 燈箱小圓鈕 ＋ 手風琴折疊 ＋ 情境粒子 ====================
+    const dayParticlesConfig = {
+      1: { icons: ['🎆', '✨', '⛩️', '🏮'], mode: 'fall', label: '跨年花火與祈福' },
+      2: { icons: ['🫧', '🐠', '🐋', '🐚'], mode: 'float', label: '美麗海海洋泡泡' },
+      3: { icons: ['🎡', '🌟', '🎆', '🍦'], mode: 'fall', label: '美國村星光煙火' },
+      4: { icons: ['💎', '🐾', '🍤', '🛍️'], mode: 'fall', label: '玉泉洞與貓島' },
+      5: { icons: ['🌺', '🥞', '✈️', '☀️'], mode: 'fall', label: '沖繩扶桑花瓣' }
+    };
+
+    function spawnAmbientParticles(dayNum) {
+      const box = document.getElementById('ambient-particles-box');
+      if (!box) return;
+      box.innerHTML = '';
+      const cfg = dayParticlesConfig[dayNum] || dayParticlesConfig[1];
+      const count = 12; // 輕量 12 顆微粒子，保持 60fps 順暢不遮擋閱讀
+
+      for (let i = 0; i < count; i++) {
+        const span = document.createElement('span');
+        span.className = 'ambient-item';
+        span.textContent = cfg.icons[i % cfg.icons.length];
+        const left = Math.random() * 94 + 2;
+        const size = Math.floor(Math.random() * 8) + 13; // 13px ~ 20px
+        const duration = (Math.random() * 6 + 8).toFixed(1); // 8s ~ 14s
+        const delay = (Math.random() * 5).toFixed(1);
+        const drift = (Math.random() * 70 - 35).toFixed(0) + 'px';
+        const animName = cfg.mode === 'float' ? 'particleFloatUp' : 'particleFallDown';
+
+        span.style.left = `${left}%`;
+        span.style.fontSize = `${size}px`;
+        span.style.setProperty('--drift-x', drift);
+        span.style.animation = `${animName} ${duration}s linear ${delay}s infinite`;
+        box.appendChild(span);
       }
-    });
+    }
+
+    function toggleDayAllAccordions(dayNum, expand) {
+      const dayEl = document.getElementById(`day-${dayNum}`);
+      if (!dayEl) return;
+      dayEl.querySelectorAll('.timeline-row').forEach(row => {
+        if (expand) row.classList.remove('is-collapsed');
+        else row.classList.add('is-collapsed');
+      });
+    }
+
+    function initTimelineAccordionAndParticles() {
+      // 1. 先標記所有對應景點票卡的標題，改為「📸 拍立得」徽章
+      document.querySelectorAll('#tab-itinerary .font-bold.text-slate-800, #tab-itinerary .spot-trigger').forEach(el => {
+        const txt = el.textContent;
+        for (const key of Object.keys(spotTicketsDB)) {
+          if (key !== 'churaumi' && txt.includes(key)) {
+            el.classList.add('spot-trigger');
+            el.setAttribute('data-spot-key', key);
+            el.innerHTML += ` <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-extrabold shadow-sm">📸 拍立得</span>`;
+            el.onclick = (e) => { e.stopPropagation(); openSpotTicket(key); };
+            break;
+          }
+        }
+        if (txt.includes('美麗海水族館')) {
+          el.setAttribute('data-spot-key', 'churaumi');
+        }
+      });
+
+      // 2. 為 Day 1 ~ Day 5 的每一個時間點升級「虛線亮點時間軸 ＋ 燈箱連接鈕 ＋ 手風琴折疊」
+      for (let d = 1; d <= 5; d++) {
+        const dayEl = document.getElementById(`day-${d}`);
+        if (!dayEl) continue;
+        const listContainer = dayEl.querySelector('.p-4.space-y-4');
+        if (!listContainer) continue;
+
+        // 在每日行程清單頂部插入「手風琴一鍵展開 / 折疊」控制列
+        const ctrlBar = document.createElement('div');
+        ctrlBar.className = 'flex items-center justify-between bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-1.5 mb-2 text-[11px]';
+        ctrlBar.innerHTML = `
+          <span class="font-extrabold text-slate-500"><i class="fa-solid fa-wand-magic-sparkles text-sky-500 mr-1"></i>點擊各時段右側箭頭可折疊收合，點時間下方「🖼️ 燈箱」可看大圖</span>
+          <div class="flex gap-1.5 flex-shrink-0">
+            <button type="button" onclick="toggleDayAllAccordions(${d}, true)" class="text-sky-700 bg-sky-100 hover:bg-sky-200 font-extrabold px-2 py-0.5 rounded-lg transition">展開全部</button>
+            <button type="button" onclick="toggleDayAllAccordions(${d}, false)" class="text-slate-600 bg-slate-200/70 hover:bg-slate-300 font-bold px-2 py-0.5 rounded-lg transition">折疊精簡</button>
+          </div>
+        `;
+        listContainer.insertBefore(ctrlBar, listContainer.firstChild);
+
+        const rows = Array.from(listContainer.children).filter(el => el.classList.contains('flex') && el.classList.contains('gap-3'));
+        rows.forEach((row) => {
+          row.classList.add('timeline-row');
+          const leftCol = row.children[0];
+          const rightCol = row.children[1];
+          if (!leftCol || !rightCol) return;
+
+          // (A) 升級左側時間欄：加上呼吸霓虹亮點 + 虛線連接軌跡
+          leftCol.classList.add('timeline-left-col');
+          const timeBadge = leftCol.querySelector('span');
+          if (timeBadge) {
+            timeBadge.classList.add('relative');
+            const dot = document.createElement('span');
+            dot.className = 'timeline-glow-dot';
+            timeBadge.appendChild(dot);
+          }
+
+          // 檢查此行程是否有對應的景點圖片，若有則在時間膠囊下方加上「🖼️ 燈箱」快速預覽連接鈕
+          const triggerEl = rightCol.querySelector('[data-spot-key]');
+          const spotKey = triggerEl ? triggerEl.getAttribute('data-spot-key') : null;
+          if (spotKey && spotTicketsDB[spotKey]) {
+            const lbPin = document.createElement('button');
+            lbPin.type = 'button';
+            lbPin.className = 'timeline-lightbox-pin';
+            lbPin.innerHTML = `<i class="fa-regular fa-image"></i> 燈箱`;
+            lbPin.title = '直接開啟此景點燈箱大圖';
+            lbPin.onclick = (e) => {
+              e.stopPropagation();
+              const info = spotTicketsDB[spotKey];
+              const customKey = `ticket_${spotKey}`;
+              const customMap = getCustomImages();
+              const imgUrl = customMap[customKey] || info.img;
+              openLightbox(e, imgUrl, info.title, info.highlight, customKey);
+            };
+            leftCol.appendChild(lbPin);
+          }
+
+          // (B) 升級右側內容欄：第一行標題旁加入手風琴折疊箭頭，其餘細節包進 .accordion-body
+          const firstTitleEl = rightCol.firstElementChild;
+          if (!firstTitleEl) return;
+
+          const headerBar = document.createElement('div');
+          headerBar.className = 'accordion-header-bar';
+          rightCol.insertBefore(headerBar, firstTitleEl);
+          headerBar.appendChild(firstTitleEl);
+
+          const arrowBtn = document.createElement('button');
+          arrowBtn.type = 'button';
+          arrowBtn.className = 'accordion-toggle-icon';
+          arrowBtn.title = '折疊 / 展開此行程介紹';
+          arrowBtn.innerHTML = `<i class="fa-solid fa-chevron-down"></i>`;
+          arrowBtn.onclick = (e) => {
+            e.stopPropagation();
+            row.classList.toggle('is-collapsed');
+          };
+          headerBar.appendChild(arrowBtn);
+
+          // 若標題本身不是拍立得觸發器，點擊整列標題也可收合手風琴
+          if (!firstTitleEl.classList.contains('spot-trigger')) {
+            headerBar.onclick = () => row.classList.toggle('is-collapsed');
+          }
+
+          // 將標題下方的介紹與導航按鈕群包進 .accordion-body
+          const bodyWrapper = document.createElement('div');
+          bodyWrapper.className = 'accordion-body';
+          while (headerBar.nextSibling) {
+            bodyWrapper.appendChild(headerBar.nextSibling);
+          }
+          rightCol.appendChild(bodyWrapper);
+        });
+      }
+
+      // 3. 預設啟動 Day 1 的跨年情境粒子特效
+      spawnAmbientParticles(1);
+    }
 
     // 7. 行前行李 ＆ 證件檢查表 (支援雲端同步)
     const defaultPackingData = [
@@ -3539,6 +3948,7 @@
 
     // 初始化所有渲染並啟動 Firebase 即時雲端同步串流
     initEditableBannersAndCovers();
+    initTimelineAccordionAndParticles();
     setQuickJpy(1000);
     renderExpenses();
     renderChecklist();

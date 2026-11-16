@@ -443,6 +443,42 @@
     </div>
   </div>
 
+  <!-- 🖼️ 全站照片自訂更換視窗 (支援頂部橫幅、Day 1~5 封面、景點票卡圖 HD 上傳與雲端同步) -->
+  <div id="custom-photo-modal" onclick="closeCustomPhotoModal()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3.5 border-2 border-sky-100" onclick="event.stopPropagation()">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-extrabold text-base text-sky-900">
+          <i class="fa-solid fa-camera-retro text-rose-500 mr-1.5"></i>更換照片：<span id="custom-photo-label" class="text-sky-600"></span>
+        </h3>
+        <button onclick="closeCustomPhotoModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <input type="hidden" id="custom-photo-key">
+
+      <!-- 即時預覽框 -->
+      <div class="relative h-44 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+        <img id="custom-photo-preview" src="" alt="預覽圖" class="w-full h-full object-cover">
+        <span class="absolute bottom-2 right-2 bg-slate-900/70 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">HD 高清預覽</span>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <label class="font-bold text-slate-600 block">📷 選擇新照片（支援手機相簿 HD 上傳或貼上圖片網址）：</label>
+        <div class="flex gap-2 items-center">
+          <label class="cursor-pointer bg-gradient-to-r from-sky-500 to-cyan-500 hover:opacity-95 text-white font-extrabold px-3.5 py-2.5 rounded-xl whitespace-nowrap shadow transition">
+            <i class="fa-solid fa-image mr-1"></i>從手機相簿選圖
+            <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'custom-photo-url', true, 'custom-photo-preview')">
+          </label>
+          <input type="text" id="custom-photo-url" oninput="document.getElementById('custom-photo-preview').src = this.value" placeholder="或貼上圖片網址..." class="flex-1 p-2.5 rounded-xl border border-slate-200 text-slate-600">
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="resetSingleCustomPhoto()" class="px-3 py-2.5 rounded-xl border border-rose-200 text-rose-600 font-bold text-xs hover:bg-rose-50">恢復預設圖</button>
+        <button type="button" onclick="closeCustomPhotoModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs">取消</button>
+        <button type="button" onclick="saveCustomPhoto()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-extrabold text-xs shadow">☁️ 儲存並同步</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 必買商品隨選編輯彈出視窗 (支援從手機相簿選照片上傳並同步至雲端) -->
   <div id="edit-shop-modal" onclick="closeEditShopModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3 border-2 border-sky-100" onclick="event.stopPropagation()">
@@ -2103,6 +2139,17 @@
       }
     }
 
+    // 取得與儲存全站自訂照片 (頂部橫幅、Day 1~5 底圖、票卡照片)
+    function getCustomSiteImages() {
+      return JSON.parse(localStorage.getItem('okinawa_site_images_v1') || '{}');
+    }
+
+    function saveCustomSiteImages(obj) {
+      localStorage.setItem('okinawa_site_images_v1', JSON.stringify(obj));
+      applyAllSiteImages();
+      pushStateToCloud();
+    }
+
     // 推送本地最新狀態至 Firebase 雲端
     async function pushStateToCloud() {
       if (isRemoteUpdating) return;
@@ -2116,6 +2163,7 @@
         deletedShop: getDeletedShopIds(),
         packChecked: JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}'),
         customPack: getCustomPackItems(),
+        customSiteImages: getCustomSiteImages(),
         updatedAt: Date.now()
       };
       try {
@@ -2144,11 +2192,13 @@
         localStorage.setItem('okinawa_deleted_shop_v1', JSON.stringify(data.deletedShop || []));
         localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(data.packChecked || {}));
         localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(data.customPack || []));
+        localStorage.setItem('okinawa_site_images_v1', JSON.stringify(data.customSiteImages || {}));
 
         convertCurrency('JPY');
         renderExpenses();
         renderChecklist();
         renderPackingList();
+        applyAllSiteImages();
         updateCloudBadge('online');
       } finally {
         isRemoteUpdating = false;
@@ -2240,30 +2290,163 @@
       document.getElementById('theme-toggle-text').textContent = '陽光';
     }
 
-    // 0.5 手機相簿選照片自動壓縮轉 Base64 (壓縮至極輕量以利雲端秒傳)
-    function handleImageUpload(inputEl, targetInputId) {
+// 0.5 升級版 HD 高解析度照片上傳引擎 (商品圖 900px / 行程橫幅底圖 1280px，畫質 0.88 超清晰)
+    function handleImageUpload(inputEl, targetInputId, isBanner = false, previewImgId = null) {
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
+      showToast('⏳ 正在處理 HD 高畫質照片...');
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const maxDim = 360;
+          const maxDim = isBanner ? 1280 : 900;
           let w = img.width, h = img.height;
           if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
           else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
           canvas.width = w;
           canvas.height = h;
           const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
           document.getElementById(targetInputId).value = dataUrl;
-          showToast('📷 照片已壓縮載入！儲存後全家人皆可看到');
+          if (previewImgId) {
+            document.getElementById(previewImgId).src = dataUrl;
+          }
+          showToast('✨ HD 高清照片已載入！請點擊儲存同步');
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
+    }
+
+    // 🖼️ 全站照片（頂部橫幅、Day 1~5 行程底圖、3D 景點票卡圖）自動掛載編輯按鈕與同步套用
+    const defaultSiteImages = {};
+    let currentOpenTicketKey = null;
+
+    function initEditableSiteImages() {
+      // 1. 綁定頂部大橫幅底圖
+      const heroImg = document.querySelector('header img.hero-bg-anim');
+      if (heroImg) {
+        heroImg.id = 'editable-img-hero';
+        defaultSiteImages['hero'] = heroImg.src;
+        const themeBtn = document.getElementById('theme-toggle-btn');
+        if (themeBtn && !document.getElementById('hero-img-edit-btn')) {
+          const btn = document.createElement('button');
+          btn.id = 'hero-img-edit-btn';
+          btn.type = 'button';
+          btn.onclick = () => openCustomPhotoModal('hero', '頂部主視覺大橫幅');
+          btn.className = 'bg-slate-950/55 hover:bg-slate-950/75 backdrop-blur-md border border-white/30 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow flex items-center gap-1 transition';
+          btn.innerHTML = '<i class="fa-solid fa-camera text-sky-300"></i><span>換橫幅</span>';
+          themeBtn.parentNode.insertBefore(btn, themeBtn);
+        }
+      }
+
+      // 2. 綁定 Day 1 ~ Day 5 每日行程封面底圖
+      for (let d = 1; d <= 5; d++) {
+        const dayBannerImg = document.querySelector(`#day-${d} .okinawa-card .relative.h-48 img`);
+        if (dayBannerImg) {
+          const key = `day_${d}`;
+          dayBannerImg.id = `editable-img-${key}`;
+          defaultSiteImages[key] = dayBannerImg.src;
+          const parentBox = dayBannerImg.parentElement;
+          if (parentBox && !parentBox.querySelector('.day-photo-edit-btn')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.onclick = (e) => { e.stopPropagation(); openCustomPhotoModal(key, `Day ${d} 行程封面底圖`); };
+            btn.className = 'day-photo-edit-btn absolute top-3 left-3 bg-black/55 hover:bg-black/80 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/30 shadow flex items-center gap-1.5 transition z-10';
+            btn.innerHTML = '<i class="fa-solid fa-camera text-amber-300"></i> 更換底圖';
+            parentBox.appendChild(btn);
+          }
+        }
+      }
+
+      // 3. 綁定 3D 景點票卡彈出視窗內的圖片更換按鈕
+      const ticketImg = document.getElementById('ticket-img');
+      if (ticketImg && ticketImg.parentElement && !document.getElementById('ticket-photo-edit-btn')) {
+        const btn = document.createElement('button');
+        btn.id = 'ticket-photo-edit-btn';
+        btn.type = 'button';
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          if (currentOpenTicketKey) {
+            openCustomPhotoModal('ticket_' + currentOpenTicketKey, spotTicketsDB[currentOpenTicketKey].title);
+          }
+        };
+        btn.className = 'absolute top-3 left-3 bg-black/55 hover:bg-black/80 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1 rounded-full border border-white/30 shadow flex items-center gap-1.5 transition z-10';
+        btn.innerHTML = '<i class="fa-solid fa-camera text-amber-300"></i> 更換景點照';
+        ticketImg.parentElement.appendChild(btn);
+      }
+
+      // 記錄景點票卡預設圖並覆寫 openSpotTicket 以支援自訂圖
+      if (typeof spotTicketsDB === 'object') {
+        Object.keys(spotTicketsDB).forEach(k => {
+          defaultSiteImages['ticket_' + k] = spotTicketsDB[k].img;
+        });
+      }
+
+      applyAllSiteImages();
+    }
+
+    function applyAllSiteImages() {
+      const customImgs = getCustomSiteImages();
+      // 套用頂部與 Day 1~5 底圖
+      Object.keys(defaultSiteImages).forEach(key => {
+        if (key.startsWith('ticket_')) {
+          const tKey = key.replace('ticket_', '');
+          if (typeof spotTicketsDB === 'object' && spotTicketsDB[tKey]) {
+            spotTicketsDB[tKey].img = customImgs[key] || defaultSiteImages[key];
+          }
+        } else {
+          const el = document.getElementById(`editable-img-${key}`);
+          if (el) el.src = customImgs[key] || defaultSiteImages[key];
+        }
+      });
+      // 若票卡視窗正開啟中，同步刷新票卡圖片
+      if (currentOpenTicketKey && typeof spotTicketsDB === 'object' && spotTicketsDB[currentOpenTicketKey]) {
+        const tImg = document.getElementById('ticket-img');
+        if (tImg) tImg.src = spotTicketsDB[currentOpenTicketKey].img;
+      }
+    }
+
+    function openCustomPhotoModal(key, label) {
+      document.getElementById('custom-photo-key').value = key;
+      document.getElementById('custom-photo-label').textContent = label;
+      const customImgs = getCustomSiteImages();
+      const currentUrl = customImgs[key] || defaultSiteImages[key] || '';
+      document.getElementById('custom-photo-url').value = currentUrl;
+      document.getElementById('custom-photo-preview').src = currentUrl;
+      const modal = document.getElementById('custom-photo-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCustomPhotoModal() {
+      const modal = document.getElementById('custom-photo-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveCustomPhoto() {
+      const key = document.getElementById('custom-photo-key').value;
+      const url = document.getElementById('custom-photo-url').value.trim();
+      if (!url) return;
+      const customImgs = getCustomSiteImages();
+      customImgs[key] = url;
+      saveCustomSiteImages(customImgs);
+      closeCustomPhotoModal();
+      showToast('🖼️ 已更新高清照片並同步給全家人！');
+    }
+
+    function resetSingleCustomPhoto() {
+      const key = document.getElementById('custom-photo-key').value;
+      const customImgs = getCustomSiteImages();
+      delete customImgs[key];
+      saveCustomSiteImages(customImgs);
+      closeCustomPhotoModal();
+      showToast('🔄 已恢復為預設照片！');
     }
 
     // 1. 精確到秒的出發倒數計時器
@@ -3030,6 +3213,7 @@
     function openSpotTicket(key) {
       const data = spotTicketsDB[key];
       if (!data) return;
+      currentOpenTicketKey = key;
       document.getElementById('ticket-img').src = data.img;
       document.getElementById('ticket-title').textContent = data.title;
       document.getElementById('ticket-desc').textContent = data.desc;
@@ -3058,130 +3242,6 @@
       }
     });
 
-    // 7. 行前行李 ＆ 證件檢查表 (支援雲端同步)
-    const defaultPackingData = [
-      { category: "🪪 絕對必備證件與金流（沒帶上不了飛機/租不了車！）", items: [
-        { id: "p1", name: "中華民國護照正本（效期需滿 6 個月以上）", note: "最優先確認！" },
-        { id: "p2", name: "【司機必備】台灣汽車駕照正本", note: "正本不可過期" },
-        { id: "p3", name: "【司機必備】台灣駕照「日文譯本」", note: "台灣監理站先辦好，日本不能辦" },
-        { id: "p4", name: "Visit Japan Web 入境審查＆海關 QR Code 截圖", note: "預先填寫截圖省時間" },
-        { id: "p5", name: "日幣現金（含沖繩行腳租車尾款 94,000 日圓）", note: "取車現場需付現" },
-        { id: "p6", name: "海外高回饋信用卡 2 張 ＋ 台灣身分證", note: "商場刷卡與備用" }
-      ]},
-      { category: "📱 3C 電器與網路（行動電源嚴禁託運！）", items: [
-        { id: "p7", name: "日本漫遊網卡 SIM 卡 / eSIM（附退卡針）", note: "落地那霸馬上開通" },
-        { id: "p8", name: "行動電源（必須隨身攜帶上飛機，不可放託運行李）", note: "拍美照導航必備" },
-        { id: "p9", name: "手機充電線、多孔快充頭、車用充電線", note: "日本兩孔插座與台灣相同" }
-      ]},
-      { category: "🧥 12-1月沖繩跨年穿搭與個人衣物", items: [
-        { id: "p10", name: "防風保暖外套（海邊、跨年夜波上宮海風較大）", note: "洋蔥式最外層" },
-        { id: "p11", name: "薄長袖、針織衫、長褲/長裙（5天份換洗衣物）", note: "商場與車內有暖氣" },
-        { id: "p12", name: "好走的運動鞋 / 休閒鞋 ＋ 太陽眼鏡", note: "日照強、逛街步數多" }
-      ]},
-      { category: "💊 常備藥品與貼心盥洗雜貨", items: [
-        { id: "p13", name: "個人常備藥（感冒藥、腸胃藥、止痛藥、暈車藥、OK繃）", note: "隨身備用最安心" },
-        { id: "p14", name: "牙刷、牙膏、洗面乳、卸妝保養品", note: "日本飯店環保政策多不主動提供" },
-        { id: "p15", name: "輕便折疊購物袋 2~3 個 ＋ 晴雨兩用摺疊傘", note: "超市唐吉訶德採買超好用" },
-        { id: "p16", name: "行李秤（回程確認戰利品有沒有超重）", note: "星宇經濟艙 23kg" }
-      ]}
-    ];
-
-    function getCustomPackItems() {
-      return JSON.parse(localStorage.getItem('okinawa_custom_pack_v1') || '[]');
-    }
-
-    function saveCustomPackItems(list) {
-      localStorage.setItem('okinawa_custom_pack_v1', JSON.stringify(list));
-      pushStateToCloud();
-    }
-
-    function addCustomPackItem(e) {
-      e.preventDefault();
-      const input = document.getElementById('pack-input');
-      const name = input.value.trim();
-      if (!name) return;
-      const list = getCustomPackItems();
-      list.unshift({ id: 'cpack_' + Date.now(), name, note: '個人自訂必帶', isCustom: true });
-      saveCustomPackItems(list);
-      input.value = '';
-      renderPackingList();
-      showToast('☁️ 已加入行前檢查表並同步！');
-    }
-
-    function deleteCustomPackItem(e, id) {
-      e.preventDefault();
-      e.stopPropagation();
-      saveCustomPackItems(getCustomPackItems().filter(i => i.id !== id));
-      renderPackingList();
-    }
-
-    function togglePackCheck(id) {
-      const saved = JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}');
-      saved[id] = !saved[id];
-      localStorage.setItem('okinawa_pack_checked_v1', JSON.stringify(saved));
-      renderPackingList();
-      pushStateToCloud();
-    }
-
-    function resetPackingList() {
-      if (confirm('確定要重置所有行前檢查表的勾選狀態嗎？')) {
-        localStorage.removeItem('okinawa_pack_checked_v1');
-        renderPackingList();
-        pushStateToCloud();
-      }
-    }
-
-    function renderPackingList() {
-      const saved = JSON.parse(localStorage.getItem('okinawa_pack_checked_v1') || '{}');
-      const customList = getCustomPackItems();
-      const groups = JSON.parse(JSON.stringify(defaultPackingData));
-      if (customList.length > 0) {
-        groups.unshift({ category: "✨ 我自己新增的必帶物品", items: customList });
-      }
-
-      let total = 0;
-      let checked = 0;
-
-      document.getElementById('packing-container').innerHTML = groups.map(group => `
-        <div>
-          <h3 class="font-extrabold text-emerald-900 bg-emerald-100/80 px-3.5 py-2 rounded-xl mb-2 text-xs">${group.category}</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            ${group.items.map(item => {
-              total++;
-              const isChecked = !!saved[item.id];
-              if (isChecked) checked++;
-              const style = isChecked ? 'bg-slate-50 border-slate-200 opacity-60' : 'bg-white border-emerald-100 shadow-sm';
-              const textStyle = isChecked ? 'line-through text-slate-400' : 'text-slate-800';
-              return `
-                <label class="flex items-center justify-between p-2.5 rounded-xl border ${style} cursor-pointer select-none">
-                  <div class="flex items-start gap-2.5 pr-2">
-                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePackCheck('${item.id}')" class="mt-0.5 h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500">
-                    <div>
-                      <div class="font-extrabold text-xs ${textStyle}">${item.name}</div>
-                      <div class="text-[10px] text-emerald-700 font-bold mt-0.5">${item.note}</div>
-                    </div>
-                  </div>
-                  ${item.isCustom ? `
-                    <button type="button" onclick="deleteCustomPackItem(event, '${item.id}')" class="text-slate-300 hover:text-rose-500 p-1">
-                      <i class="fa-solid fa-trash-can text-xs"></i>
-                    </button>
-                  ` : ''}
-                </label>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      `).join('');
-
-      const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
-      document.getElementById('packing-progress-text').textContent = `${checked} / ${total} 項 (${pct}%)`;
-      document.getElementById('packing-progress-bar').style.width = `${pct}%`;
-      if (pct === 100 && total > 0 && !isRemoteUpdating) {
-        fireConfetti();
-        showToast('🎉 行李 100% 準備完成！準備出發沖繩囉！');
-      }
-    }
-
     // ✈️ 開啟與關閉「星宇航空完整搭機＆出入境注意事項」3D 票卡視窗
     function openFlightNoticeModal() {
       const modal = document.getElementById('flight-notice-modal');
@@ -3195,11 +3255,12 @@
       modal.classList.remove('flex');
     }
 
-    // 初始化所有渲染並啟動 Firebase 即時雲端同步串流
+    // 初始化所有渲染、啟用全站照片更換功能並啟動 Firebase 即時雲端同步串流
     setQuickJpy(1000);
     renderExpenses();
     renderChecklist();
     renderPackingList();
+    initEditableSiteImages();
     initRealtimeCloudStream();
   </script>
 </body>
